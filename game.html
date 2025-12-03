@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mila Vola Gambling - Microtâche Mila Vola</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --success: #4cc9f0;
+      --danger: #e63946;
+      --warning: #f72585;
+      --gold: #FFD700;
+      --silver: #C0C0C0;
+      --bronze: #CD7F32;
+      --gambling-bg: #1a1a2e;
+      --gambling-card: #16213e;
+      --gambling-accent: #0f3460;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, var(--gambling-accent), #1a1a2e);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      border: 1px solid var(--primary);
+    }
+    
+    .header h1 {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--gold);
+    }
+    
+    .header p {
+      opacity: 0.9;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: var(--gambling-card);
+      border-radius: 15px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--gambling-accent);
+      transition: transform 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    }
+    
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--gold);
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .level-badge {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      background: linear-gradient(135deg, var(--gold), #FFA500);
+      color: #000;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+    
+    .game-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    @media (max-width: 992px) {
+      .game-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .strategy-panel {
+      background: var(--gambling-card);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .domino-game {
+      background: var(--gambling-card);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--gambling-accent);
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #ddd;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--gambling-accent);
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+    }
+    
+    .range-value {
+      display: inline-block;
+      margin-left: 10px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+    
+    .btn-gambling {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 1rem;
+    }
+    
+    .btn-gambling:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+    }
+    
+    .btn-gambling:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, var(--success), #3a86ff);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #e11d74);
+    }
+    
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning), #ff6d00);
+    }
+    
+    .domino-wheel {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 2rem auto;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 5px solid var(--gambling-accent);
+    }
+    
+    .domino {
+      font-size: 5rem;
+      color: white;
+      transition: transform 2s cubic-bezier(0.17, 0.67, 0.21, 0.99);
+    }
+    
+    .domino.red {
+      color: #FF6B6B;
+    }
+    
+    .domino.blue {
+      color: #4ECDC4;
+    }
+    
+    .result-display {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .result-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-amount {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    
+    .level-progress {
+      background: var(--gambling-card);
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .progress-container {
+      margin-top: 1rem;
+    }
+    
+    .progress-bar {
+      height: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      border-radius: 10px;
+      transition: width 1s ease;
+    }
+    
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+    
+    .referral-stats {
+      background: var(--gambling-card);
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .history-section {
+      background: var(--gambling-card);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    
+    .history-table th {
+      background: var(--gambling-accent);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .history-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .history-table tr:nth-child(even) {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .history-table tr:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .badge-win {
+      background: #4CAF50;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .badge-loss {
+      background: #F44336;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .hourly-task {
+      background: linear-gradient(135deg, var(--gambling-accent), #1a1a2e);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--primary);
+    }
+    
+    .hourly-reward {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin: 1rem 0;
+    }
+    
+    .timer {
+      font-size: 1.2rem;
+      color: #aaa;
+      margin-top: 1rem;
+    }
+    
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background: var(--gambling-card);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      transform: scale(0.8);
+      transition: transform 0.3s;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .modal-overlay.show .modal-content {
+      transform: scale(1);
+    }
+    
+    .withdraw-fee {
+      color: #FF6B6B;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    
+    .game-status {
+      padding: 1rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      margin-top: 1rem;
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .auto-roll {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+    }
+    
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    
+    .slider.round {
+      border-radius: 34px;
+    }
+    
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    
+    .level-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .level-item {
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .level-item.current {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-color: var(--gold);
+    }
+    
+    .level-number {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    
+    .level-reward {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .spinning {
+      animation: spin 0.5s linear infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes winFlash {
+      0%, 100% { background-color: transparent; }
+      50% { background-color: rgba(76, 175, 80, 0.3); }
+    }
+    
+    @keyframes loseFlash {
+      0%, 100% { background-color: transparent; }
+      50% { background-color: rgba(244, 67, 54, 0.3); }
+    }
+    
+    .win-flash {
+      animation: winFlash 1s;
+    }
+    
+    .lose-flash {
+      animation: loseFlash 1s;
+    }
+    
+    .rules-panel {
+      background: var(--gambling-card);
+      border-radius: 15px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .rules-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    
+    .rules-list li {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .rules-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .rules-list i {
+      color: var(--gold);
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateX(150%);
+      transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification i {
+      font-size: 1.2rem;
+    }
+    
+    .notification.success {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    }
+    
+    .notification.error {
+      background: linear-gradient(135deg, #F44336, #C62828);
+    }
+    
+    .notification.warning {
+      background: linear-gradient(135deg, #FF9800, #EF6C00);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-dice me-2"></i>Mila Vola Gambling</h1>
+      <p>Système de jeu avec niveaux et gains horaires</p>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Solde Gambling</div>
+        <div class="stat-number" id="gamblingBalance">0 Ar</div>
+        <button class="btn-gambling btn-success mt-3" onclick="openDepositModal()">
+          <i class="fas fa-plus-circle"></i> Déposer
+        </button>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Niveau Actuel</div>
+        <div class="stat-number" id="currentLevel">1</div>
+        <div class="level-badge" id="levelBadge">Niveau 1</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Gain Horaire</div>
+        <div class="stat-number" id="hourlyReward">5 Ar/h</div>
+        <div class="timer" id="hourlyTimer">Prochain gain: 60:00</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Total Gagné/Perdu</div>
+        <div class="stat-number" id="totalGambling">0 Ar</div>
+        <div class="mt-2">
+          <span id="totalWon" style="color: #4CAF50">0 Ar</span> / 
+          <span id="totalLost" style="color: #F44336">0 Ar</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="hourly-task">
+      <h3><i class="fas fa-clock me-2"></i>Tâche Horaire</h3>
+      <p>Recevez un bonus toutes les heures selon votre niveau (Réclamation manuelle)</p>
+      <div class="hourly-reward" id="currentHourlyReward">5 Ar</div>
+      <button class="btn-gambling btn-warning" id="claimHourlyBtn" onclick="claimHourlyReward()">
+        <i class="fas fa-gift"></i> RÉCLAMER LE BONUS
+      </button>
+      <div class="timer" id="hourlyCountdown">Disponible dans: 60:00</div>
+      <div class="timer" id="nextAvailableTime" style="color: #FF9800; margin-top: 0.5rem;"></div>
+    </div>
+    
+    <div class="game-container">
+      <div class="strategy-panel">
+        <h3><i class="fas fa-cogs me-2"></i>Stratégie de Jeu</h3>
+        
+        <div class="form-group">
+          <label class="form-label">Mise <span class="range-value" id="betAmountValue">5</span> Ar</label>
+          <input type="range" id="betAmount" class="form-control" min="5" max="10000" value="5" step="5">
+          <div class="withdraw-fee">Minimum: 5 Ar</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Take Profit <span class="range-value" id="takeProfitValue">500</span> Ar</label>
+          <input type="range" id="takeProfit" class="form-control" min="10" max="10000" value="500" step="10">
+          <div class="withdraw-fee">Arrêt lorsque ce profit est atteint</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Multiple <span class="range-value" id="multipleValue">2x</span></label>
+          <input type="range" id="multiple" class="form-control" min="1" max="10" value="2" step="0.5">
+          <div class="withdraw-fee">Multiplicateur de gain/perte</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Take Loss <span class="range-value" id="takeLossValue">200</span> Ar</label>
+          <input type="range" id="takeLoss" class="form-control" min="10" max="5000" value="200" step="10">
+          <div class="withdraw-fee">Arrêt lorsque cette perte est atteinte</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Pourcentage de Gain <span class="range-value" id="percentageValue">1%</span></label>
+          <input type="range" id="percentage" class="form-control" min="0.1" max="5" value="1" step="0.1">
+          <div class="withdraw-fee">+1% = perte automatique</div>
+        </div>
+        
+        <div class="auto-roll">
+          <label class="form-label" style="margin: 0">Auto Roll</label>
+          <label class="switch">
+            <input type="checkbox" id="autoRoll">
+            <span class="slider round"></span>
+          </label>
+          <span id="autoRollStatus" style="color: #aaa">OFF</span>
+        </div>
+        
+        <div class="game-status">
+          <div id="currentProfit">Profit actuel: 0 Ar</div>
+          <div id="currentLoss">Perte actuelle: 0 Ar</div>
+          <div id="gamesPlayed">Parties jouées: 0</div>
+        </div>
+        
+        <button class="btn-gambling btn-primary" id="startGameBtn" onclick="startGame()">
+          <i class="fas fa-play"></i> COMMENCER LE JEU
+        </button>
+        
+        <button class="btn-gambling btn-danger mt-2" id="stopGameBtn" onclick="stopGame()" disabled>
+          <i class="fas fa-stop"></i> ARRÊTER
+        </button>
+        
+        <button class="btn-gambling btn-success mt-2" onclick="openWithdrawModal()">
+          <i class="fas fa-exchange-alt"></i> RETIRER VERS COMPTE PRINCIPAL
+        </button>
+      </div>
+      
+      <div class="domino-game">
+        <h3><i class="fas fa-gamepad me-2"></i>Jeu de Domino</h3>
+        <p>Le domino s'arrête sur ROUGE (perte) ou BLEU (gain)</p>
+        
+        <div class="domino-wheel" id="dominoWheel">
+          <div class="domino" id="domino">🎲</div>
+        </div>
+        
+        <div class="result-display">
+          <div class="result-text" id="resultText">En attente...</div>
+          <div class="result-amount" id="resultAmount">0 Ar</div>
+          <div id="resultDetail" style="color: #aaa; margin-top: 0.5rem;"></div>
+        </div>
+        
+        <div class="mt-3">
+          <h4>Derniers résultats:</h4>
+          <div id="recentResults" style="display: flex; gap: 10px; margin-top: 1rem; justify-content: center; flex-wrap: wrap;">
+            <!-- Les résultats récents seront ajoutés ici -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="level-progress">
+      <h3><i class="fas fa-chart-line me-2"></i>Progression de Niveau</h3>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="levelProgressFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-text">
+          <span id="currentProgress">0 Ar</span>
+          <span id="nextLevelRequirement">20,000 Ar</span>
+        </div>
+      </div>
+      <div class="level-info" id="levelInfo">
+        <!-- Les informations de niveau seront ajoutées ici -->
+      </div>
+    </div>
+    
+    <div class="referral-stats">
+      <h3><i class="fas fa-users me-2"></i>Programme de Parrainage Gambling</h3>
+      <p>Vous recevez 50% des gains de vos filleuls</p>
+      <div class="stats-grid" style="margin-top: 1.5rem;">
+        <div class="stat-card">
+          <div class="stat-label">Gains des Filleuls</div>
+          <div class="stat-number" id="referralEarnings">0 Ar</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Votre Commission</div>
+          <div class="stat-number" id="yourCommission">0 Ar</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Filleuls Actifs</div>
+          <div class="stat-number" id="activeReferrals">0</div>
+        </div>
+        <div class="stat-card">
+          <button class="btn-gambling btn-primary" onclick="claimCommission()">
+            <i class="fas fa-hand-holding-usd"></i> RÉCLAMER COMMISSION
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="history-section">
+      <h3><i class="fas fa-history me-2"></i>Historique des Parties</h3>
+      <div class="table-responsive">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Mise</th>
+              <th>Résultat</th>
+              <th>Gain/Perte</th>
+              <th>Niveau</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 3rem;">
+                <i class="fas fa-history fa-3x mb-3" style="color: #666;"></i>
+                <p>Aucun historique pour le moment</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="rules-panel">
+      <h3><i class="fas fa-info-circle me-2"></i>Règles du Jeu</h3>
+      <ul class="rules-list">
+        <li><i class="fas fa-check"></i> <strong>Niveaux:</strong> Gagnez un bonus horaire selon votre niveau (réclamation manuelle)</li>
+        <li><i class="fas fa-check"></i> <strong>Progression:</strong> Atteignez le montant total gagné/perdu pour monter de niveau</li>
+        <li><i class="fas fa-check"></i> <strong>Mise minimum:</strong> 5 Ar (réglable de 5 à 10,000 Ar)</li>
+        <li><i class="fas fa-check"></i> <strong>Take Profit:</strong> Le jeu s'arrête automatiquement lorsque ce profit est atteint</li>
+        <li><i class="fas fa-check"></i> <strong>Take Loss:</strong> Le jeu s'arrête automatiquement lorsque cette perte est atteinte</li>
+        <li><i class="fas fa-check"></i> <strong>Multiple:</strong> Vos gains et pertes sont multipliés par cette valeur</li>
+        <li><i class="fas fa-check"></i> <strong>Pourcentage:</strong> +1% = perte automatique. Moins de 1% = chance de gain</li>
+        <li><i class="fas fa-check"></i> <strong>Retrait:</strong> 10% de frais pour transférer vers votre compte principal</li>
+        <li><i class="fas fa-check"></i> <strong>Parrainage:</strong> Recevez 50% des gains de vos filleuls</li>
+        <li><i class="fas fa-check"></i> <strong>Bonus horaire:</strong> Réclamation manuelle uniquement. Si vous ne réclamez pas, le bonus n'est pas cumulé</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Modal de dépôt -->
+  <div class="modal-overlay" id="depositModal">
+    <div class="modal-content">
+      <h3><i class="fas fa-plus-circle me-2"></i>Déposer des fonds</h3>
+      <div class="form-group mt-3">
+        <label class="form-label">Montant à déposer (Ar)</label>
+        <input type="number" id="depositAmount" class="form-control" value="1000" min="5">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Solde principal disponible: <span id="mainBalance">0</span> Ar</label>
+      </div>
+      <div class="withdraw-fee">Le montant sera transféré de votre compte principal vers votre compte gambling</div>
+      <div class="mt-3" style="display: flex; gap: 10px;">
+        <button class="btn-gambling btn-success flex-grow-1" onclick="processDeposit()">
+          <i class="fas fa-check"></i> DÉPOSER
+        </button>
+        <button class="btn-gambling btn-danger" onclick="closeModal('depositModal')">
+          <i class="fas fa-times"></i> ANNULER
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de retrait -->
+  <div class="modal-overlay" id="withdrawModal">
+    <div class="modal-content">
+      <h3><i class="fas fa-exchange-alt me-2"></i>Retirer vers compte principal</h3>
+      <div class="form-group mt-3">
+        <label class="form-label">Montant à retirer (Ar)</label>
+        <input type="number" id="withdrawAmount" class="form-control" value="1000" min="5">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Solde gambling disponible: <span id="availableGamblingBalance">0</span> Ar</label>
+      </div>
+      <div class="withdraw-fee">Frais de retrait: 10% (vous recevrez: <span id="withdrawAfterFees">900</span> Ar)</div>
+      <div class="withdraw-fee">Vous ne pouvez pas retirer pendant une partie en cours</div>
+      <div class="mt-3" style="display: flex; gap: 10px;">
+        <button class="btn-gambling btn-success flex-grow-1" onclick="processWithdraw()">
+          <i class="fas fa-check"></i> RETIRER
+        </button>
+        <button class="btn-gambling btn-danger" onclick="closeModal('withdrawModal')">
+          <i class="fas fa-times"></i> ANNULER
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Notification -->
+  <div class="notification" id="notification">
+    <i class="fas fa-info-circle"></i>
+    <span id="notificationMessage">Message de notification</span>
+  </div>
+
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, doc,
+      serverTimestamp, getDoc, updateDoc, onSnapshot,
+      query, where, getDocs, setDoc, increment,
+      writeBatch, arrayUnion, arrayRemove
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+    // Configuration Firebase (identique au code principal)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAC-P6WFH1kqfYQi3PdCWpy4LSUqvtX_vo",
+      authDomain: "mila-vola.firebaseapp.com",
+      projectId: "mila-vola",
+      storageBucket: "mila-vola.appspot.com",
+      messagingSenderId: "690624768352",
+      appId: "1:690624768352:web:668994ef2664c5b99dd605",
+      measurementId: "G-C3FZTKQHFP"
+    };
+
+    // Initialiser Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Variables globales
+    let userId = "";
+    let userName = "";
+    let userReferrer = null;
+    let isGameRunning = false;
+    let autoRollEnabled = false;
+    let currentProfit = 0;
+    let currentLoss = 0;
+    let gamesPlayed = 0;
+    let gameInterval = null;
+    
+    // Niveaux et récompenses horaires
+    const levels = [
+      { level: 1, hourlyReward: 5, requirement: 20000 },
+      { level: 2, hourlyReward: 20, requirement: 50000 },
+      { level: 3, hourlyReward: 50, requirement: 100000 },
+      { level: 4, hourlyReward: 100, requirement: 150000 },
+      { level: 5, hourlyReward: 500, requirement: 200000 },
+      { level: 6, hourlyReward: 1500, requirement: 250000 },
+      { level: 7, hourlyReward: 2500, requirement: 300000 },
+      { level: 8, hourlyReward: 4000, requirement: 350000 },
+      { level: 9, hourlyReward: 5000, requirement: 400000 },
+      { level: 10, hourlyReward: 10000, requirement: 500000 }
+    ];
+
+    // Initialiser l'application
+    async function initApp() {
+      // Vérifier si l'utilisateur est connecté
+      const savedUser = localStorage.getItem('milaVolaUser');
+      if (!savedUser) {
+        showNotification("Veuillez vous connecter d'abord au compte principal.", "error");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+        return;
+      }
+
+      const userData = JSON.parse(savedUser);
+      userId = userData.id;
+      userName = userData.name;
+      userReferrer = userData.referrer || null;
+
+      // Charger les données de l'utilisateur
+      await loadUserData();
+      
+      // Configurer les écouteurs d'événements
+      setupEventListeners();
+      
+      // Mettre à jour l'interface
+      updateUI();
+      
+      // Démarrer le minuteur horaire
+      startHourlyTimer();
+      
+      // Charger l'historique
+      loadHistory();
+      
+      // Configurer les écouteurs en temps réel
+      setupRealtimeListeners();
+    }
+
+    // Charger les données de l'utilisateur
+    async function loadUserData() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          
+          // Initialiser les données gambling si elles n'existent pas
+          if (!userData.gamblingBalance) {
+            await updateDoc(userRef, {
+              gamblingBalance: 0,
+              gamblingLevel: 1,
+              totalGamblingWon: 0,
+              totalGamblingLost: 0,
+              lastHourlyClaim: null,
+              referralCommission: 0,
+              referralEarnings: 0,
+              hourlyRewardAvailable: false
+            });
+          }
+          
+          // Charger le solde principal
+          const mainBalance = userData.gain || 0;
+          document.getElementById('mainBalance').textContent = mainBalance.toLocaleString();
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des données:", error);
+        showNotification("Erreur de chargement des données", "error");
+      }
+    }
+
+    // Configurer les écouteurs d'événements
+    function setupEventListeners() {
+      // Mise à jour des valeurs des sliders
+      document.getElementById('betAmount').addEventListener('input', function() {
+        document.getElementById('betAmountValue').textContent = this.value;
+      });
+      
+      document.getElementById('takeProfit').addEventListener('input', function() {
+        document.getElementById('takeProfitValue').textContent = this.value;
+      });
+      
+      document.getElementById('multiple').addEventListener('input', function() {
+        document.getElementById('multipleValue').textContent = this.value + 'x';
+      });
+      
+      document.getElementById('takeLoss').addEventListener('input', function() {
+        document.getElementById('takeLossValue').textContent = this.value;
+      });
+      
+      document.getElementById('percentage').addEventListener('input', function() {
+        document.getElementById('percentageValue').textContent = this.value + '%';
+      });
+      
+      document.getElementById('autoRoll').addEventListener('change', function() {
+        autoRollEnabled = this.checked;
+        document.getElementById('autoRollStatus').textContent = this.checked ? 'ON' : 'OFF';
+        document.getElementById('autoRollStatus').style.color = this.checked ? '#4CAF50' : '#aaa';
+      });
+      
+      document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawFees);
+    }
+
+    // Mettre à jour l'interface
+    function updateUI() {
+      // Cette fonction sera appelée par les écouteurs en temps réel
+    }
+
+    // Démarrer le minuteur horaire
+    function startHourlyTimer() {
+      updateHourlyTimer();
+      setInterval(updateHourlyTimer, 1000);
+    }
+
+    // Mettre à jour le minuteur horaire
+    async function updateHourlyTimer() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const currentLevel = userData.gamblingLevel || 1;
+          const lastHourlyClaim = userData.lastHourlyClaim ? userData.lastHourlyClaim.toDate() : null;
+          const hourlyRewardAvailable = userData.hourlyRewardAvailable || false;
+          
+          // Mettre à jour la récompense horaire
+          const hourlyReward = levels[currentLevel - 1].hourlyReward;
+          document.getElementById('hourlyReward').textContent = hourlyReward + ' Ar/h';
+          document.getElementById('currentHourlyReward').textContent = hourlyReward + ' Ar';
+          
+          // Calculer le temps restant
+          const now = new Date();
+          let timeRemaining = 3600; // 1 heure en secondes
+          let nextAvailable = new Date(now.getTime() + 3600000); // Maintenant + 1 heure
+          
+          if (lastHourlyClaim) {
+            const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
+            timeRemaining = Math.max(0, 3600 - timeSinceLastClaim);
+            nextAvailable = new Date(lastHourlyClaim.getTime() + 3600000);
+          }
+          
+          // Mettre à jour le bouton et le minuteur
+          const claimBtn = document.getElementById('claimHourlyBtn');
+          const timerElement = document.getElementById('hourlyCountdown');
+          const nextTimeElement = document.getElementById('nextAvailableTime');
+          
+          // Formater la date de prochaine disponibilité
+          const nextTimeStr = nextAvailable.toLocaleTimeString('fr-FR', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false 
+          });
+          
+          if (hourlyRewardAvailable) {
+            // Récompense disponible (l'utilisateur n'a pas encore réclamé)
+            claimBtn.disabled = false;
+            claimBtn.innerHTML = '<i class="fas fa-gift"></i> RÉCLAMER LE BONUS';
+            timerElement.textContent = 'Disponible maintenant!';
+            timerElement.style.color = '#4CAF50';
+            nextTimeElement.textContent = `Prochaine disponibilité: ${nextTimeStr}`;
+          } else if (timeRemaining <= 0) {
+            // L'heure est passée, marquer la récompense comme disponible
+            if (!hourlyRewardAvailable) {
+              await updateDoc(userRef, {
+                hourlyRewardAvailable: true
+              });
+            }
+          } else {
+            // En attente
+            claimBtn.disabled = true;
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            claimBtn.innerHTML = `<i class="fas fa-clock"></i> ATTENDRE ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            timerElement.textContent = `Disponible dans: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            timerElement.style.color = '#FF9800';
+            nextTimeElement.textContent = `Prochaine disponibilité: ${nextTimeStr}`;
+          }
+          
+          document.getElementById('hourlyTimer').textContent = `Prochain gain: ${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}`;
+        }
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du minuteur:", error);
+      }
+    }
+
+    // Réclamer la récompense horaire
+    async function claimHourlyReward() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const currentLevel = userData.gamblingLevel || 1;
+          const hourlyReward = levels[currentLevel - 1].hourlyReward;
+          const hourlyRewardAvailable = userData.hourlyRewardAvailable || false;
+          
+          // Vérifier si la récompense est disponible
+          if (!hourlyRewardAvailable) {
+            showNotification("La récompense horaire n'est pas encore disponible", "warning");
+            return;
+          }
+          
+          // Vérifier si une heure s'est écoulée depuis la dernière réclamation
+          const lastHourlyClaim = userData.lastHourlyClaim ? userData.lastHourlyClaim.toDate() : null;
+          const now = new Date();
+          
+          if (lastHourlyClaim) {
+            const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
+            if (timeSinceLastClaim < 3600) {
+              showNotification("La récompense horaire n'est pas encore disponible", "warning");
+              return;
+            }
+          }
+          
+          // Ajouter la récompense au solde gambling
+          await updateDoc(userRef, {
+            gamblingBalance: increment(hourlyReward),
+            lastHourlyClaim: serverTimestamp(),
+            totalGamblingWon: increment(hourlyReward),
+            hourlyRewardAvailable: false
+          });
+          
+          // Enregistrer dans l'historique
+          await addDoc(collection(db, "gambling_history"), {
+            userId: userId,
+            userName: userName,
+            type: "hourly_reward",
+            amount: hourlyReward,
+            level: currentLevel,
+            timestamp: serverTimestamp()
+          });
+          
+          showNotification(`Récompense horaire de ${hourlyReward} Ar réclamée!`, "success");
+          
+          // Mettre à jour l'interface
+          updateHourlyTimer();
+        }
+      } catch (error) {
+        console.error("Erreur lors de la réclamation de la récompense:", error);
+        showNotification("Erreur lors de la réclamation", "error");
+      }
+    }
+
+    // Démarrer le jeu
+    async function startGame() {
+      if (isGameRunning) {
+        showNotification("Une partie est déjà en cours", "warning");
+        return;
+      }
+      
+      const betAmount = parseInt(document.getElementById('betAmount').value);
+      const takeProfit = parseInt(document.getElementById('takeProfit').value);
+      const multiple = parseFloat(document.getElementById('multiple').value);
+      const takeLoss = parseInt(document.getElementById('takeLoss').value);
+      const percentage = parseFloat(document.getElementById('percentage').value);
+      
+      // Vérifier la mise minimum
+      if (betAmount < 5) {
+        showNotification("La mise minimum est de 5 Ar", "warning");
+        return;
+      }
+      
+      // Vérifier le solde
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        showNotification("Utilisateur non trouvé", "error");
+        return;
+      }
+      
+      const userData = userSnap.data();
+      const gamblingBalance = userData.gamblingBalance || 0;
+      
+      if (gamblingBalance < betAmount) {
+        showNotification("Solde gambling insuffisant", "error");
+        return;
+      }
+      
+      // Débiter la mise
+      await updateDoc(userRef, {
+        gamblingBalance: increment(-betAmount)
+      });
+      
+      // Initialiser les variables de jeu
+      isGameRunning = true;
+      currentProfit = 0;
+      currentLoss = 0;
+      gamesPlayed = 0;
+      
+      // Mettre à jour l'interface
+      document.getElementById('startGameBtn').disabled = true;
+      document.getElementById('stopGameBtn').disabled = false;
+      document.getElementById('resultText').textContent = "Jeu en cours...";
+      
+      // Démarrer le jeu
+      playGameRound(betAmount, takeProfit, multiple, takeLoss, percentage);
+      
+      showNotification("Jeu démarré!", "success");
+    }
+
+    // Jouer un tour de jeu
+    async function playGameRound(betAmount, takeProfit, multiple, takeLoss, percentage) {
+      if (!isGameRunning) return;
+      
+      // Vérifier les conditions d'arrêt
+      if (currentProfit >= takeProfit) {
+        stopGame();
+        showNotification(`Take Profit atteint! Profit total: ${currentProfit} Ar`, "success");
+        return;
+      }
+      
+      if (currentLoss >= takeLoss) {
+        stopGame();
+        showNotification(`Take Loss atteint! Perte totale: ${currentLoss} Ar`, "error");
+        return;
+      }
+      
+      // Jouer le tour
+      gamesPlayed++;
+      
+      // Calculer la probabilité de gain (moins de 1% = chance de gain)
+      const winProbability = percentage < 1 ? 0.5 : 0.1; // 50% de chance si <1%, sinon 10%
+      const isWin = Math.random() < winProbability;
+      
+      // Calculer le gain/perte
+      let roundResult;
+      if (isWin) {
+        roundResult = betAmount * multiple;
+        currentProfit += roundResult;
+      } else {
+        roundResult = -betAmount * multiple;
+        currentLoss += Math.abs(roundResult);
+      }
+      
+      // Mettre à jour l'affichage
+      updateGameDisplay(isWin, roundResult);
+      
+      // Mettre à jour la base de données
+      await processGameResult(betAmount, isWin, roundResult);
+      
+      // Continuer le jeu si autoRoll est activé
+      if (autoRollEnabled && isGameRunning) {
+        setTimeout(() => {
+          playGameRound(betAmount, takeProfit, multiple, takeLoss, percentage);
+        }, 1000);
+      }
+    }
+
+    // Mettre à jour l'affichage du jeu
+    function updateGameDisplay(isWin, amount) {
+      const domino = document.getElementById('domino');
+      const resultText = document.getElementById('resultText');
+      const resultAmount = document.getElementById('resultAmount');
+      const resultDetail = document.getElementById('resultDetail');
+      
+      // Animation du domino
+      domino.classList.remove('red', 'blue');
+      domino.classList.add(isWin ? 'blue' : 'red');
+      domino.style.transform = 'rotate(360deg)';
+      
+      setTimeout(() => {
+        domino.style.transform = 'rotate(0deg)';
+      }, 500);
+      
+      // Mettre à jour les résultats
+      if (isWin) {
+        resultText.textContent = "GAGNÉ!";
+        resultText.style.color = "#4CAF50";
+        resultAmount.textContent = `+${amount} Ar`;
+        resultAmount.style.color = "#4CAF50";
+        resultDetail.textContent = `Multiplicateur: ${document.getElementById('multiple').value}x`;
+        
+        // Animation de victoire
+        document.getElementById('dominoWheel').classList.add('win-flash');
+        setTimeout(() => {
+          document.getElementById('dominoWheel').classList.remove('win-flash');
+        }, 1000);
+      } else {
+        resultText.textContent = "PERDU";
+        resultText.style.color = "#F44336";
+        resultAmount.textContent = `-${Math.abs(amount)} Ar`;
+        resultAmount.style.color = "#F44336";
+        resultDetail.textContent = `Pourcentage: ${document.getElementById('percentage').value}%`;
+        
+        // Animation de défaite
+        document.getElementById('dominoWheel').classList.add('lose-flash');
+        setTimeout(() => {
+          document.getElementById('dominoWheel').classList.remove('lose-flash');
+        }, 1000);
+      }
+      
+      // Mettre à jour les statistiques
+      document.getElementById('currentProfit').textContent = `Profit actuel: ${currentProfit} Ar`;
+      document.getElementById('currentLoss').textContent = `Perte actuelle: ${currentLoss} Ar`;
+      document.getElementById('gamesPlayed').textContent = `Parties jouées: ${gamesPlayed}`;
+      
+      // Ajouter au historique récent
+      addRecentResult(isWin, amount);
+    }
+
+    // Ajouter un résultat récent
+    function addRecentResult(isWin, amount) {
+      const recentResults = document.getElementById('recentResults');
+      const resultDiv = document.createElement('div');
+      
+      resultDiv.style.cssText = `
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+        background: ${isWin ? '#4CAF50' : '#F44336'};
+      `;
+      
+      resultDiv.textContent = isWin ? '+' : '-';
+      recentResults.insertBefore(resultDiv, recentResults.firstChild);
+      
+      // Limiter à 10 résultats
+      if (recentResults.children.length > 10) {
+        recentResults.removeChild(recentResults.lastChild);
+      }
+    }
+
+    // Traiter le résultat du jeu dans la base de données
+    async function processGameResult(betAmount, isWin, amount) {
+      try {
+        const userRef = doc(db, "users", userId);
+        const batch = writeBatch(db);
+        
+        if (isWin) {
+          // Ajouter le gain au solde
+          batch.update(userRef, {
+            gamblingBalance: increment(amount),
+            totalGamblingWon: increment(amount)
+          });
+          
+          // Payer la commission au parrain (50% du gain net)
+          if (userReferrer) {
+            const referrerRef = doc(db, "users", userReferrer);
+            const commission = amount * 0.5;
+            
+            batch.update(referrerRef, {
+              referralCommission: increment(commission),
+              referralEarnings: increment(amount)
+            });
+          }
+        } else {
+          // Enregistrer la perte
+          batch.update(userRef, {
+            totalGamblingLost: increment(Math.abs(amount))
+          });
+        }
+        
+        // Enregistrer dans l'historique
+        const historyRef = doc(collection(db, "gambling_history"));
+        batch.set(historyRef, {
+          userId: userId,
+          userName: userName,
+          type: "game_round",
+          betAmount: betAmount,
+          result: isWin ? "win" : "loss",
+          amount: amount,
+          level: levels[(await getDoc(userRef)).data().gamblingLevel - 1].level,
+          timestamp: serverTimestamp(),
+          multiple: parseFloat(document.getElementById('multiple').value),
+          percentage: parseFloat(document.getElementById('percentage').value)
+        });
+        
+        await batch.commit();
+        
+        // Vérifier la progression de niveau
+        await checkLevelUp();
+        
+      } catch (error) {
+        console.error("Erreur lors du traitement du résultat:", error);
+      }
+    }
+
+    // Arrêter le jeu
+    function stopGame() {
+      isGameRunning = false;
+      autoRollEnabled = false;
+      document.getElementById('autoRoll').checked = false;
+      document.getElementById('autoRollStatus').textContent = 'OFF';
+      document.getElementById('autoRollStatus').style.color = '#aaa';
+      
+      document.getElementById('startGameBtn').disabled = false;
+      document.getElementById('stopGameBtn').disabled = true;
+      
+      document.getElementById('resultText').textContent = "Jeu arrêté";
+      document.getElementById('resultAmount').textContent = `Profit: ${currentProfit} Ar`;
+      document.getElementById('resultDetail').textContent = `Parties: ${gamesPlayed}`;
+      
+      showNotification("Jeu arrêté", "warning");
+    }
+
+    // Vérifier la progression de niveau
+    async function checkLevelUp() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const currentLevel = userData.gamblingLevel || 1;
+          const totalWon = userData.totalGamblingWon || 0;
+          const totalLost = userData.totalGamblingLost || 0;
+          const totalGambling = totalWon + totalLost;
+          
+          // Vérifier si l'utilisateur peut monter de niveau
+          if (currentLevel < levels.length) {
+            const nextLevelRequirement = levels[currentLevel].requirement;
+            
+            if (totalGambling >= nextLevelRequirement) {
+              // Monter de niveau
+              await updateDoc(userRef, {
+                gamblingLevel: currentLevel + 1
+              });
+              
+              showNotification(`Félicitations! Vous êtes maintenant niveau ${currentLevel + 1}`, "success");
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de la vérification du niveau:", error);
+      }
+    }
+
+    // Ouvrir le modal de dépôt
+    function openDepositModal() {
+      if (isGameRunning) {
+        showNotification("Vous ne pouvez pas déposer pendant une partie", "warning");
+        return;
+      }
+      
+      document.getElementById('depositModal').classList.add('show');
+    }
+
+    // Ouvrir le modal de retrait
+    function openWithdrawModal() {
+      if (isGameRunning) {
+        showNotification("Vous ne pouvez pas retirer pendant une partie", "warning");
+        return;
+      }
+      
+      updateWithdrawFees();
+      document.getElementById('withdrawModal').classList.add('show');
+    }
+
+    // Fermer un modal
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('show');
+    }
+
+    // Mettre à jour les frais de retrait
+    function updateWithdrawFees() {
+      const amount = parseInt(document.getElementById('withdrawAmount').value) || 0;
+      const afterFees = amount * 0.9;
+      document.getElementById('withdrawAfterFees').textContent = afterFees.toLocaleString();
+    }
+
+    // Traiter le dépôt
+    async function processDeposit() {
+      try {
+        const amount = parseInt(document.getElementById('depositAmount').value);
+        
+        if (amount < 5) {
+          showNotification("Le dépôt minimum est de 5 Ar", "warning");
+          return;
+        }
+        
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const mainBalance = userData.gain || 0;
+          
+          if (mainBalance < amount) {
+            showNotification("Solde principal insuffisant", "error");
+            return;
+          }
+          
+          // Transférer du compte principal vers le compte gambling
+          await updateDoc(userRef, {
+            gain: increment(-amount),
+            gamblingBalance: increment(amount)
+          });
+          
+          // Enregistrer dans l'historique
+          await addDoc(collection(db, "gambling_history"), {
+            userId: userId,
+            userName: userName,
+            type: "deposit",
+            amount: amount,
+            timestamp: serverTimestamp()
+          });
+          
+          showNotification(`Dépôt de ${amount} Ar effectué!`, "success");
+          closeModal('depositModal');
+        }
+      } catch (error) {
+        console.error("Erreur lors du dépôt:", error);
+        showNotification("Erreur lors du dépôt", "error");
+      }
+    }
+
+    // Traiter le retrait
+    async function processWithdraw() {
+      try {
+        const amount = parseInt(document.getElementById('withdrawAmount').value);
+        
+        if (amount < 5) {
+          showNotification("Le retrait minimum est de 5 Ar", "warning");
+          return;
+        }
+        
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const gamblingBalance = userData.gamblingBalance || 0;
+          
+          if (gamblingBalance < amount) {
+            showNotification("Solde gambling insuffisant", "error");
+            return;
+          }
+          
+          // Calculer les frais (10%)
+          const fees = amount * 0.1;
+          const netAmount = amount - fees;
+          
+          // Transférer du compte gambling vers le compte principal (après frais)
+          await updateDoc(userRef, {
+            gamblingBalance: increment(-amount),
+            gain: increment(netAmount)
+          });
+          
+          // Enregistrer dans l'historique
+          await addDoc(collection(db, "gambling_history"), {
+            userId: userId,
+            userName: userName,
+            type: "withdraw",
+            amount: amount,
+            fees: fees,
+            netAmount: netAmount,
+            timestamp: serverTimestamp()
+          });
+          
+          showNotification(`Retrait de ${amount} Ar effectué! (Frais: ${fees} Ar, Net: ${netAmount} Ar)`, "success");
+          closeModal('withdrawModal');
+        }
+      } catch (error) {
+        console.error("Erreur lors du retrait:", error);
+        showNotification("Erreur lors du retrait", "error");
+      }
+    }
+
+    // Réclamer la commission de parrainage
+    async function claimCommission() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const commission = userData.referralCommission || 0;
+          
+          if (commission <= 0) {
+            showNotification("Aucune commission disponible", "warning");
+            return;
+          }
+          
+          // Ajouter la commission au solde gambling
+          await updateDoc(userRef, {
+            gamblingBalance: increment(commission),
+            referralCommission: 0
+          });
+          
+          // Enregistrer dans l'historique
+          await addDoc(collection(db, "gambling_history"), {
+            userId: userId,
+            userName: userName,
+            type: "commission_claim",
+            amount: commission,
+            timestamp: serverTimestamp()
+          });
+          
+          showNotification(`Commission de ${commission} Ar réclamée!`, "success");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la réclamation de la commission:", error);
+        showNotification("Erreur lors de la réclamation", "error");
+      }
+    }
+
+    // Charger l'historique
+    async function loadHistory() {
+      try {
+        const historyQuery = query(
+          collection(db, "gambling_history"),
+          where("userId", "==", userId)
+        );
+        
+        const historySnap = await getDocs(historyQuery);
+        const historyBody = document.getElementById('historyBody');
+        
+        if (historySnap.empty) {
+          return;
+        }
+        
+        historyBody.innerHTML = '';
+        const historyData = [];
+        
+        historySnap.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          historyData.push(data);
+        });
+        
+        // Trier par date (du plus récent au plus ancien)
+        historyData.sort((a, b) => {
+          const dateA = a.timestamp ? a.timestamp.toDate() : new Date(0);
+          const dateB = b.timestamp ? b.timestamp.toDate() : new Date(0);
+          return dateB - dateA;
+        });
+        
+        // Afficher les 20 derniers résultats
+        historyData.slice(0, 20).forEach(item => {
+          const date = item.timestamp ? item.timestamp.toDate().toLocaleDateString('fr-FR') + ' ' + item.timestamp.toDate().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'}) : 'Date inconnue';
+          const type = item.type;
+          const amount = item.amount;
+          const level = item.level || 1;
+          
+          let resultBadge = '';
+          let resultAmount = '';
+          
+          if (type === 'game_round') {
+            if (item.result === 'win') {
+              resultBadge = '<span class="badge-win">GAGNÉ</span>';
+              resultAmount = `<span style="color: #4CAF50">+${amount} Ar</span>`;
+            } else {
+              resultBadge = '<span class="badge-loss">PERDU</span>';
+              resultAmount = `<span style="color: #F44336">-${Math.abs(amount)} Ar</span>`;
+            }
+          } else if (type === 'hourly_reward') {
+            resultBadge = '<span class="badge-win">HORAIRE</span>';
+            resultAmount = `<span style="color: #4CAF50">+${amount} Ar</span>`;
+          } else if (type === 'deposit') {
+            resultBadge = '<span style="background: #2196F3; color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600;">DÉPÔT</span>';
+            resultAmount = `<span style="color: #2196F3">+${amount} Ar</span>`;
+          } else if (type === 'withdraw') {
+            resultBadge = '<span style="background: #9C27B0; color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600;">RETRAIT</span>';
+            resultAmount = `<span style="color: #9C27B0">-${amount} Ar</span>`;
+          } else if (type === 'commission_claim') {
+            resultBadge = '<span style="background: #FF9800; color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600;">COMMISSION</span>';
+            resultAmount = `<span style="color: #FF9800">+${amount} Ar</span>`;
+          }
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${date}</td>
+            <td>${type === 'game_round' ? item.betAmount + ' Ar' : '-'}</td>
+            <td>${resultBadge}</td>
+            <td>${resultAmount}</td>
+            <td>${level}</td>
+          `;
+          
+          historyBody.appendChild(row);
+        });
+        
+      } catch (error) {
+        console.error("Erreur lors du chargement de l'historique:", error);
+      }
+    }
+
+    // Configurer les écouteurs en temps réel
+    function setupRealtimeListeners() {
+      const userRef = doc(db, "users", userId);
+      
+      onSnapshot(userRef, (doc) => {
+        if (doc.exists()) {
+          const userData = doc.data();
+          
+          // Mettre à jour les soldes
+          const gamblingBalance = userData.gamblingBalance || 0;
+          const mainBalance = userData.gain || 0;
+          const currentLevel = userData.gamblingLevel || 1;
+          const totalWon = userData.totalGamblingWon || 0;
+          const totalLost = userData.totalGamblingLost || 0;
+          const totalGambling = totalWon + totalLost;
+          const referralCommission = userData.referralCommission || 0;
+          const referralEarnings = userData.referralEarnings || 0;
+          
+          // Compter les filleuls actifs
+          const activeReferrals = userData.referrals ? userData.referrals.length : 0;
+          
+          // Mettre à jour l'interface
+          document.getElementById('gamblingBalance').textContent = gamblingBalance.toLocaleString() + ' Ar';
+          document.getElementById('availableGamblingBalance').textContent = gamblingBalance.toLocaleString();
+          document.getElementById('mainBalance').textContent = mainBalance.toLocaleString();
+          document.getElementById('currentLevel').textContent = currentLevel;
+          document.getElementById('levelBadge').textContent = `Niveau ${currentLevel}`;
+          document.getElementById('totalGambling').textContent = totalGambling.toLocaleString() + ' Ar';
+          document.getElementById('totalWon').textContent = totalWon.toLocaleString() + ' Ar';
+          document.getElementById('totalLost').textContent = totalLost.toLocaleString() + ' Ar';
+          document.getElementById('referralEarnings').textContent = referralEarnings.toLocaleString() + ' Ar';
+          document.getElementById('yourCommission').textContent = referralCommission.toLocaleString() + ' Ar';
+          document.getElementById('activeReferrals').textContent = activeReferrals;
+          
+          // Mettre à jour la progression de niveau
+          updateLevelProgress(currentLevel, totalGambling);
+          
+          // Mettre à jour les informations de niveau
+          updateLevelInfo(currentLevel);
+        }
+      });
+    }
+
+    // Mettre à jour la progression de niveau
+    function updateLevelProgress(currentLevel, totalGambling) {
+      if (currentLevel >= levels.length) {
+        document.getElementById('levelProgressFill').style.width = '100%';
+        document.getElementById('currentProgress').textContent = 'MAX';
+        document.getElementById('nextLevelRequirement').textContent = 'Niveau maximum atteint';
+        return;
+      }
+      
+      const currentRequirement = levels[currentLevel - 1].requirement;
+      const nextRequirement = levels[currentLevel].requirement;
+      const progress = Math.min(100, (totalGambling / nextRequirement) * 100);
+      
+      document.getElementById('levelProgressFill').style.width = progress + '%';
+      document.getElementById('currentProgress').textContent = totalGambling.toLocaleString() + ' Ar';
+      document.getElementById('nextLevelRequirement').textContent = nextRequirement.toLocaleString() + ' Ar';
+    }
+
+    // Mettre à jour les informations de niveau
+    function updateLevelInfo(currentLevel) {
+      const levelInfo = document.getElementById('levelInfo');
+      levelInfo.innerHTML = '';
+      
+      levels.forEach(level => {
+        const levelItem = document.createElement('div');
+        levelItem.className = `level-item ${level.level === currentLevel ? 'current' : ''}`;
+        levelItem.innerHTML = `
+          <div class="level-number">${level.level}</div>
+          <div class="level-reward">${level.hourlyReward} Ar/h</div>
+          <div style="font-size: 0.8rem; color: #aaa; margin-top: 0.25rem;">${level.requirement.toLocaleString()} Ar</div>
+        `;
+        levelInfo.appendChild(levelItem);
+      });
+    }
+
+    // Afficher une notification
+    function showNotification(message, type = "info") {
+      const notification = document.getElementById('notification');
+      const notificationMessage = document.getElementById('notificationMessage');
+      
+      notificationMessage.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Initialiser l'application au chargement
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initApp();
+    });
+
+    // Rendre les fonctions accessibles globalement
+    window.openDepositModal = openDepositModal;
+    window.openWithdrawModal = openWithdrawModal;
+    window.closeModal = closeModal;
+    window.startGame = startGame;
+    window.stopGame = stopGame;
+    window.claimHourlyReward = claimHourlyReward;
+    window.claimCommission = claimCommission;
+    window.processDeposit = processDeposit;
+    window.processWithdraw = processWithdraw;
+    window.updateWithdrawFees = updateWithdrawFees;
+  </script>
+</body>
+</html>
