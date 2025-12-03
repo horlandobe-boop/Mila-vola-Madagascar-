@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Roue de la fortune - Microtâche Mila Vola</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --success: #4cc9f0;
+      --warning: #f72585;
+      --gold: #FFD700;
+      --silver: #C0C0C0;
+      --bronze: #CD7F32;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f8f9fc, #eef2f9);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, var(--primary), #3a56d4);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+    }
+    
+    .header h1 {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .header p {
+      opacity: 0.9;
+    }
+    
+    .wheel-container {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      margin: 0 auto 3rem;
+    }
+    
+    .wheel {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,0,0,0.2);
+      transition: transform 5s cubic-bezier(0.17, 0.67, 0.21, 0.99);
+      border: 8px solid var(--primary);
+    }
+    
+    .wheel-section {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      transform-origin: 100% 100%;
+      left: 0;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    
+    .wheel-section-content {
+      transform: rotate(45deg);
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+    }
+    
+    .wheel-section-amount {
+      font-size: 1.4rem;
+      margin-bottom: 5px;
+    }
+    
+    .wheel-section-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .wheel-center {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      border: 4px solid var(--primary);
+    }
+    
+    .wheel-center i {
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    
+    .arrow {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      border-top: 40px solid var(--warning);
+      z-index: 20;
+      filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+    }
+    
+    .arrow::after {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: -10px;
+      width: 20px;
+      height: 20px;
+      background: var(--warning);
+      border-radius: 50%;
+    }
+    
+    .stats-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e9ecef;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-item {
+      background: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid #e9ecef;
+      transition: transform 0.3s;
+    }
+    
+    .stat-item:hover {
+      transform: translateY(-5px);
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-spin {
+      background: linear-gradient(135deg, var(--warning), #e11d74);
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 2rem auto;
+      box-shadow: 0 8px 25px rgba(247, 37, 133, 0.3);
+      transition: all 0.3s;
+    }
+    
+    .btn-spin:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(247, 37, 133, 0.4);
+      background: linear-gradient(135deg, #e11d74, var(--warning));
+    }
+    
+    .btn-spin:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .result-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .result-modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .result-content {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      transform: scale(0.8);
+      transition: transform 0.3s;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .result-modal.show .result-content {
+      transform: scale(1);
+    }
+    
+    .result-icon {
+      font-size: 4rem;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+    
+    .result-amount {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .result-message {
+      font-size: 1.2rem;
+      color: #6c757d;
+      margin-bottom: 2rem;
+    }
+    
+    .history-section {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e9ecef;
+    }
+    
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    
+    .history-table th {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+    }
+    
+    .history-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .history-table tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    
+    .empty-history {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+    }
+    
+    .badge-spin {
+      background: var(--warning);
+      color: white;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+    
+    .rules-section {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e9ecef;
+    }
+    
+    .rules-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    
+    .rules-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f1f1f1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .rules-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .rules-list i {
+      color: var(--primary);
+    }
+    
+    .spin-type-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    
+    .bonus-spin {
+      background: #FFD700;
+      color: #000;
+    }
+    
+    .referral-spin {
+      background: var(--primary);
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      .wheel-container {
+        width: 300px;
+        height: 300px;
+      }
+      
+      .wheel-section-amount {
+        font-size: 1rem;
+      }
+      
+      .wheel-section-label {
+        font-size: 0.7rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Animations */
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(1000px) rotate(720deg); opacity: 0; }
+    }
+    
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--gold);
+      top: -10px;
+      opacity: 0;
+    }
+    
+    .spinning {
+      animation: spin 0.5s linear infinite;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-gift me-2"></i>La Roue de la Fortune</h1>
+      <p>Tournez la roue et gagnez des bonus !</p>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number" id="remainingSpins">2</div>
+        <div class="stat-label">Spins Restants</div>
+        <small id="spinTypeInfo">(Bonus: 2)</small>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="referralCount">0</div>
+        <div class="stat-label">Parrainages</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="maxGain">500 Ar</div>
+        <div class="stat-label">Gain Maximum Actuel</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="totalWon">0 Ar</div>
+        <div class="stat-label">Total Gagné</div>
+      </div>
+    </div>
+    
+    <div class="wheel-container">
+      <div class="arrow"></div>
+      <div class="wheel" id="wheel">
+        <!-- Les sections seront générées par JavaScript -->
+      </div>
+      <div class="wheel-center">
+        <i class="fas fa-gift"></i>
+      </div>
+    </div>
+    
+    <button class="btn-spin" id="spinButton">
+      <i class="fas fa-redo-alt"></i> TOURNER LA ROUE
+    </button>
+    
+    <div class="rules-section">
+      <h3><i class="fas fa-info-circle me-2"></i>Règles du jeu</h3>
+      <ul class="rules-list">
+        <li><i class="fas fa-check-circle"></i> Chaque nouvel utilisateur reçoit <strong>2 spins bonus</strong> (max 500 Ar par spin)</li>
+        <li><i class="fas fa-check-circle"></i> Chaque parrainage vous donne <strong>1 spin supplémentaire</strong></li>
+        <li><i class="fas fa-check-circle"></i> Gains possibles : 10Ar, 20Ar, 30Ar, 40Ar, 100Ar, 500Ar, 1000Ar, 2000Ar, 5000Ar</li>
+        <li><i class="fas fa-check-circle"></i> Limite selon parrainages : 
+          <ul style="margin-left: 20px; margin-top: 10px;">
+            <li>< 50 parrainages : max 1000 Ar par spin</li>
+            <li>50-299 parrainages : max 5000 Ar par spin</li>
+            <li>≥ 300 parrainages : toutes les cases accessibles</li>
+          </ul>
+        </li>
+        <li><i class="fas fa-check-circle"></i> Les gains sont ajoutés directement à votre solde</li>
+      </ul>
+    </div>
+    
+    <div class="history-section">
+      <h3><i class="fas fa-history me-2"></i>Historique des Gains</h3>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Gain</th>
+            <th>Type</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr>
+            <td colspan="4" class="empty-history">
+              <i class="fas fa-history fa-2x mb-3"></i>
+              <p>Aucun historique pour le moment</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="result-modal" id="resultModal">
+    <div class="result-content">
+      <div class="result-icon">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <div class="result-amount" id="resultAmount">0 Ar</div>
+      <div class="result-message" id="resultMessage">Félicitations ! Vous avez gagné</div>
+      <div id="spinTypeBadge" class="spin-type-badge bonus-spin" style="margin-bottom: 20px;">Spin Bonus</div>
+      <button class="btn-spin" onclick="closeResult()">
+        <i class="fas fa-check"></i> CONTINUER
+      </button>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, doc,
+      serverTimestamp, getDoc, updateDoc, onSnapshot,
+      query, where, getDocs, setDoc, increment
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+    // Configuration Firebase (identique au code principal)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAC-P6WFH1kqfYQi3PdCWpy4LSUqvtX_vo",
+      authDomain: "mila-vola.firebaseapp.com",
+      projectId: "mila-vola",
+      storageBucket: "mila-vola.appspot.com",
+      messagingSenderId: "690624768352",
+      appId: "1:690624768352:web:668994ef2664c5b99dd605",
+      measurementId: "G-C3FZTKQHFP"
+    };
+
+    // Initialiser Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Variables globales
+    let userId = "";
+    let userName = "";
+    let userSpins = 2; // Nouveaux utilisateurs ont 2 spins bonus
+    let referralCount = 0;
+    let maxAllowedGain = 500; // Gain maximum initial pour spins bonus
+    let isSpinning = false;
+    let currentSpinType = "bonus"; // "bonus" ou "referral"
+    let totalWon = 0;
+    
+    // Sections de la roue avec leurs valeurs
+    const wheelSections = [
+      { value: 10, label: "10 Ar", color: "#FF6B6B" },
+      { value: 20, label: "20 Ar", color: "#4ECDC4" },
+      { value: 30, label: "30 Ar", color: "#FFD166" },
+      { value: 40, label: "40 Ar", color: "#06D6A0" },
+      { value: 0, label: "VIDE", color: "#8B8B8B" },
+      { value: 100, label: "100 Ar", color: "#118AB2" },
+      { value: 500, label: "500 Ar", color: "#073B4C" },
+      { value: 1000, label: "1000 Ar", color: "#EF476F" },
+      { value: 2000, label: "2000 Ar", color: "#9B5DE5" },
+      { value: 0, label: "VIDE", color: "#8B8B8B" },
+      { value: 5000, label: "5000 Ar", color: "#00BBF9" }
+    ];
+
+    // Initialiser l'application
+    async function initApp() {
+      // Vérifier si l'utilisateur est connecté
+      const savedUser = localStorage.getItem('milaVolaUser');
+      if (!savedUser) {
+        alert("Veuillez vous connecter d'abord au compte principal.");
+        window.location.href = "index.html"; // Rediriger vers la page principale
+        return;
+      }
+
+      const userData = JSON.parse(savedUser);
+      userId = userData.id;
+      userName = userData.name;
+
+      // Charger les données de l'utilisateur
+      await loadUserData();
+      
+      // Initialiser la roue
+      initWheel();
+      
+      // Configurer les écouteurs d'événements
+      setupEventListeners();
+      
+      // Charger l'historique
+      loadHistory();
+      
+      // Charger le total gagné
+      loadTotalWon();
+    }
+
+    // Charger les données de l'utilisateur
+    async function loadUserData() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          
+          // Récupérer le nombre de parrainages
+          referralCount = userData.referrals ? userData.referrals.length : 0;
+          document.getElementById('referralCount').textContent = referralCount;
+          
+          // Récupérer les spins depuis la base de données
+          userSpins = userData.spins || 2;
+          document.getElementById('remainingSpins').textContent = userSpins;
+          
+          // Calculer le gain maximum autorisé selon le type de spin
+          updateMaxGain();
+          
+          // Mettre à jour l'info sur le type de spin
+          updateSpinTypeInfo();
+          
+          // Mettre à jour le bouton de spin
+          updateSpinButton();
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des données:", error);
+      }
+    }
+
+    // Mettre à jour le gain maximum selon le type de spin
+    function updateMaxGain() {
+      if (currentSpinType === "bonus") {
+        maxAllowedGain = 500; // Maximum 500 Ar pour les spins bonus
+      } else {
+        // Pour les spins parrainage, selon le nombre de parrainages
+        if (referralCount < 50) {
+          maxAllowedGain = 1000;
+        } else if (referralCount < 300) {
+          maxAllowedGain = 5000;
+        } else {
+          maxAllowedGain = 5000; // Pour 300+ parrainages
+        }
+      }
+      
+      document.getElementById('maxGain').textContent = maxAllowedGain + " Ar";
+    }
+
+    // Mettre à jour l'info sur le type de spin
+    function updateSpinTypeInfo() {
+      const spinTypeInfo = document.getElementById('spinTypeInfo');
+      if (userSpins > 0) {
+        // Si l'utilisateur a encore des spins bonus
+        const bonusSpinsUsed = 2 - (userSpins > 2 ? 0 : userSpins);
+        if (bonusSpinsUsed < 2) {
+          currentSpinType = "bonus";
+          spinTypeInfo.textContent = `(Bonus: ${userSpins > 2 ? 2 : userSpins})`;
+          spinTypeInfo.style.color = "#FFD700";
+        } else {
+          currentSpinType = "referral";
+          spinTypeInfo.textContent = `(Parrainage: ${userSpins})`;
+          spinTypeInfo.style.color = "#4361ee";
+        }
+      } else {
+        spinTypeInfo.textContent = "(Aucun spin)";
+        spinTypeInfo.style.color = "#6c757d";
+      }
+    }
+
+    // Initialiser la roue
+    function initWheel() {
+      const wheel = document.getElementById('wheel');
+      wheel.innerHTML = '';
+      
+      const totalSections = wheelSections.length;
+      const anglePerSection = 360 / totalSections;
+      
+      wheelSections.forEach((section, index) => {
+        const sectionEl = document.createElement('div');
+        sectionEl.className = 'wheel-section';
+        sectionEl.style.backgroundColor = section.color;
+        sectionEl.style.transform = `rotate(${index * anglePerSection}deg)`;
+        
+        const content = document.createElement('div');
+        content.className = 'wheel-section-content';
+        content.innerHTML = `
+          <div class="wheel-section-amount">${section.label}</div>
+          ${section.value > 0 ? `<div class="wheel-section-label">${section.value} Ar</div>` : ''}
+        `;
+        
+        sectionEl.appendChild(content);
+        wheel.appendChild(sectionEl);
+      });
+    }
+
+    // Configurer les écouteurs d'événements
+    function setupEventListeners() {
+      document.getElementById('spinButton').addEventListener('click', spinWheel);
+    }
+
+    // Mettre à jour l'état du bouton de spin
+    function updateSpinButton() {
+      const spinButton = document.getElementById('spinButton');
+      if (userSpins > 0 && !isSpinning) {
+        spinButton.disabled = false;
+        spinButton.innerHTML = `<i class="fas fa-redo-alt"></i> TOURNER LA ROUE (${userSpins} restant${userSpins > 1 ? 's' : ''})`;
+      } else {
+        spinButton.disabled = true;
+        if (isSpinning) {
+          spinButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i> EN COURS...`;
+        } else {
+          spinButton.innerHTML = `<i class="fas fa-times"></i> PLUS DE SPINS`;
+        }
+      }
+    }
+
+    // Faire tourner la roue
+    async function spinWheel() {
+      if (userSpins <= 0 || isSpinning) return;
+      
+      isSpinning = true;
+      updateSpinButton();
+      
+      const wheel = document.getElementById('wheel');
+      const spinButton = document.getElementById('spinButton');
+      
+      // Désactiver le bouton pendant le spin
+      spinButton.disabled = true;
+      
+      // Déterminer le type de spin actuel
+      updateSpinTypeInfo();
+      
+      // Choisir une section aléatoire avec les limites appropriées
+      let selectedIndex;
+      let selectedValue;
+      let attempts = 0;
+      const maxAttempts = 100;
+      
+      do {
+        selectedIndex = Math.floor(Math.random() * wheelSections.length);
+        selectedValue = wheelSections[selectedIndex].value;
+        
+        // Appliquer les limites selon le type de spin
+        if (currentSpinType === "bonus") {
+          // Pour les spins bonus, maximum 500 Ar
+          if (selectedValue > 500) {
+            // Si la valeur est supérieure à 500, on la ramène à une valeur aléatoire entre 10 et 500
+            const possibleValues = [10, 20, 30, 40, 100, 500];
+            selectedValue = possibleValues[Math.floor(Math.random() * possibleValues.length)];
+            
+            // Trouver l'index correspondant à cette valeur
+            const newIndex = wheelSections.findIndex(section => section.value === selectedValue);
+            if (newIndex !== -1) {
+              selectedIndex = newIndex;
+            }
+          }
+        } else {
+          // Pour les spins parrainage, appliquer les limites selon le nombre de parrainages
+          if (referralCount < 50 && selectedValue > 1000) {
+            // Pour moins de 50 parrainages, les gains >1000 deviennent VIDE (0)
+            selectedValue = 0;
+          } else if (referralCount < 300 && selectedValue > 5000) {
+            // Pour 50-299 parrainages, les gains >5000 deviennent VIDE (0)
+            selectedValue = 0;
+          }
+        }
+        
+        attempts++;
+        if (attempts > maxAttempts) {
+          // Si on ne trouve pas après plusieurs tentatives, on prend une valeur basse
+          selectedValue = 10;
+          selectedIndex = wheelSections.findIndex(section => section.value === 10);
+          break;
+        }
+      } while (selectedValue > maxAllowedGain);
+      
+      // Calculer l'angle pour que la section choisie s'arrête sous la flèche
+      const totalSections = wheelSections.length;
+      const anglePerSection = 360 / totalSections;
+      const targetAngle = 3600 - (selectedIndex * anglePerSection) + (anglePerSection / 2);
+      
+      // Appliquer la rotation
+      wheel.style.transform = `rotate(${targetAngle}deg)`;
+      
+      // Attendre la fin de l'animation
+      setTimeout(async () => {
+        // Enregistrer le gain
+        await recordWin(selectedValue);
+        
+        // Mettre à jour les spins
+        userSpins--;
+        await updateUserSpins();
+        
+        // Mettre à jour le total gagné
+        totalWon += selectedValue;
+        document.getElementById('totalWon').textContent = totalWon + " Ar";
+        
+        // Réactiver le bouton
+        isSpinning = false;
+        updateSpinButton();
+        updateSpinTypeInfo();
+        updateMaxGain();
+        
+        // Afficher le résultat
+        showResult(selectedValue);
+        
+        // Recharger l'historique
+        loadHistory();
+        
+        // Mettre à jour l'affichage
+        document.getElementById('remainingSpins').textContent = userSpins;
+        
+      }, 5000); // Correspond à la durée de l'animation CSS
+    }
+
+    // Enregistrer le gain dans la base de données
+    async function recordWin(amount) {
+      try {
+        // Ajouter à l'historique
+        await addDoc(collection(db, "wheel_history"), {
+          userId: userId,
+          userName: userName,
+          amount: amount,
+          spinType: currentSpinType,
+          referralCount: referralCount,
+          timestamp: serverTimestamp()
+        });
+        
+        // Mettre à jour le solde de gains de l'utilisateur
+        const userRef = doc(db, "users", userId);
+        
+        // Utiliser increment pour éviter les problèmes de concurrence
+        await updateDoc(userRef, {
+          gain: increment(amount)
+        });
+        
+        console.log(`Gain de ${amount} Ar enregistré pour ${userName} (${currentSpinType})`);
+      } catch (error) {
+        console.error("Erreur lors de l'enregistrement du gain:", error);
+      }
+    }
+
+    // Mettre à jour le nombre de spins de l'utilisateur
+    async function updateUserSpins() {
+      try {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, {
+          spins: userSpins
+        });
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour des spins:", error);
+      }
+    }
+
+    // Afficher le résultat
+    function showResult(amount) {
+      const modal = document.getElementById('resultModal');
+      const resultAmount = document.getElementById('resultAmount');
+      const resultMessage = document.getElementById('resultMessage');
+      const spinTypeBadge = document.getElementById('spinTypeBadge');
+      
+      // Mettre à jour le badge du type de spin
+      if (currentSpinType === "bonus") {
+        spinTypeBadge.textContent = "SPIN BONUS";
+        spinTypeBadge.className = "spin-type-badge bonus-spin";
+      } else {
+        spinTypeBadge.textContent = "SPIN PARRAINAGE";
+        spinTypeBadge.className = "spin-type-badge referral-spin";
+      }
+      
+      if (amount === 0) {
+        resultAmount.textContent = "VIDE";
+        resultAmount.style.color = "#8B8B8B";
+        resultMessage.textContent = "Dommage ! Vous n'avez rien gagné cette fois.";
+      } else {
+        resultAmount.textContent = amount + " Ar";
+        resultAmount.style.color = "#4361ee";
+        resultMessage.textContent = `Félicitations ${userName} ! Vous avez gagné ${amount} Ar`;
+        
+        // Effets de confetti pour les gains
+        if (amount >= 100) {
+          createConfetti();
+        }
+      }
+      
+      modal.classList.add('show');
+    }
+
+    // Fermer le résultat
+    function closeResult() {
+      const modal = document.getElementById('resultModal');
+      modal.classList.remove('show');
+    }
+
+    // Créer des effets de confetti
+    function createConfetti() {
+      const colors = ['#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', '#118AB2', '#FFD700'];
+      
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = Math.random() * 10 + 5 + 'px';
+        confetti.style.height = Math.random() * 10 + 5 + 'px';
+        
+        document.body.appendChild(confetti);
+        
+        // Animation
+        const animation = confetti.animate([
+          { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+          { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+        ], {
+          duration: Math.random() * 3000 + 2000,
+          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+        });
+        
+        // Supprimer après l'animation
+        animation.onfinish = () => confetti.remove();
+      }
+    }
+
+    // Charger l'historique des gains
+    async function loadHistory() {
+      try {
+        const historyQuery = query(
+          collection(db, "wheel_history"),
+          where("userId", "==", userId)
+        );
+        
+        const historySnap = await getDocs(historyQuery);
+        const historyBody = document.getElementById('historyBody');
+        
+        if (historySnap.empty) {
+          historyBody.innerHTML = `
+            <tr>
+              <td colspan="4" class="empty-history">
+                <i class="fas fa-history fa-2x mb-3"></i>
+                <p>Aucun historique pour le moment</p>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        historyBody.innerHTML = '';
+        const historyData = [];
+        
+        historySnap.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          historyData.push(data);
+        });
+        
+        // Trier par date (du plus récent au plus ancien)
+        historyData.sort((a, b) => {
+          const dateA = a.timestamp ? a.timestamp.toDate() : new Date(0);
+          const dateB = b.timestamp ? b.timestamp.toDate() : new Date(0);
+          return dateB - dateA;
+        });
+        
+        // Afficher les 10 derniers résultats
+        historyData.slice(0, 10).forEach(item => {
+          const date = item.timestamp ? item.timestamp.toDate().toLocaleDateString('fr-FR') : 'Date inconnue';
+          const amount = item.amount;
+          const spinType = item.spinType || 'bonus';
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${date}</td>
+            <td><strong>${amount} Ar</strong></td>
+            <td>
+              ${spinType === 'bonus' ? 
+                '<span class="spin-type-badge bonus-spin">Bonus</span>' : 
+                '<span class="spin-type-badge referral-spin">Parrainage</span>'
+              }
+            </td>
+            <td>
+              ${amount > 0 ? 
+                `<span class="badge bg-success">GAGNÉ</span>` : 
+                `<span class="badge bg-secondary">VIDE</span>`
+              }
+            </td>
+          `;
+          
+          historyBody.appendChild(row);
+        });
+        
+      } catch (error) {
+        console.error("Erreur lors du chargement de l'historique:", error);
+      }
+    }
+
+    // Charger le total gagné
+    async function loadTotalWon() {
+      try {
+        const historyQuery = query(
+          collection(db, "wheel_history"),
+          where("userId", "==", userId),
+          where("amount", ">", 0)
+        );
+        
+        const historySnap = await getDocs(historyQuery);
+        
+        let total = 0;
+        historySnap.forEach(doc => {
+          const data = doc.data();
+          total += data.amount;
+        });
+        
+        totalWon = total;
+        document.getElementById('totalWon').textContent = totalWon + " Ar";
+      } catch (error) {
+        console.error("Erreur lors du calcul du total gagné:", error);
+      }
+    }
+
+    // Écouter les mises à jour en temps réel des parrainages
+    function setupRealtimeListeners() {
+      const userRef = doc(db, "users", userId);
+      
+      onSnapshot(userRef, (doc) => {
+        if (doc.exists()) {
+          const userData = doc.data();
+          const newReferralCount = userData.referrals ? userData.referrals.length : 0;
+          
+          if (newReferralCount !== referralCount) {
+            referralCount = newReferralCount;
+            document.getElementById('referralCount').textContent = referralCount;
+            
+            // Ajouter des spins pour les nouveaux parrainages
+            addReferralSpins(newReferralCount);
+            
+            // Mettre à jour le gain maximum
+            updateMaxGain();
+          }
+          
+          // Mettre à jour les spins si modifiés ailleurs
+          if (userData.spins !== undefined && userData.spins !== userSpins) {
+            userSpins = userData.spins;
+            document.getElementById('remainingSpins').textContent = userSpins;
+            updateSpinButton();
+            updateSpinTypeInfo();
+            updateMaxGain();
+          }
+        }
+      });
+    }
+
+    // Ajouter des spins pour les parrainages
+    async function addReferralSpins(newReferralCount) {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const referralSpinsGiven = userData.referralSpinsGiven || 0;
+          
+          // Chaque nouveau parrainage donne 1 spin
+          if (newReferralCount > referralSpinsGiven) {
+            const additionalSpins = newReferralCount - referralSpinsGiven;
+            const newTotalSpins = userSpins + additionalSpins;
+            
+            await updateDoc(userRef, {
+              spins: newTotalSpins,
+              referralSpinsGiven: newReferralCount
+            });
+            
+            userSpins = newTotalSpins;
+            document.getElementById('remainingSpins').textContent = userSpins;
+            updateSpinButton();
+            updateSpinTypeInfo();
+            
+            if (additionalSpins > 0) {
+              showNotification(`Vous avez reçu ${additionalSpins} spin(s) pour vos nouveaux parrainages !`);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'ajout des spins de parrainage:", error);
+      }
+    }
+
+    // Fonction d'affichage de notification
+    function showNotification(message) {
+      // Créer une notification temporaire
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, var(--primary), #3a56d4);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        z-index: 1000;
+        animation: slideIn 0.5s, fadeOut 0.5s 3.5s forwards;
+      `;
+      
+      notification.innerHTML = `
+        <i class="fas fa-gift me-2"></i>
+        <span>${message}</span>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 4000);
+    }
+
+    // Initialiser l'application au chargement
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initApp();
+      setupRealtimeListeners();
+    });
+
+    // Rendre les fonctions accessibles globalement
+    window.closeResult = closeResult;
+  </script>
+</body>
+</html>

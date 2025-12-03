@@ -1,0 +1,3946 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microtâche Mila Vola</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --primary-light: #edf2ff;
+      --secondary: #3f37c9;
+      --success: #4cc9f0;
+      --success-dark: #3ab4d8;
+      --warning: #f72585;
+      --danger: #e63946;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray-100: #f8f9fa;
+      --gray-200: #e9ecef;
+      --gray-300: #dee2e6;
+      --gray-400: #ced4da;
+      --gray-500: #adb5bd;
+      --gray-600: #6c757d;
+      --gray-700: #495057;
+      --gray-800: #343a40;
+      --gray-900: #212529;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      --box-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --whatsapp: #25D366;
+      --whatsapp-dark: #128C7E;
+      --reactivate: #FF6B00;
+      --bonus: #ff9e00;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f8f9fc, #eef2f9);
+      color: var(--gray-800);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+    }
+    
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      color: white;
+      padding: 1.5rem 0;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .app-title {
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      font-size: 1.8rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .app-subtitle {
+      font-weight: 400;
+      opacity: 0.9;
+      font-size: 1rem;
+      max-width: 600px;
+    }
+    
+    .nav-pills {
+      background: white;
+      border-radius: 50px;
+      padding: 0.5rem;
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .nav-pills .nav-link {
+      border-radius: 50px;
+      padding: 0.65rem 1.5rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      transition: var(--transition);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .nav-pills .nav-link.active, 
+    .nav-pills .nav-link:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .section-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+      transition: var(--transition);
+      border: 1px solid var(--gray-200);
+    }
+    
+    .section-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--box-shadow-hover);
+    }
+    
+    .section-title {
+      color: var(--secondary);
+      font-weight: 700;
+      margin-bottom: 1.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--primary);
+      display: inline-block;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 50px;
+      height: 2px;
+      background: var(--primary);
+    }
+    
+    .balance-card {
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 1rem;
+      box-shadow: var(--box-shadow);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      border: none;
+    }
+    
+    .balance-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--box-shadow-hover);
+    }
+    
+    .gain-card {
+      background: linear-gradient(135deg, var(--success), #3a86ff);
+      color: white;
+    }
+    
+    .deposit-card {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+    
+    .bonus-card {
+      background: linear-gradient(135deg, var(--bonus), #ff6d00);
+      color: white;
+    }
+    
+    .balance-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .balance-amount {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    
+    .btn-action {
+      padding: 0.85rem 1.75rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-action::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 20px;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(25deg);
+      transition: all 0.6s;
+    }
+    
+    .btn-action:hover::after {
+      left: 120%;
+    }
+    
+    .btn-action i {
+      margin-right: 8px;
+    }
+    
+    .btn-deposit {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-deposit:hover {
+      background: var(--primary-dark);
+      color: white;
+    }
+    
+    .btn-withdraw {
+      background: var(--warning);
+      color: white;
+    }
+    
+    .btn-withdraw:hover {
+      background: #e11d74;
+      color: white;
+    }
+    
+    .btn-reactivate {
+      background: var(--reactivate);
+      color: white;
+    }
+    
+    .btn-reactivate:hover {
+      background: #e05a00;
+      color: white;
+    }
+    
+    .btn-transfer {
+      background: var(--bonus);
+      color: white;
+    }
+    
+    .btn-transfer:hover {
+      background: #e68a00;
+      color: white;
+    }
+    
+    .btn-action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .task-card {
+      margin-bottom: 1.25rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: none;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      border: 1px solid var(--gray-200);
+    }
+    
+    .task-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--box-shadow-hover);
+    }
+    
+    .task-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--warning);
+      color: white;
+      font-weight: 600;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 8px rgba(247, 37, 133, 0.25);
+    }
+    
+    .admin-card {
+      background: #fff;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .admin-header {
+      color: var(--secondary);
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .request-card {
+      background: #f8f9fc;
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--primary);
+      transition: var(--transition);
+    }
+    
+    .request-card:hover {
+      background: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .request-card h6 {
+      font-weight: 600;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .request-card pre {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--gray-200);
+      margin-top: 0.75rem;
+    }
+    
+    .modal-content {
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--gray-200);
+    }
+    
+    .modal-header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 1.25rem 1.5rem;
+    }
+    
+    .modal-title {
+      font-weight: 600;
+    }
+    
+    .referral-code {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.85rem 1.75rem;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      display: inline-block;
+      margin-top: 0.5rem;
+      border: 1px dashed var(--primary);
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      margin: 1.75rem 0;
+      gap: 1.5rem;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 1.25rem;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      flex: 1;
+      transition: var(--transition);
+    }
+    
+    .stat-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--box-shadow-hover);
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Montserrat', sans-serif;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+    
+    .form-control, .form-select {
+      padding: 0.85rem 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--gray-300);
+      transition: var(--transition);
+      font-size: 0.95rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.2);
+    }
+    
+    .form-label {
+      font-weight: 500;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+    }
+    
+    footer {
+      background: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 1.75rem 0;
+      margin-top: 3rem;
+      border-radius: 20px 20px 0 0;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .firebase-status {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    
+    .status-connected {
+      background-color: var(--success);
+      color: white;
+    }
+    
+    .status-disconnected {
+      background-color: var(--danger);
+      color: white;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--gray-600);
+      border: 2px dashed var(--gray-300);
+      border-radius: var(--border-radius);
+      background: var(--gray-100);
+    }
+    
+    .empty-state i {
+      font-size: 3.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--gray-400);
+      opacity: 0.7;
+    }
+    
+    .login-container {
+      max-width: 480px;
+      margin: 100px auto;
+      padding: 2.5rem;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow-hover);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .login-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+    }
+    
+    .login-logo {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    
+    .login-logo i {
+      font-size: 3.5rem;
+      color: var(--primary);
+      margin-bottom: 1.25rem;
+      background: var(--primary-light);
+      width: 90px;
+      height: 90px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    
+    .login-logo h2 {
+      color: var(--secondary);
+      font-weight: 700;
+    }
+    
+    .admin-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 1.25rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .admin-table th {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .admin-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .admin-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .admin-table tr:nth-child(even) {
+      background-color: var(--gray-100);
+    }
+    
+    .admin-table tr:hover {
+      background-color: var(--primary-light);
+    }
+    
+    .admin-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn-sm {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.875rem;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    
+    .logout-btn {
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.65rem 1.25rem;
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logout-btn:hover {
+      background: #d0343f;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+    }
+    
+    .completed-task {
+      position: relative;
+      opacity: 0.85;
+    }
+    
+    .completed-task:after {
+      content: "Asa vita";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-10deg);
+      background: var(--success);
+      color: white;
+      font-weight: bold;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      z-index: 10;
+      font-size: 1.1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .referral-section {
+      background: linear-gradient(135deg, #f8f9fc, #eef2f9);
+      padding: 1.75rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 1.75rem;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .referral-link {
+      display: flex;
+      gap: 10px;
+      margin-top: 1.25rem;
+    }
+    
+    .referral-link input {
+      flex: 1;
+      border-radius: 10px 0 0 10px;
+      background: white;
+    }
+    
+    .referral-link button {
+      border-radius: 0 10px 10px 0;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0 1.25rem;
+      transition: var(--transition);
+    }
+    
+    .referral-link button:hover {
+      background: var(--primary-dark);
+    }
+    
+    .modal-header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 1.25rem 1.5rem;
+    }
+    
+    .modal-title {
+      font-weight: 600;
+    }
+    
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-right: 12px;
+    }
+    
+    .social-icon {
+      font-size: 1.5rem;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    
+    .facebook { color: #3b5998; }
+    .twitter { color: #1da1f2; }
+    .instagram { color: #e1306c; }
+    .telegram { color: #0088cc; }
+    .website { color: var(--primary); }
+    .whatsapp { color: var(--whatsapp); }
+    
+    .task-type-badge {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .social-task {
+      border-left: 4px solid #3b5998;
+    }
+    
+    .website-task {
+      border-left: 4px solid var(--primary);
+    }
+    
+    .whatsapp-btn {
+      background: var(--whatsapp) !important;
+      color: white !important;
+      border-radius: 50px;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-top: 15px;
+      width: 100%;
+      justify-content: center;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+    }
+    
+    .whatsapp-btn:hover {
+      background: var(--whatsapp-dark) !important;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: var(--border-radius);
+      background: var(--success);
+      color: white;
+      box-shadow: var(--box-shadow);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.5s, fadeOut 0.5s 2.5s forwards;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    
+    .proof-container {
+      background: var(--primary-light);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      margin-top: 1rem;
+      border: 1px dashed var(--primary);
+    }
+    
+    .proof-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .whatsapp-section {
+      background: linear-gradient(135deg, var(--whatsapp), var(--whatsapp-dark));
+      color: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .whatsapp-input-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    
+    .whatsapp-input-group input {
+      flex: 1;
+      border-radius: 10px;
+      border: none;
+      padding: 0.85rem 1.25rem;
+      font-size: 1rem;
+    }
+    
+    .whatsapp-input-group button {
+      border-radius: 10px;
+      background: white;
+      color: var(--whatsapp);
+      border: none;
+      padding: 0 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    
+    .whatsapp-input-group button:hover {
+      background: var(--gray-100);
+      transform: translateY(-2px);
+    }
+    
+    .admin-task-id {
+      background: var(--primary-light);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    .admin-task-id:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    /* Styles pour la section historique */
+    .history-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 1.25rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .history-table th {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .history-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .history-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .history-table tr:nth-child(even) {
+      background-color: var(--gray-100);
+    }
+    
+    .history-table tr:hover {
+      background-color: var(--primary-light);
+    }
+    
+    .history-badge {
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .badge-deposit {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    
+    .badge-withdraw {
+      background: #fce4ec;
+      color: #e91e63;
+    }
+    
+    .badge-proof {
+      background: #e8f5e9;
+      color: #4caf50;
+    }
+    
+    .badge-pending {
+      background: #fff8e1;
+      color: #ffa000;
+    }
+    
+    .badge-confirmed {
+      background: #e8f5e9;
+      color: #4caf50;
+    }
+    
+    .badge-canceled {
+      background: #ffebee;
+      color: #f44336;
+    }
+    
+    .badge-inactive {
+      background: #e0e0e0;
+      color: #616161;
+    }
+    
+    .history-section {
+      margin-bottom: 2.5rem;
+    }
+    
+    /* Nouveau style pour la notification d'attente */
+    .pending-notification {
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 500;
+      width: 100%;
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .publication-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: #f8f9fc;
+      border-radius: 10px;
+    }
+    
+    .stat-item-pub {
+      text-align: center;
+      flex: 1;
+    }
+    
+    .stat-number-pub {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .stat-label-pub {
+      font-size: 0.8rem;
+      color: var(--gray-600);
+    }
+    
+    /* Styles pour la méthode PAYEER */
+    .payeer-container {
+      background: var(--primary-light);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      margin: 1rem 0;
+      border: 1px solid var(--gray-300);
+      display: none;
+    }
+    
+    .copyable-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .copyable-input input {
+      flex: 1;
+      border-radius: 8px 0 0 8px;
+      border: 1px solid var(--gray-300);
+      padding: 0.65rem;
+      font-weight: 600;
+    }
+    
+    .copyable-input button {
+      border-radius: 0 8px 8px 0;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0 1rem;
+    }
+    
+    .deposit-info {
+      background: #fff8e1;
+      border-left: 4px solid #ffb300;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    
+    /* Nouveaux styles pour les tables */
+    .tasks-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 1.25rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .tasks-table th {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .tasks-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .tasks-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .tasks-table tr:nth-child(even) {
+      background-color: var(--gray-100);
+    }
+    
+    .tasks-table tr:hover {
+      background-color: var(--primary-light);
+    }
+    
+    /* Barre de recherche admin */
+    .admin-search-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    
+    .admin-search-container input {
+      flex: 1;
+      border-radius: 10px;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid var(--gray-300);
+    }
+    
+    .admin-search-container button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    
+    /* Barre de recherche des tâches */
+    .task-search-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .task-search-container input {
+      flex: 1;
+      border-radius: 10px;
+      padding: 0.85rem 1.25rem;
+      border: 1px solid var(--gray-300);
+    }
+    
+    .task-search-container button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0 1.75rem;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    
+    /* Tableau de parrainage */
+    .referrals-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 1.25rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .referrals-table th {
+      background: var(--bonus);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .referrals-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .referrals-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .referrals-table tr:nth-child(even) {
+      background-color: #fff8e1;
+    }
+    
+    .referrals-table tr:hover {
+      background-color: #ffecb3;
+    }
+    
+    .referral-bonus {
+      background: #fff8e1;
+      padding: 1.25rem;
+      border-radius: var(--border-radius);
+      margin-top: 1.5rem;
+      border: 1px solid #ffd54f;
+    }
+    
+    /* Nouveaux styles pour la section des participants */
+    .participants-section {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--gray-300);
+    }
+    
+    .participants-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 0.5rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .participants-table th {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    
+    .participants-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--gray-200);
+      font-size: 0.9rem;
+    }
+    
+    .participants-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .participants-table tr:nth-child(even) {
+      background-color: var(--gray-100);
+    }
+    
+    @media (max-width: 768px) {
+      .section-card {
+        padding: 1.5rem;
+      }
+      
+      .nav-pills {
+        padding: 0.35rem;
+      }
+      
+      .nav-pills .nav-link {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .stats-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .app-title {
+        font-size: 1.6rem;
+      }
+      
+      .admin-table, .history-table, .tasks-table, .referrals-table, .participants-table {
+        display: block;
+        overflow-x: auto;
+      }
+      
+      .login-container {
+        margin: 60px auto;
+        padding: 1.75rem;
+      }
+      
+      .whatsapp-input-group {
+        flex-direction: column;
+      }
+      
+      .publication-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .row.mb-4 > div {
+        margin-bottom: 1rem;
+      }
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .delayed-1 { animation-delay: 0.1s; }
+    .delayed-2 { animation-delay: 0.2s; }
+    .delayed-3 { animation-delay: 0.3s; }
+    
+    /* Nouvelle animation pour le badge */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    
+    .pending-notification {
+      animation: pulse 2s infinite;
+    }
+    
+    /* Nouveau style pour les onglets de connexion */
+    .auth-tabs {
+      background: white;
+      border-radius: 50px;
+      padding: 0.35rem;
+      box-shadow: var(--box-shadow);
+      margin-bottom: 1.5rem;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .auth-tabs .nav-link {
+      border-radius: 50px;
+      padding: 0.65rem 1.25rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      transition: var(--transition);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .auth-tabs .nav-link.active, 
+    .auth-tabs .nav-link:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    /* Mot de passe oublié */
+    .forgot-password {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .forgot-password a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Styles pour les boutons d'action dans la section publications */
+    .publication-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+      justify-content: flex-start;
+    }
+    
+    .btn-edit {
+      background: var(--warning);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .btn-edit:hover {
+      background: #e11d74;
+      color: white;
+    }
+    
+    .btn-delete {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .btn-delete:hover {
+      background: #d0343f;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Page de connexion -->
+  <div id="loginPage" class="container">
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-tasks"></i>
+        <h2>Microtâche Mila Vola</h2>
+        <p>Plateforme pour gagner de l'argent en réalisant des microtâches</p>
+      </div>
+      
+      <!-- Onglets -->
+      <ul class="nav auth-tabs justify-content-center" id="authTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="login-tab" data-bs-toggle="pill" data-bs-target="#login" type="button" role="tab">
+            <i class="fas fa-sign-in-alt me-1"></i> Hiditra (Connexion)
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="signup-tab" data-bs-toggle="pill" data-bs-target="#signup" type="button" role="tab">
+            <i class="fas fa-user-plus me-1"></i> Hisoratra anarana (Inscription)
+          </button>
+        </li>
+      </ul>
+      
+      <div class="tab-content">
+        <!-- Formulaire de connexion -->
+        <div class="tab-pane fade show active" id="login" role="tabpanel">
+          <form id="loginForm">
+            <div class="mb-3">
+              <label for="loginFirstName" class="form-label">Anarana voalohany</label>
+              <input type="text" class="form-control" id="loginFirstName" required>
+            </div>
+            <div class="mb-3">
+              <label for="loginSecurityCode" class="form-label">Teny miafina</label>
+              <input type="password" class="form-control" id="loginSecurityCode" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="fas fa-sign-in-alt me-1"></i> Hiditra
+            </button>
+            <div class="forgot-password mt-3">
+              <a href="#" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">Mot de passe oublié ?</a>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Formulaire d'inscription -->
+        <div class="tab-pane fade" id="signup" role="tabpanel">
+          <form id="signupForm">
+            <div class="mb-3">
+              <label for="signupFirstName" class="form-label">Anarana voalohany</label>
+              <input type="text" class="form-control" id="signupFirstName" required>
+            </div>
+            <div class="mb-3">
+              <label for="signupSecurityCode" class="form-label">Teny miafina</label>
+              <input type="password" class="form-control" id="signupSecurityCode" required>
+            </div>
+            <div class="mb-3">
+              <label for="referralCodeInput" class="form-label">Code de parrainage (facultatif)</label>
+              <input type="text" class="form-control" id="referralCodeInput" placeholder="Entrez le code de votre parrain">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="fas fa-user-plus me-1"></i> Hisoratra anarana
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page principale (cachée par défaut) -->
+  <div id="appContainer" class="app-container" style="display:none;">
+    <div class="header">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1 class="app-title">Microtâche Mila Vola</h1>
+            <p class="app-subtitle" id="welcomeMessage">Plateforme pour gagner de l'argent en réalisant des microtâches</p>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="d-flex align-items-center justify-content-end">
+              <div class="d-inline-block bg-white text-dark p-2 rounded-circle me-2">
+                <i class="fas fa-user fa-lg text-primary"></i>
+              </div>
+              <button id="logoutBtn" class="logout-btn">
+                <i class="fas fa-sign-out-alt me-1"></i> Hivoaka
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="firebaseStatus" class="firebase-status status-connected">
+      <i class="fas fa-circle-check"></i> Mila vola 
+    </div>
+
+    <div id="notificationArea"></div>
+
+    <div class="container">
+      <!-- Stats Section -->
+      <div class="section-card">
+        <div class="stats-container">
+          <div class="stat-item fade-in">
+            <div class="stat-number">152</div>
+            <div class="stat-label">Tâches Complétées</div>
+          </div>
+          <div class="stat-item fade-in delayed-1">
+            <div class="stat-number">78</div>
+            <div class="stat-label">Utilisateurs Actifs</div>
+          </div>
+          <div class="stat-item fade-in delayed-2">
+            <div class="stat-number">1.2M Ar</div>
+            <div class="stat-label">Gains Distribués</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="nav nav-pills justify-content-center mb-4">
+        <a class="nav-link" href="#adminSection" onclick="showSection('adminSection')" id="adminNavLink"><i class="fas fa-cog me-1"></i> Admin</a>
+        <a class="nav-link active" href="#accountSection" onclick="showSection('accountSection')"><i class="fas fa-wallet me-1"></i> Compte</a>
+        <a class="nav-link" href="#tasksSection" onclick="showSection('tasksSection')"><i class="fas fa-tasks me-1"></i> Asa</a>
+        <a class="nav-link" href="#publicationSection" onclick="showSection('publicationSection')"><i class="fas fa-bullhorn me-1"></i> Publication</a>
+        <a class="nav-link" href="#settingsSection" onclick="showSection('settingsSection')"><i class="fas fa-sliders-h me-1"></i> Paramètres</a>
+        <a class="nav-link" href="#historySection" onclick="showSection('historySection'); loadHistory()"><i class="fas fa-history me-1"></i> Historique</a>
+        <a class="nav-link" href="roue.html" onclick=" showSection('historySection')"><i class="fas fa-history me-1"></i>La roue de la fortu</a> 
+      </nav>
+
+      <!-- Admin Section -->
+      <div id="adminSection" class="mb-5" style="display:none;">
+        <h4 class="section-title"><i class="fas fa-cog me-2"></i>Admin Panel</h4>
+        
+        <div class="admin-card">
+          <h5 class="admin-header"><i class="fas fa-money-bill-wave me-2"></i>Demandes de Dépôt</h5>
+          <div class="admin-search-container">
+            <input type="text" id="searchDepot" class="form-control" placeholder="Rechercher par nom ou ID...">
+            <button class="btn btn-primary" onclick="filterAdminTable('depotList', 'searchDepot')">
+              <i class="fas fa-search me-1"></i> Hitady
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Montant</th>
+                <th>Méthode</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="depotList">
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  <div class="empty-state py-0">
+                    <i class="fas fa-inbox"></i>
+                    <p>Aucune demande de dépôt en attente</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="admin-card">
+          <h5 class="admin-header"><i class="fas fa-hand-holding-usd me-2"></i>Demandes de Retrait</h5>
+          <div class="admin-search-container">
+            <input type="text" id="searchRetrait" class="form-control" placeholder="Rechercher par nom ou ID...">
+            <button class="btn btn-primary" onclick="filterAdminTable('retraitList', 'searchRetrait')">
+              <i class="fas fa-search me-1"></i> Hitady
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>Montant</th>
+                <th>Frais</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="retraitList">
+              <tr>
+                <td colspan="6" class="text-center py-4">
+                  <div class="empty-state py-0">
+                    <i class="fas fa-inbox"></i>
+                    <p>Aucune demande de retrait en attente</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="admin-card">
+          <h5 class="admin-header"><i class="fas fa-check-circle me-2"></i>Soumissions de Preuves</h5>
+          <div class="admin-search-container">
+            <input type="text" id="searchProof" class="form-control" placeholder="Rechercher par nom ou ID...">
+            <button class="btn btn-primary" onclick="filterAdminTable('submissionList', 'searchProof')">
+              <i class="fas fa-search me-1"></i> Hitady
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Tâche</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="submissionList">
+              <tr>
+                <td colspan="4" class="text-center py-4">
+                  <div class="empty-state py-0">
+                    <i class="fas fa-inbox"></i>
+                    <p>Aucune soumission de preuve en attente</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Compte Section -->
+      <div id="accountSection" class="mb-5">
+        <h4 class="section-title"><i class="fas fa-wallet me-2"></i>Compte</h4>
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <div class="balance-card gain-card">
+              <div class="balance-label">Solde de Gains</div>
+              <div id="gainBalance" class="balance-amount">0 Ar</div>
+              <div class="mt-2 small">Ce solde peut être retiré</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="balance-card deposit-card">
+              <div class="balance-label">Solde de Dépôt</div>
+              <div id="depositBalance" class="balance-amount">0 Ar</div>
+              <div class="mt-2 small">Utilisé pour publier des tâches</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="balance-card bonus-card">
+              <div class="balance-label">Solde Bonus</div>
+              <div id="bonusBalance" class="balance-amount">0 Ar</div>
+              <div class="mt-2 small">Gains de parrainage</div>
+              <button class="btn btn-sm btn-light mt-2" onclick="transferBonus()" style="border-radius: 20px;">
+                <i class="fas fa-exchange-alt me-1"></i> Envoyer vers Gains
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tableau de parrainage -->
+        <div class="section-card mb-4">
+          <h5><i class="fas fa-users me-2"></i>Programme de Parrainage</h5>
+          <p>Vous avez <strong id="referralsCount">0</strong> filleul(s). Gagnez 5% de leurs gains!</p>
+          
+          <div class="mt-3">
+            <h6>Vos filleuls</h6>
+            <div class="table-responsive">
+              <table class="referrals-table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Date d'inscription</th>
+                    <th>Gains générés</th>
+                  </tr>
+                </thead>
+                <tbody id="referralsList">
+                  <tr>
+                    <td colspan="3" class="text-center py-3">
+                      <div class="empty-state py-0">
+                        <i class="fas fa-users"></i>
+                        <p>Aucun filleul pour le moment</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="referral-bonus">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6>Total des gains de parrainage</h6>
+                <div id="totalReferralBonus" class="fs-4 fw-bold">0 Ar</div>
+              </div>
+              <div>
+                <button class="btn btn-transfer" onclick="transferBonus()">
+                  <i class="fas fa-exchange-alt me-1"></i> Transférer vers gains
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="d-grid gap-3 d-md-flex">
+          <button class="btn btn-action btn-deposit" data-bs-toggle="modal" data-bs-target="#depositModal">
+            <i class="fas fa-plus-circle me-1"></i> Dépôt
+          </button>
+          <button class="btn btn-action btn-withdraw" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+            <i class="fas fa-minus-circle me-1"></i> Retrait
+          </button>
+        </div>
+      </div>
+
+      <!-- Tasks Section - Modifiée pour utiliser un tableau -->
+      <div id="tasksSection" class="mb-5">
+        <h4 class="section-title"><i class="fas fa-tasks me-2"></i>Asa</h4>
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>Complétez des tâches pour gagner de l'argent. Chaque tâche validée rapporte 50 Ar.
+        </div>
+        
+        <!-- Barre de recherche -->
+        <div class="task-search-container">
+          <input type="text" id="taskSearchInput" class="form-control" placeholder="Rechercher par description ou ID de tâche...">
+          <button class="btn btn-primary" type="button" onclick="searchTasks()">
+            <i class="fas fa-search me-1"></i> Hitady
+          </button>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="tasks-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Gains</th>
+                <th>Réseau social</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="taskList">
+              <tr>
+                <td colspan="4" class="text-center py-4">
+                  <div class="empty-state py-0">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Chargement des tâches disponibles...</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Publication Section -->
+      <div id="publicationSection" class="mb-5" style="display:none;">
+        <h4 class="section-title"><i class="fas fa-bullhorn me-2"></i>Publication</h4>
+        <div class="section-card mb-4">
+          <form id="publishForm" class="mb-3">
+            <input type="hidden" id="editTaskId" value="">
+            <div class="mb-3">
+              <label class="form-label">Description de la tâche</label>
+              <textarea id="pubDescription" class="form-control mb-2" placeholder="Décrivez la tâche à réaliser" rows="3" required></textarea>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Budget par participant (≥ 5Ar)</label>
+                <input id="pubBudgetPerParticipant" type="number" class="form-control" placeholder="Ex: 5" min="5" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Type de tâche</label>
+                <select id="taskType" class="form-select" required>
+                  <option value="">Choisir un type</option>
+                  <option value="social">Réseau social</option>
+                  <option value="website">Inscription site web</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="mb-3" id="socialMediaContainer" style="display:none;">
+              <label class="form-label">Réseau social</label>
+              <select id="socialMedia" class="form-select">
+                <option value="">Sélectionner un réseau</option>
+                <option value="facebook">Facebook</option>
+                <option value="twitter">Twitter</option>
+                <option value="instagram">Instagram</option>
+                <option value="telegram">Télégramme</option>
+                <option value="youtube">YouTube</option>
+                <option value="tiktok">TikTok</option>
+                <option value="linkedin">LinkedIn</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">URL/Information</label>
+              <input id="pubURL" type="text" class="form-control" placeholder="Lien ou référence" required>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Conditions</label>
+              <textarea id="pubConditions" class="form-control" placeholder="Conditions à respecter" rows="3"></textarea>
+            </div>
+            
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary btn-action flex-grow-1">
+                <i class="fas fa-paper-plane me-1"></i> Publier la tâche
+              </button>
+              <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display:none;" onclick="cancelEdit()">
+                <i class="fas fa-times me-1"></i> Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Nouvelle section WhatsApp -->
+        <div class="section-card mb-4">
+          <div class="whatsapp-section">
+            <h5><i class="fab fa-whatsapp me-2"></i>Configuration WhatsApp</h5>
+            <p>Spécifiez le numéro WhatsApp où les preuves doivent être envoyées</p>
+            
+            <div class="whatsapp-input-group">
+              <input type="tel" id="pubWhatsApp" class="form-control" placeholder="261XXXXXXXXX" required>
+              <button type="button" id="saveWhatsAppBtn">
+                <i class="fas fa-save me-1"></i> Enregistrer
+              </button>
+            </div>
+            
+            <div class="proof-container mt-3">
+              <p class="proof-title"><i class="fas fa-info-circle"></i> Les preuves seront envoyées à ce numéro WhatsApp</p>
+              <p class="small">Après avoir enregistré le numéro, il sera utilisé pour toutes les publications suivantes.</p>
+            </div>
+          </div>
+        </div>
+        
+        <h5 class="mt-4 mb-3"><i class="fas fa-list me-2"></i>Mes Publications</h5>
+        <div id="publicationList" class="row">
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Chargement de vos publications...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Section -->
+      <div id="settingsSection" class="mb-5">
+        <h4 class="section-title"><i class="fas fa-sliders-h me-2"></i>Paramètres</h4>
+        <div class="section-card">
+          <h5><i class="fas fa-user-friends me-2"></i>Programme de Parrainage</h5>
+          <p>Invitez vos amis et gagnez 10% de leurs gains!</p>
+          <div class="mt-3">
+            <p class="mb-1">Votre code de parrainage:</p>
+            <div class="referral-code" id="referralCode">Chargement...</div>
+          </div>
+          
+          <div class="referral-link">
+            <input type="text" class="form-control" id="referralLink" readonly>
+            <button class="btn btn-outline-primary" onclick="copyReferralLink()">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          
+          <div class="mt-3">
+            <button class="btn btn-primary" onclick="shareReferral()" style="background: var(--primary); border: none; padding: 0.75rem 1.5rem; font-weight: 600; border-radius: 10px;">
+              <i class="fas fa-share-alt me-1"></i> Partager
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nouvelle section Historique -->
+      <div id="historySection" class="mb-5" style="display:none;">
+        <h4 class="section-title"><i class="fas fa-history me-2"></i>Historique des Transactions</h4>
+        
+        <!-- Historique des Dépôts -->
+        <div class="history-section">
+          <h5 class="mb-3"><i class="fas fa-money-bill-wave me-2"></i>Historique des Dépôts</h5>
+          <div class="table-responsive">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Montant</th>
+                  <th>Méthode</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody id="depositHistory">
+                <tr>
+                  <td colspan="4" class="text-center py-4">
+                    <div class="empty-state py-0">
+                      <i class="fas fa-spinner fa-spin"></i>
+                      <p>Chargement de l'historique des dépôts...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Historique des Retraits -->
+        <div class="history-section">
+          <h5 class="mb-3"><i class="fas fa-hand-holding-usd me-2"></i>Historique des Retraits</h5>
+          <div class="table-responsive">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Montant</th>
+                  <th>Frais</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody id="withdrawHistory">
+                <tr>
+                  <td colspan="4" class="text-center py-4">
+                    <div class="empty-state py-0">
+                      <i class="fas fa-spinner fa-spin"></i>
+                      <p>Chargement de l'historique des retraits...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Historique des Preuves -->
+        <div class="history-section">
+          <h5 class="mb-3"><i class="fas fa-check-circle me-2"></i>Historique des Preuves</h5>
+          <div class="table-responsive">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Tâche</th>
+                  <th>Statut</th>
+                  <th>Gain</th>
+                </tr>
+              </thead>
+              <tbody id="proofHistory">
+                <tr>
+                  <td colspan="4" class="text-center py-4">
+                    <div class="empty-state py-0">
+                      <i class="fas fa-spinner fa-spin"></i>
+                      <p>Chargement de l'historique des preuves...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modals -->
+      <!-- Deposit Modal -->
+      <div class="modal fade" id="depositModal" tabindex="-1">
+        <div class="modal-dialog">
+          <form id="depositForm" class="modal-content">
+            <div class="modal-header card-header-gradient">
+              <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Dépôt</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Montant (≥ 2000 Ar)</label>
+                <input id="depositAmount" type="number" class="form-control" placeholder="Ex: 2000" min="2000" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Méthode de Paiement</label>
+                <select id="depositMethod" class="form-select" required>
+                  <option value="">Sélectionnez une méthode</option>
+                  <option value="PAYEER">MVOLA</option>
+                  <option value="Orange Money">En attente</option>
+                  <option value="Airtel Money">En attente</option>
+                </select>
+              </div>
+              
+              <!-- Container pour PAYEER -->
+              <div id="payeerContainer" class="payeer-container">
+                <h6><i class="fas fa-wallet me-2"></i>Compte Mvola</h6>
+                <p>Utilisez ce numéro de compte pour effectuer votre dépôt :</p>
+                
+                <div class="copyable-input">
+                  <input type="text" id="payeerAccount" value="0382266876" readonly>
+                  <button type="button" class="btn btn-primary" onclick="copyPayeerAccount()">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+                
+                <div class="deposit-info">
+                  <p><i class="fas fa-info-circle me-2"></i>Après avoir effectué le paiement, envoyez la preuve de paiement sur Facebook à :</p>
+                  <p class="text-center fw-bold"><a href="https://www.facebook.com/profile.php?id=61578558871898" target="_blank">Envoyé la preuve 
+</a></p>
+                  <p class="small">Capture d'écran du paiement requis avant de soumettre ce formulaire</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary" style="background: var(--primary); border: none; padding: 0.65rem 1.25rem; font-weight: 600; border-radius: 10px;">Envoyer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Withdraw Modal -->
+      <div class="modal fade" id="withdrawModal" tabindex="-1">
+        <div class="modal-dialog">
+          <form id="withdrawForm" class="modal-content">
+            <div class="modal-header card-header-gradient">
+              <h5 class="modal-title"><i class="fas fa-minus-circle me-2"></i>Retrait</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Nom Complet</label>
+                <input id="withdrawName" type="text" class="form-control" placeholder="Votre nom" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Numéro de Téléphone</label>
+                <input id="withdrawPhone" type="tel" class="form-control" placeholder="Votre numéro" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Montant (≥ 500 Ar)</label>
+                <input id="withdrawAmount" type="number" class="form-control" placeholder="Ex: 500" min="500" required>
+                <div class="form-text">Frais: 10% du montant</div>
+                <div class="form-text text-danger">Attention: Seul le solde de gains peut être retiré</div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary" style="background: var(--primary); border: none; padding: 0.65rem 1.25rem; font-weight: 600; border-radius: 10px;">Envoyer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Proof Modal -->
+      <div class="modal fade" id="proofModal" tabindex="-1">
+        <div class="modal-dialog">
+          <form id="submitProofForm" class="modal-content">
+            <input id="taskIdHidden" type="hidden">
+            <div class="modal-header card-header-gradient">
+              <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Envoyer Preuve</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Votre Identifiant</label>
+                <input id="userName" type="text" class="form-control" placeholder="Nom/Email/Instagram" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Preuve de Réalisation</label>
+                <textarea id="userProof" class="form-control" placeholder="Texte ou URL d'image" rows="3" required></textarea>
+                <div class="form-text">Fournissez un lien ou décrivez votre preuve</div>
+              </div>
+              
+              <div class="proof-container">
+                <p class="proof-title"><i class="fas fa-info-circle"></i> Envoyer une capture d'écran par WhatsApp</p>
+                <a href="#" id="whatsappProofBtn" target="_blank" class="btn whatsapp-btn">
+                  <i class="fab fa-whatsapp"></i> Envoyer par WhatsApp
+                </a>
+                <p class="mt-2 small">Après avoir envoyé votre capture d'écran sur WhatsApp, soumettez votre nom ci-dessus pour que nous puissions vous créditer.</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary" style="background: var(--primary); border: none; padding: 0.65rem 1.25rem; font-weight: 600; border-radius: 10px;">Envoyer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Task Details Modal (Nouveau) -->
+      <div class="modal fade" id="taskDetailsModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header card-header-gradient">
+              <h5 class="modal-title"><i class="fas fa-tasks me-2"></i>Détails de la tâche</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <p id="taskDescription" class="form-control-static"></p>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label">Conditions</label>
+                <p id="taskConditions" class="form-control-static"></p>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label">Gains</label>
+                <p id="taskGains" class="form-control-static"></p>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label">Réseau social</label>
+                <p id="taskSocial" class="form-control-static"></p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a href="#" id="taskAccessBtn" target="_blank" class="btn btn-primary">
+                <i class="fas fa-external-link-alt me-1"></i> Accéder à la tâche
+              </a>
+              <button class="btn btn-success" id="taskSendProofBtn">
+                <i class="fas fa-paper-plane me-1"></i> Envoyer preuve
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Confirmation Modal -->
+      <div class="modal fade" id="confirmationModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header card-header-gradient">
+              <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Confirmer la Soumission</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">ID de la Tâche</label>
+                <div class="admin-task-id" id="confirmationTaskId">Chargement...</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nom du Participant</label>
+                <input type="text" class="form-control" id="confirmationName" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Lien de Preuve</label>
+                <input type="text" class="form-control" id="confirmationProof" readonly>
+              </div>
+              <div class="text-center mt-4">
+                <button class="btn btn-success me-2" id="confirmSubmissionBtn">
+                  <i class="fas fa-check me-1"></i> Confirmer
+                </button>
+                <button class="btn btn-danger" id="cancelSubmissionBtn">
+                  <i class="fas fa-times me-1"></i> Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Reset Password Modal -->
+      <div class="modal fade" id="resetPasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+          <form id="resetPasswordForm" class="modal-content">
+            <div class="modal-header card-header-gradient">
+              <h5 class="modal-title"><i class="fas fa-key me-2"></i>Réinitialiser le mot de passe</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="resetEmail" class="form-label">Adresse email</label>
+                <input type="email" class="form-control" id="resetEmail" required>
+              </div>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Un lien de réinitialisation sera envoyé à cette adresse email.
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary">Envoyer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Modal de confirmation de suppression -->
+      <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header card-header-gradient">
+              <h5 class="modal-title"><i class="fas fa-trash me-2"></i>Confirmer la suppression</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Êtes-vous sûr de vouloir supprimer cette publication ?</p>
+              <p class="text-danger"><strong>Cette action est irréversible !</strong></p>
+              <input type="hidden" id="deleteTaskId" value="">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Supprimer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <div class="container">
+        <p class="mb-0">Microtâche Mila Vola &copy; 2023 - Plateforme de microtâches</p>
+        <p class="mb-0">Contact: support@milavola.mg | +261 34 00 000 00</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, getDoc, doc,
+      serverTimestamp, query, where, getDocs, setDoc,
+      updateDoc, deleteDoc, onSnapshot, arrayUnion
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAC-P6WFH1kqfYQi3PdCWpy4LSUqvtX_vo",
+      authDomain: "mila-vola.firebaseapp.com",
+      projectId: "mila-vola",
+      storageBucket: "mila-vola.appspot.com",
+      messagingSenderId: "690624768352",
+      appId: "1:690624768352:web:668994ef2664c5b99dd605",
+      measurementId: "G-C3FZTKQHFP"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Update Firebase status
+    const firebaseStatus = document.getElementById('firebaseStatus');
+    firebaseStatus.innerHTML = '<i class="fas fa-circle-check"></i> Firebase Connected';
+
+    // Variables globales
+    let userId = "";
+    let isAdmin = false;
+    let userName = "";
+    let userWhatsApp = "";
+    let userReferrer = null;
+
+    // Page elements
+    const loginPage = document.getElementById('loginPage');
+    const appContainer = document.getElementById('appContainer');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const taskTypeSelect = document.getElementById('taskType');
+    const socialMediaContainer = document.getElementById('socialMediaContainer');
+    const saveWhatsAppBtn = document.getElementById('saveWhatsAppBtn');
+    const depositMethodSelect = document.getElementById('depositMethod');
+    const payeerContainer = document.getElementById('payeerContainer');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    // Gestion du type de tâche
+    taskTypeSelect.addEventListener('change', function() {
+      if (this.value === 'social') {
+        socialMediaContainer.style.display = 'block';
+      } else {
+        socialMediaContainer.style.display = 'none';
+      }
+    });
+
+    // Gestion de la méthode de dépôt
+    depositMethodSelect.addEventListener('change', function() {
+      if (this.value === 'PAYEER') {
+        payeerContainer.style.display = 'block';
+      } else {
+        payeerContainer.style.display = 'none';
+      }
+    });
+
+    // Fonction pour afficher une section
+    window.showSection = (sectionId) => {
+      // Masquer toutes les sections
+      document.getElementById('adminSection').style.display = 'none';
+      document.getElementById('accountSection').style.display = 'none';
+      document.getElementById('tasksSection').style.display = 'none';
+      document.getElementById('publicationSection').style.display = 'none';
+      document.getElementById('settingsSection').style.display = 'none';
+      document.getElementById('historySection').style.display = 'none';
+      
+      // Vérifier l'accès admin
+      if (sectionId === 'adminSection' && !isAdmin) {
+        showNotification("Accès non autorisé à la section admin", "danger");
+        showSection('accountSection');
+        return;
+      }
+      
+      // Afficher la section demandée
+      document.getElementById(sectionId).style.display = 'block';
+      
+      // Charger les données si nécessaire
+      if (sectionId === 'adminSection' && isAdmin) {
+        loadAdminPanel();
+      } else if (sectionId === 'tasksSection') {
+        loadTasks();
+      } else if (sectionId === 'publicationSection' && isAdmin) {
+        loadPublications();
+      } else if (sectionId === 'accountSection') {
+        loadReferrals();
+      }
+    };
+
+    // Vérifier si l'utilisateur est déjà connecté
+    function checkLoginStatus() {
+      const savedUser = localStorage.getItem('milaVolaUser');
+      if (savedUser) {
+        const userData = JSON.parse(savedUser);
+        userId = userData.id;
+        userName = userData.name;
+        isAdmin = userData.isAdmin;
+        userWhatsApp = userData.whatsapp || "";
+        userReferrer = userData.referrer || null;
+        
+        // Masquer la page de connexion et afficher l'application
+        loginPage.style.display = 'none';
+        appContainer.style.display = 'block';
+        
+        // Mettre à jour le message de bienvenue
+        welcomeMessage.textContent = `Bienvenue, ${userName} !`;
+        
+        // Charger l'application
+        loadApplication();
+      }
+    }
+
+    // Gestion du formulaire de connexion
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const firstName = document.getElementById('loginFirstName').value.trim();
+      const securityCode = document.getElementById('loginSecurityCode').value;
+      
+      if (!firstName || !securityCode) {
+        alert('Ampidiro ny anarana sy ny teny miafina');
+        return;
+      }
+      
+      // Créer un ID utilisateur basé sur le nom
+      const userID = firstName.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(1000 + Math.random() * 9000);
+      
+      try {
+        // Vérifier si l'utilisateur existe déjà
+        const userRef = doc(db, "users", userID);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          // Vérifier le mot de passe
+          const userData = userSnap.data();
+          if (userData.securityCode !== securityCode) {
+            alert('Teny miafina diso!');
+            return;
+          }
+        } else {
+          // Créer un nouvel utilisateur
+          await setDoc(userRef, {
+            name: firstName,
+            securityCode: securityCode,
+            gain: 0,
+            depot: 0,
+            bonus: 0,
+            createdAt: serverTimestamp(),
+            isAdmin: false,
+            completedTasks: [],
+            whatsapp: "",
+            referrals: [],
+            referrer: null
+          });
+        }
+        
+        // Récupérer les informations de l'utilisateur
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.data();
+        
+        // Stocker les informations de l'utilisateur
+        userId = userID;
+        userName = userData.name;
+        isAdmin = userData.isAdmin || false;
+        userWhatsApp = userData.whatsapp || "";
+        userReferrer = userData.referrer || null;
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem('milaVolaUser', JSON.stringify({
+          id: userId,
+          name: userName,
+          isAdmin: isAdmin,
+          whatsapp: userWhatsApp,
+          referrer: userReferrer
+        }));
+        
+        // Mettre à jour le message de bienvenue
+        welcomeMessage.textContent = `Bienvenue, ${userName} !`;
+        
+        // Masquer la page de connexion et afficher l'application
+        loginPage.style.display = 'none';
+        appContainer.style.display = 'block';
+        
+        // Charger l'application
+        loadApplication();
+        
+      } catch (error) {
+        console.error("Erreur de connexion:", error);
+        alert("Erreur de connexion: " + error.message);
+      }
+    });
+
+    // Gestion du formulaire d'inscription
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const firstName = document.getElementById('signupFirstName').value.trim();
+      const securityCode = document.getElementById('signupSecurityCode').value;
+      const referralCode = document.getElementById('referralCodeInput').value.trim();
+      
+      if (!firstName || !securityCode) {
+        alert('Ampidiro ny anarana sy ny teny miafina');
+        return;
+      }
+      
+      // Créer un ID utilisateur
+      const userID = firstName.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(1000 + Math.random() * 9000);
+      
+      try {
+        // Vérifier si l'utilisateur existe déjà
+        const userRef = doc(db, "users", userID);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          alert('Ce nom d\'utilisateur existe déjà. Veuillez en choisir un autre.');
+          return;
+        }
+        
+        let referrerId = null;
+        // Vérifier le code de parrainage
+        if (referralCode) {
+          const referrerRef = doc(db, "users", referralCode);
+          const referrerSnap = await getDoc(referrerRef);
+          if (referrerSnap.exists()) {
+            referrerId = referralCode;
+          } else {
+            alert('Code de parrainage invalide. Veuillez vérifier ou laisser vide.');
+            return;
+          }
+        }
+        
+        // Créer un nouvel utilisateur
+        await setDoc(userRef, {
+          name: firstName,
+          securityCode: securityCode,
+          gain: 0,
+          depot: 0,
+          bonus: 0, // Solde bonus de parrainage
+          referrer: referrerId, // ID du parrain
+          referrals: [], // Liste des filleuls
+          createdAt: serverTimestamp(),
+          isAdmin: false,
+          completedTasks: [],
+          whatsapp: ""
+        });
+        
+        // Si le parrain est valide, mettre à jour son compte
+        if (referrerId) {
+          const referrerRef = doc(db, "users", referrerId);
+          await updateDoc(referrerRef, {
+            referrals: arrayUnion(userID)
+          });
+          
+          // Afficher une notification de succès
+          showNotification(`Inscription réussie avec parrainage (${referralCode}) !`, "success");
+        }
+        
+        // Connecter l'utilisateur après inscription
+        userId = userID;
+        userName = firstName;
+        isAdmin = false;
+        userReferrer = referrerId;
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem('milaVolaUser', JSON.stringify({
+          id: userId,
+          name: userName,
+          isAdmin: isAdmin,
+          referrer: userReferrer
+        }));
+        
+        // Mettre à jour le message de bienvenue
+        welcomeMessage.textContent = `Bienvenue, ${userName} !`;
+        
+        // Masquer la page de connexion et afficher l'application
+        loginPage.style.display = 'none';
+        appContainer.style.display = 'block';
+        
+        // Charger l'application
+        loadApplication();
+        
+      } catch (error) {
+        console.error("Erreur lors de l'inscription:", error);
+        alert("Erreur lors de l'inscription: " + error.message);
+      }
+    });
+
+    // Déconnexion
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('milaVolaUser');
+      location.reload();
+    });
+
+    // Charger l'application après connexion
+    async function loadApplication() {
+      await loadBalances();
+      await loadTasks();
+      await loadPublications();
+      document.getElementById("referralCode").textContent = userId;
+      document.getElementById('referralLink').value = window.location.href.split('?')[0] + '?ref=' + userId;
+      
+      // Cacher le lien admin si l'utilisateur n'est pas admin
+      const adminNavLink = document.getElementById('adminNavLink');
+      if (adminNavLink) {
+        adminNavLink.style.display = isAdmin ? 'block' : 'none';
+      }
+      
+      // Gestion des sections admin/publication
+      if (isAdmin) {
+        document.getElementById('adminSection').style.display = 'none';
+        document.getElementById('publicationSection').style.display = 'none';
+      } else {
+        document.getElementById('adminSection').style.display = 'none';
+        document.getElementById('publicationSection').style.display = 'none';
+      }
+      
+      // Afficher la section Compte par défaut
+      document.getElementById('accountSection').style.display = 'block';
+      
+      // Setup real-time listeners
+      setupRealtimeListeners();
+    }
+
+    // --- Section Compte ---
+    async function loadBalances() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const snap = await getDoc(userRef);
+        const data = snap.exists() ? snap.data() : { gain: 0, depot: 0, bonus: 0 };
+        document.getElementById("gainBalance").textContent = data.gain + " Ar";
+        document.getElementById("depositBalance").textContent = data.depot + " Ar";
+        document.getElementById("bonusBalance").textContent = data.bonus + " Ar";
+        document.getElementById("referralsCount").textContent = data.referrals ? data.referrals.length : 0;
+        document.getElementById("totalReferralBonus").textContent = data.bonus + " Ar";
+      } catch (error) {
+        console.error("Error loading balances:", error);
+      }
+    }
+
+    // Charger les filleuls
+    async function loadReferrals() {
+      try {
+        const list = document.getElementById('referralsList');
+        list.innerHTML = '';
+        
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        
+        if (!userData.referrals || userData.referrals.length === 0) {
+          list.innerHTML = `
+            <tr>
+              <td colspan="3" class="text-center py-3">
+                <div class="empty-state py-0">
+                  <i class="fas fa-users"></i>
+                  <p>Aucun filleul pour le moment</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        // Pour chaque filleul, récupérer les détails
+        for (const referralId of userData.referrals) {
+          const referralRef = doc(db, "users", referralId);
+          const referralSnap = await getDoc(referralRef);
+          
+          if (referralSnap.exists()) {
+            const referralData = referralSnap.data();
+            const date = referralData.createdAt ? new Date(referralData.createdAt.seconds * 1000).toLocaleDateString() : 'Date inconnue';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${referralData.name}</td>
+              <td>${date}</td>
+              <td>${referralData.gain ? (referralData.gain * 0.05).toFixed(2) : '0'} Ar</td>
+            `;
+            list.appendChild(row);
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des filleuls:", error);
+      }
+    }
+
+    // Transférer le bonus vers les gains
+    async function transferBonus() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        
+        if (userData.bonus <= 0) {
+          showNotification("Votre solde bonus est nul.", "warning");
+          return;
+        }
+        
+        await updateDoc(userRef, {
+          gain: userData.gain + userData.bonus,
+          bonus: 0
+        });
+        
+        showNotification(`Solde bonus transféré: ${userData.bonus} Ar ajoutés à vos gains.`, "success");
+        loadBalances();
+      } catch (error) {
+        showNotification("Erreur lors du transfert: " + error.message, "danger");
+      }
+    }
+
+    document.getElementById("depositForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const montant = parseFloat(document.getElementById("depositAmount").value);
+      const method = document.getElementById("depositMethod").value;
+      
+      if (montant >= 2000 && method) {
+        try {
+          await addDoc(collection(db, "depot_requests"), {
+            userId, userName, montant, method,
+            status: "en attente", createdAt: serverTimestamp()
+          });
+          showNotification("Dépôt voaray! Votre demande est en cours de traitement.", "success");
+          
+          // Reset form and close modal
+          e.target.reset();
+          bootstrap.Modal.getInstance(document.getElementById('depositModal')).hide();
+        } catch (error) {
+          showNotification("Erreur lors du dépôt: " + error.message, "danger");
+        }
+      } else {
+        showNotification("Ampidiro araka ny tokony ho izy ny vola (min 2000 Ar) sy fomba fandoavana.", "warning");
+      }
+    });
+
+    document.getElementById("withdrawForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nom = document.getElementById("withdrawName").value;
+      const phone = document.getElementById("withdrawPhone").value;
+      const montant = parseFloat(document.getElementById("withdrawAmount").value);
+      
+      try {
+        // Vérifier le solde de gains
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        
+        if (montant > userData.gain) {
+          showNotification("Solde de gains insuffisant. Vous ne pouvez retirer que votre solde de gains.", "warning");
+          return;
+        }
+        
+        if (montant >= 500) {
+          const frais = montant * 0.1;
+          await addDoc(collection(db, "retrait_requests"), {
+            userId, userName, nom, phone, montant, frais,
+            status: "en attente", createdAt: serverTimestamp()
+          });
+          showNotification("Retrait voaray! Votre demande est en cours de traitement.", "success");
+          
+          // Reset form and close modal
+          e.target.reset();
+          bootstrap.Modal.getInstance(document.getElementById('withdrawModal')).hide();
+        } else {
+          showNotification("Tsara indrindra ny ≥ 500 Ar", "warning");
+        }
+      } catch (error) {
+        showNotification("Erreur lors du retrait: " + error.message, "danger");
+      }
+    });
+
+    // --- Section Asa (Proof) ---
+    async function loadTasks() {
+      try {
+        const list = document.getElementById("taskList");
+        list.innerHTML = '';
+        
+        // Récupérer les tâches complétées par l'utilisateur
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        const completedTasks = userSnap.exists() ? userSnap.data().completedTasks || [] : [];
+        
+        // Récupérer les soumissions en attente de l'utilisateur
+        const pendingSubmissions = new Set();
+        try {
+          const submissionsQuery = query(collection(db, "submissions"), 
+            where("userId", "==", userId),
+            where("status", "==", "en attente"));
+          const submissionsSnap = await getDocs(submissionsQuery);
+          submissionsSnap.forEach(doc => {
+            const data = doc.data();
+            pendingSubmissions.add(data.taskId);
+          });
+        } catch (error) {
+          console.error("Erreur lors du chargement des soumissions en attente:", error);
+        }
+        
+        const q = query(collection(db, "tasks"), where("status","==","active"));
+        const snap = await getDocs(q);
+        
+        if (snap.empty) {
+          list.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center py-4">
+                <div class="empty-state py-0">
+                  <i class="fas fa-tasks"></i>
+                  <p>Aucune tâche disponible pour le moment</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          const taskId = docSnap.id;
+          
+          // Vérifier si la tâche est déjà complétée
+          const isCompleted = completedTasks.includes(taskId);
+          // Vérifier si l'utilisateur a une soumission en attente pour cette tâche
+          const isPending = pendingSubmissions.has(taskId);
+          
+          // Récupérer le budget (compatibilité avec ancienne version)
+          const budget = d.budgetPerParticipant || d.budget || 0;
+          
+          let socialText = '';
+          
+          if (d.taskType === 'social') {
+            switch(d.socialMedia) {
+              case 'facebook':
+                socialText = 'Facebook';
+                break;
+              case 'twitter':
+                socialText = 'Twitter';
+                break;
+              case 'instagram':
+                socialText = 'Instagram';
+                break;
+              case 'telegram':
+                socialText = 'Télégramme';
+                break;
+              case 'youtube':
+                socialText = 'YouTube';
+                break;
+              case 'tiktok':
+                socialText = 'TikTok';
+                break;
+              case 'linkedin':
+                socialText = 'LinkedIn';
+                break;
+            }
+          } else if (d.taskType === 'website') {
+            socialText = 'Site Web';
+          }
+          
+          const el = document.createElement('tr');
+          el.className = isCompleted ? 'completed-task' : '';
+          
+          el.innerHTML = `
+            <td>${d.description}</td>
+            <td>${budget} Ar</td>
+            <td>${socialText}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" onclick="showTaskDetails('${taskId}', '${d.whatsapp || ''}')">
+                <i class="fas fa-eye me-1"></i> Ouvrir
+              </button>
+              ${isCompleted ? '<span class="badge bg-success ms-2">Complétée</span>' : 
+                (isPending ? '<span class="badge bg-warning ms-2">En attente</span>' : '')}
+            </td>
+          `;
+          list.appendChild(el);
+        });
+      } catch (error) {
+        console.error("Error loading tasks:", error);
+      }
+    }
+
+    // Fonction de recherche de tâches
+    function searchTasks() {
+      const searchTerm = document.getElementById('taskSearchInput').value.toLowerCase();
+      const table = document.getElementById('taskList');
+      const rows = table.getElementsByTagName('tr');
+      
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+          const cellText = cells[j].textContent || cells[j].innerText;
+          if (cellText.toLowerCase().includes(searchTerm)) {
+            found = true;
+            break;
+          }
+        }
+        
+        if (found) {
+          rows[i].style.display = '';
+        } else {
+          rows[i].style.display = 'none';
+        }
+      }
+    }
+
+    window.showTaskDetails = async (taskId, whatsapp) => {
+      try {
+        const taskRef = doc(db, "tasks", taskId);
+        const taskSnap = await getDoc(taskRef);
+        
+        if (taskSnap.exists()) {
+          const taskData = taskSnap.data();
+          
+          // Récupérer le budget (compatibilité avec ancienne version)
+          const budget = taskData.budgetPerParticipant || taskData.budget || 0;
+          
+          let socialText = '';
+          
+          if (taskData.taskType === 'social') {
+            switch(taskData.socialMedia) {
+              case 'facebook':
+                socialText = 'Facebook';
+                break;
+              case 'twitter':
+                socialText = 'Twitter';
+                break;
+              case 'instagram':
+                socialText = 'Instagram';
+                break;
+              case 'telegram':
+                socialText = 'Télégramme';
+                break;
+              case 'youtube':
+                socialText = 'YouTube';
+                break;
+              case 'tiktok':
+                socialText = 'TikTok';
+                break;
+              case 'linkedin':
+                socialText = 'LinkedIn';
+                break;
+            }
+          } else if (taskData.taskType === 'website') {
+            socialText = 'Site Web';
+          }
+          
+          // Remplir les détails de la tâche
+          document.getElementById('taskDescription').textContent = taskData.description;
+          document.getElementById('taskConditions').textContent = taskData.cond || 'Aucune condition spécifique';
+          document.getElementById('taskGains').textContent = `${budget} Ar`;
+          document.getElementById('taskSocial').textContent = socialText;
+          
+          // Mettre à jour le lien d'accès à la tâche
+          const taskAccessBtn = document.getElementById('taskAccessBtn');
+          taskAccessBtn.href = taskData.url;
+          
+          // Configurer le bouton "Envoyer preuve"
+          const taskSendProofBtn = document.getElementById('taskSendProofBtn');
+          taskSendProofBtn.onclick = () => {
+            openProofModal(taskId, whatsapp);
+            bootstrap.Modal.getInstance(document.getElementById('taskDetailsModal')).hide();
+          };
+          
+          // Ouvrir la modal
+          new bootstrap.Modal(document.getElementById('taskDetailsModal')).show();
+        } else {
+          showNotification("Tâche introuvable", "danger");
+        }
+      } catch (error) {
+        showNotification("Erreur lors du chargement de la tâche: " + error.message, "danger");
+      }
+    };
+
+    document.getElementById("submitProofForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const taskId = document.getElementById("taskIdHidden").value;
+      const name = document.getElementById("userName").value;
+      const proof = document.getElementById("userProof").value;
+      
+      if (!taskId || !name || !proof) {
+        showNotification("Ampidiro ny angona rehetra", "warning");
+        return;
+      }
+      
+      try {
+        // Vérifier si l'utilisateur a déjà soumis une preuve pour cette tâche
+        const submissionKey = `${userId}_${taskId}`;
+        const submissionRef = doc(db, "submissions", submissionKey);
+        const submissionSnap = await getDoc(submissionRef);
+        
+        if (submissionSnap.exists()) {
+          showNotification("Vous avez déjà soumis une preuve pour cette tâche.", "warning");
+          return;
+        }
+        
+        await setDoc(submissionRef, {
+          userId, userName, taskId, name, proof,
+          status: "en attente", createdAt: serverTimestamp()
+        });
+        
+        showNotification("Porofo nalefa! Ny mpitantana dia handinika azy.", "success");
+        
+        // Recharger les tâches pour afficher la notification
+        loadTasks();
+        
+        // Reset form and close modal
+        e.target.reset();
+        bootstrap.Modal.getInstance(document.getElementById('proofModal')).hide();
+      } catch (error) {
+        showNotification("Erreur lors de l'envoi de la preuve: " + error.message, "danger");
+      }
+    });
+
+    window.openProofModal = async (id, whatsapp) => {
+      document.getElementById('taskIdHidden').value = id;
+      
+      // Mettre à jour le lien WhatsApp
+      const whatsappBtn = document.getElementById('whatsappProofBtn');
+      const defaultMessage = "Nanatanteraka ny asa tamin'ny Microtâche Mila Vola aho. Izao ny porofoko:";
+      
+      if (whatsapp) {
+        whatsappBtn.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(defaultMessage)}`;
+      } else {
+        whatsappBtn.href = "https://wa.me/261384557584";
+      }
+      
+      // Ouvrir la modal
+      new bootstrap.Modal(document.getElementById('proofModal')).show();
+    };
+
+    // --- Gestion WhatsApp ---
+    saveWhatsAppBtn.addEventListener('click', async () => {
+      const whatsapp = document.getElementById('pubWhatsApp').value.trim();
+      
+      if (!whatsapp || whatsapp.length < 10) {
+        showNotification("Ampidiro ny laharana WhatsApp araka ny tokony ho izy", "warning");
+        return;
+      }
+      
+      try {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, {
+          whatsapp: whatsapp
+        });
+        
+        userWhatsApp = whatsapp;
+        showNotification("Laharana WhatsApp voarakitra!", "success");
+      } catch (error) {
+        showNotification("Erreur lors de l'enregistrement: " + error.message, "danger");
+      }
+    });
+
+    // --- Section Publication ---
+    async function loadPublications() {
+      try {
+        const list = document.getElementById('publicationList');
+        list.innerHTML = '';
+        
+        const q = query(collection(db,'tasks'), where('publisher','==',userId));
+        const snap = await getDocs(q);
+        
+        if (snap.empty) {
+          list.innerHTML = `
+            <div class="col-12">
+              <div class="empty-state">
+                <i class="fas fa-bullhorn"></i>
+                <p>Vous n'avez publié aucune tâche</p>
+                </div>
+            </div>
+          `;
+          return;
+        }
+        
+        list.innerHTML = '';
+        for (const docSnap of snap.docs) {
+          const d = docSnap.data();
+          const taskId = docSnap.id;
+          const el = document.createElement('div');
+          el.className = 'col-md-6 mb-3';
+          
+          let icon = '';
+          let typeText = '';
+          let statusBadge = '';
+          
+          if (d.status === 'active') {
+            statusBadge = '<span class="badge bg-success">Active</span>';
+          } else {
+            statusBadge = '<span class="badge bg-secondary">Inactive</span>';
+          }
+          
+          // Récupérer le budget (compatibilité avec ancienne version)
+          const budget = d.budgetPerParticipant || d.budget || 0;
+          const completedCount = d.completedCount || 0;
+          
+          if (d.taskType === 'social') {
+            switch(d.socialMedia) {
+              case 'facebook': 
+                icon = '<i class="fab fa-facebook social-icon facebook"></i>';
+                typeText = 'Réseau social: Facebook';
+                break;
+              case 'twitter': 
+                icon = '<i class="fab fa-twitter social-icon twitter"></i>';
+                typeText = 'Réseau social: Twitter';
+                break;
+              case 'instagram': 
+                icon = '<i class="fab fa-instagram social-icon instagram"></i>';
+                typeText = 'Réseau social: Instagram';
+                break;
+              case 'telegram': 
+                icon = '<i class="fab fa-telegram social-icon telegram"></i>';
+                typeText = 'Réseau social: Télégramme';
+                break;
+              case 'youtube': 
+                icon = '<i class="fab fa-youtube social-icon youtube"></i>';
+                typeText = 'Réseau social: YouTube';
+                break;
+              case 'tiktok': 
+                icon = '<i class="fab fa-tiktok social-icon tiktok"></i>';
+                typeText = 'Réseau social: TikTok';
+                break;
+              case 'linkedin': 
+                icon = '<i class="fab fa-linkedin social-icon linkedin"></i>';
+                typeText = 'Réseau social: LinkedIn';
+                break;
+            }
+          } else if (d.taskType === 'website') {
+            icon = '<i class="fas fa-globe social-icon website"></i>';
+            typeText = 'Inscription site web';
+          }
+          
+          // Récupérer les soumissions pour cette tâche
+          const submissionsQuery = query(collection(db, "submissions"), 
+            where("taskId", "==", taskId),
+            where("status", "==", "en attente"));
+          const submissionsSnap = await getDocs(submissionsQuery);
+          const submissions = [];
+          
+          submissionsSnap.forEach(subDoc => {
+            const subData = subDoc.data();
+            submissions.push({
+              id: subDoc.id,
+              name: subData.name,
+              proof: subData.proof
+            });
+          });
+          
+          el.innerHTML = `
+            <div class="card task-card">
+              <div class="card-body">
+                <h6>${icon} ${d.description}</h6>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <span class="badge bg-warning">${budget} Ar/part</span>
+                  ${statusBadge}
+                </div>
+                <div class="mt-2 small">${typeText}</div>
+                <div class="mt-2 small">WhatsApp: ${d.whatsapp || 'Non configuré'}</div>
+                <div class="publication-stats">
+                  <div class="stat-item-pub">
+                    <div class="stat-number-pub">${completedCount}</div>
+                    <div class="stat-label-pub">Participants</div>
+                  </div>
+                  <div class="stat-item-pub">
+                    <div class="stat-number-pub">${completedCount * budget} Ar</div>
+                    <div class="stat-label-pub">Dépensé</div>
+                  </div>
+                </div>
+                <div class="admin-task-id" onclick="copyToClipboard('${taskId}')">ID: ${taskId.substring(0,8)}...</div>
+                <div class="mt-2">
+                  <a href="${d.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-external-link-alt me-1"></i> Voir la tâche
+                  </a>
+                  ${d.status === 'inactive' ? 
+                    `<button class="btn btn-reactivate btn-sm mt-2" onclick="reactivateTask('${taskId}')">
+                      <i class="fas fa-sync-alt me-1"></i> Réactiver
+                    </button>` 
+                    : ''
+                  }
+                </div>
+                
+                <!-- Boutons d'action pour supprimer ou modifier -->
+                <div class="publication-actions">
+                  <button class="btn btn-edit" onclick="editPublication('${taskId}')">
+                    <i class="fas fa-edit me-1"></i> Modifier
+                  </button>
+                  <button class="btn btn-delete" onclick="confirmDelete('${taskId}')">
+                    <i class="fas fa-trash me-1"></i> Supprimer
+                  </button>
+                </div>
+                
+                <!-- Section des participants -->
+                <div class="participants-section">
+                  <h6>Participants en attente</h6>
+                  <div class="table-responsive">
+                    <table class="participants-table">
+                      <thead>
+                        <tr>
+                          <th>Nom</th>
+                          <th>ID</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="participants-${taskId}">
+                        ${submissions.length === 0 ? 
+                          `<tr>
+                            <td colspan="3" class="text-center py-2">
+                              Aucun participant en attente
+                            </td>
+                          </tr>` 
+                          : submissions.map(sub => `
+                            <tr>
+                              <td>${sub.name}</td>
+                              <td>${sub.id.substring(0, 8)}...</td>
+                              <td>
+                                <button class="btn btn-success btn-sm me-1" onclick="confirmSubmission('${sub.id}')">
+                                  <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="cancelSubmission('${sub.id}')">
+                                  <i class="fas fa-times"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          `).join('')
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          list.appendChild(el);
+        }
+        
+        // Préremplir le champ WhatsApp
+        if (userWhatsApp) {
+          document.getElementById('pubWhatsApp').value = userWhatsApp;
+        }
+      } catch (error) {
+        console.error("Error loading publications:", error);
+      }
+    }
+
+    document.getElementById('publishForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const desc = document.getElementById('pubDescription').value;
+      const budgetPerParticipant = parseInt(document.getElementById('pubBudgetPerParticipant').value);
+      const url = document.getElementById('pubURL').value;
+      const cond = document.getElementById('pubConditions').value;
+      const taskType = document.getElementById('taskType').value;
+      const socialMedia = document.getElementById('socialMedia').value;
+      const editTaskId = document.getElementById('editTaskId').value;
+      
+      if (budgetPerParticipant < 5) {
+        showNotification('Budget ≥ 5 Ar par participant', 'warning');
+        return;
+      }
+      
+      if (!taskType) {
+        showNotification('Sélectionnez un type de tâche', 'warning');
+        return;
+      }
+      
+      if (taskType === 'social' && !socialMedia) {
+        showNotification('Sélectionnez un réseau social', 'warning');
+        return;
+      }
+      
+      try {
+        // Mode édition
+        if (editTaskId) {
+          const taskRef = doc(db, "tasks", editTaskId);
+          const taskSnap = await getDoc(taskRef);
+          
+          if (!taskSnap.exists()) {
+            showNotification("Tâche introuvable", "danger");
+            return;
+          }
+          
+          const taskData = taskSnap.data();
+          
+          // Vérifier que l'utilisateur est bien le propriétaire de la tâche
+          if (taskData.publisher !== userId) {
+            showNotification("Vous n'êtes pas autorisé à modifier cette tâche", "danger");
+            return;
+          }
+          
+          // Mettre à jour la tâche
+          await updateDoc(taskRef, {
+            description: desc,
+            budgetPerParticipant: budgetPerParticipant,
+            url: url,
+            cond: cond,
+            taskType: taskType,
+            socialMedia: taskType === 'social' ? socialMedia : '',
+            whatsapp: userWhatsApp
+          });
+          
+          showNotification('Tâche modifiée avec succès!', 'success');
+        } else {
+          // Mode création
+          // Vérifier le solde de dépôt
+          const userRef = doc(db, "users", userId);
+          const userSnap = await getDoc(userRef);
+          const userData = userSnap.data();
+          
+          if (userData.depot < budgetPerParticipant) {
+            showNotification('Solde de dépôt insuffisant pour réactiver cette tâche', 'warning');
+            return;
+          }
+          
+          // Créer la tâche sans déduire le solde
+          await addDoc(collection(db,'tasks'),{
+            publisher: userId,
+            publisherName: userName,
+            description: desc,
+            budgetPerParticipant: budgetPerParticipant,
+            url,
+            cond,
+            taskType,
+            socialMedia: taskType === 'social' ? socialMedia : '',
+            status: 'active',
+            whatsapp: userWhatsApp,
+            createdAt: serverTimestamp(),
+            completedCount: 0
+          });
+          
+          showNotification('Asa navoaka! Le solde ne sera déduit que lorsque les participants enverront des preuves.', 'success');
+        }
+        
+        loadPublications();
+        
+        // Reset form
+        e.target.reset();
+        socialMediaContainer.style.display = 'none';
+        cancelEdit();
+      } catch (error) {
+        showNotification("Erreur lors de la publication: " + error.message, 'danger');
+      }
+    });
+
+    // Fonction pour éditer une publication
+    window.editPublication = async (taskId) => {
+      try {
+        const taskRef = doc(db, "tasks", taskId);
+        const taskSnap = await getDoc(taskRef);
+        
+        if (!taskSnap.exists()) {
+          showNotification("Tâche introuvable", "danger");
+          return;
+        }
+        
+        const taskData = taskSnap.data();
+        
+        // Vérifier que l'utilisateur est bien le propriétaire de la tâche
+        if (taskData.publisher !== userId) {
+          showNotification("Vous n'êtes pas autorisé à modifier cette tâche", "danger");
+          return;
+        }
+        
+        // Remplir le formulaire avec les données de la tâche
+        document.getElementById('editTaskId').value = taskId;
+        document.getElementById('pubDescription').value = taskData.description;
+        document.getElementById('pubBudgetPerParticipant').value = taskData.budgetPerParticipant || taskData.budget || 5;
+        document.getElementById('pubURL').value = taskData.url;
+        document.getElementById('pubConditions').value = taskData.cond || '';
+        document.getElementById('taskType').value = taskData.taskType || 'social';
+        
+        // Gérer l'affichage du champ réseau social
+        if (taskData.taskType === 'social') {
+          socialMediaContainer.style.display = 'block';
+          document.getElementById('socialMedia').value = taskData.socialMedia || '';
+        } else {
+          socialMediaContainer.style.display = 'none';
+        }
+        
+        // Changer le texte du bouton de soumission
+        document.querySelector('#publishForm button[type="submit"]').innerHTML = '<i class="fas fa-save me-1"></i> Modifier la tâche';
+        
+        // Afficher le bouton annuler
+        cancelEditBtn.style.display = 'block';
+        
+        // Faire défiler jusqu'au formulaire
+        document.getElementById('pubDescription').focus();
+        
+      } catch (error) {
+        showNotification("Erreur lors du chargement de la tâche: " + error.message, "danger");
+      }
+    };
+
+    // Fonction pour annuler l'édition
+    window.cancelEdit = () => {
+      document.getElementById('editTaskId').value = '';
+      document.getElementById('publishForm').reset();
+      socialMediaContainer.style.display = 'none';
+      document.querySelector('#publishForm button[type="submit"]').innerHTML = '<i class="fas fa-paper-plane me-1"></i> Publier la tâche';
+      cancelEditBtn.style.display = 'none';
+    };
+
+    // Fonction pour confirmer la suppression
+    window.confirmDelete = (taskId) => {
+      document.getElementById('deleteTaskId').value = taskId;
+      new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
+    };
+
+    // Gestionnaire d'événement pour le bouton de suppression confirmée
+    confirmDeleteBtn.addEventListener('click', async () => {
+      const taskId = document.getElementById('deleteTaskId').value;
+      
+      if (!taskId) {
+        return;
+      }
+      
+      try {
+        const taskRef = doc(db, "tasks", taskId);
+        const taskSnap = await getDoc(taskRef);
+        
+        if (!taskSnap.exists()) {
+          showNotification("Tâche introuvable", "danger");
+          return;
+        }
+        
+        const taskData = taskSnap.data();
+        
+        // Vérifier que l'utilisateur est bien le propriétaire de la tâche
+        if (taskData.publisher !== userId) {
+          showNotification("Vous n'êtes pas autorisé à supprimer cette tâche", "danger");
+          return;
+        }
+        
+        // Supprimer la tâche
+        await deleteDoc(taskRef);
+        
+        showNotification('Publication supprimée avec succès!', 'success');
+        
+        // Fermer le modal
+        bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+        
+        // Recharger les publications
+        loadPublications();
+      } catch (error) {
+        showNotification("Erreur lors de la suppression: " + error.message, "danger");
+      }
+    });
+
+    // --- Section Admin ---
+    async function loadAdminPanel() {
+      if (!isAdmin) {
+        showNotification("Accès non autorisé", "danger");
+        return;
+      }
+      
+      try {
+        // Charger les demandes de dépôt
+        const depotQuery = query(collection(db, "depot_requests"), where("status", "==", "en attente"));
+        const depotSnapshot = await getDocs(depotQuery);
+        
+        const depotList = document.getElementById('depotList');
+        depotList.innerHTML = '';
+        
+        if (depotSnapshot.empty) {
+          depotList.innerHTML = `
+            <tr>
+              <td colspan="5" class="text-center py-4">
+                <div class="empty-state py-0">
+                  <i class="fas fa-inbox"></i>
+                  <p>Aucune demande de dépôt en attente</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          depotSnapshot.forEach((doc) => {
+            const data = doc.data();
+            const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${data.userName || data.userId}</td>
+              <td>${data.montant} Ar</td>
+              <td>${data.method}</td>
+              <td>${date}</td>
+              <td class="admin-actions">
+                <button class='btn btn-success btn-sm me-1' onclick='confirmDeposit("${doc.id}", "${data.userId}", ${data.montant})'>
+                  <i class="fas fa-check me-1"></i> Confirmer
+                </button>
+                <button class='btn btn-danger btn-sm' onclick='rejectRequest("depot_requests", "${doc.id}")'>
+                  <i class="fas fa-times me-1"></i> Rejeter
+                </button>
+              </td>
+            `;
+            depotList.appendChild(row);
+          });
+        }
+        
+        // Charger les demandes de retrait
+        const retraitQuery = query(collection(db, "retrait_requests"), where("status", "==", "en attente"));
+        const retraitSnapshot = await getDocs(retraitQuery);
+        
+        const retraitList = document.getElementById('retraitList');
+        retraitList.innerHTML = '';
+        
+        if (retraitSnapshot.empty) {
+          retraitList.innerHTML = `
+            <tr>
+              <td colspan="6" class="text-center py-4">
+                <div class="empty-state py-0">
+                  <i class="fas fa-inbox"></i>
+                  <p>Aucune demande de retrait en attente</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          retraitSnapshot.forEach((doc) => {
+            const data = doc.data();
+            const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${data.nom || data.userName || data.userId}</td>
+              <td>${data.phone || 'Non spécifié'}</td>
+              <td>${data.montant} Ar</td>
+              <td>${data.frais || 0} Ar</td>
+              <td>${date}</td>
+              <td class="admin-actions">
+                <button class='btn btn-success btn-sm me-1' onclick='confirmWithdrawal("${doc.id}", "${data.userId}", ${data.montant}, ${data.frais || 0})'>
+                  <i class="fas fa-check me-1"></i> Confirmer
+                </button>
+                <button class='btn btn-danger btn-sm' onclick='rejectRequest("retrait_requests", "${doc.id}")'>
+                  <i class="fas fa-times me-1"></i> Rejeter
+                </button>
+              </td>
+            `;
+            retraitList.appendChild(row);
+          });
+        }
+        
+        // Charger les soumissions de preuves
+        const proofQuery = query(collection(db, "submissions"), where("status", "==", "en attente"));
+        const proofSnapshot = await getDocs(proofQuery);
+        
+        const submissionList = document.getElementById('submissionList');
+        submissionList.innerHTML = '';
+        
+        if (proofSnapshot.empty) {
+          submissionList.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center py-4">
+                <div class="empty-state py-0">
+                  <i class="fas fa-inbox"></i>
+                  <p>Aucune soumission de preuve en attente</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          proofSnapshot.forEach((doc) => {
+            const data = doc.data();
+            const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${data.userName || data.userId}</td>
+              <td>${data.taskId || 'Inconnue'}</td>
+              <td>${date}</td>
+              <td class="admin-actions">
+                <button class='btn btn-success btn-sm me-1' onclick='openConfirmationModal("${doc.id}",${JSON.stringify(data)})'>
+                  <i class="fas fa-check me-1"></i> Voir
+                </button>
+                <button class='btn btn-danger btn-sm' onclick='rejectRequest("submissions", "${doc.id}")'>
+                  <i class="fas fa-times me-1"></i> Rejeter
+                </button>
+              </td>
+            `;
+            submissionList.appendChild(row);
+          });
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement du panel admin:", error);
+        showNotification("Erreur lors du chargement: " + error.message, "danger");
+      }
+    }
+
+    window.filterAdminTable = (tableId, searchId) => {
+      const searchTerm = document.getElementById(searchId).value.toLowerCase();
+      const table = document.getElementById(tableId);
+      const rows = table.getElementsByTagName('tr');
+      
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+          const cellText = cells[j].textContent || cells[j].innerText;
+          if (cellText.toLowerCase().indexOf(searchTerm) > -1) {
+            found = true;
+            break;
+          }
+        }
+        
+        if (found) {
+          rows[i].style.display = '';
+        } else {
+          rows[i].style.display = 'none';
+        }
+      }
+    };
+
+    // Fonctions d'administration
+    window.confirmDeposit = async (depositId, userId, amount) => {
+      try {
+        const userRef = doc(db, "users", userId);
+        const depositRef = doc(db, "depot_requests", depositId);
+        
+        // Mettre à jour le statut du dépôt
+        await updateDoc(depositRef, {
+          status: "confirmé",
+          confirmedAt: serverTimestamp()
+        });
+        
+        // Augmenter le solde de dépôt de l'utilisateur
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        
+        await updateDoc(userRef, {
+          depot: (userData.depot || 0) + amount
+        });
+        
+        showNotification("Dépôt confirmé avec succès!", "success");
+        loadAdminPanel();
+        loadBalances();
+        
+      } catch (error) {
+        console.error("Erreur lors de la confirmation du dépôt:", error);
+        showNotification("Erreur: " + error.message, "danger");
+      }
+    };
+
+    window.confirmWithdrawal = async (withdrawalId, userId, amount, fees) => {
+      try {
+        const userRef = doc(db, "users", userId);
+        const withdrawalRef = doc(db, "retrait_requests", withdrawalId);
+        
+        // Mettre à jour le statut du retrait
+        await updateDoc(withdrawalRef, {
+          status: "confirmé",
+          confirmedAt: serverTimestamp()
+        });
+        
+        // Diminuer le solde de gains de l'utilisateur
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        
+        const totalAmount = amount + fees;
+        
+        if (userData.gain < totalAmount) {
+          showNotification("Solde de gains insuffisant pour l'utilisateur", "warning");
+          return;
+        }
+        
+        await updateDoc(userRef, {
+          gain: (userData.gain || 0) - totalAmount
+        });
+        
+        showNotification("Retrait confirmé avec succès!", "success");
+        loadAdminPanel();
+        loadBalances();
+        
+      } catch (error) {
+        console.error("Erreur lors de la confirmation du retrait:", error);
+        showNotification("Erreur: " + error.message, "danger");
+      }
+    };
+
+    window.rejectRequest = async (collectionName, requestId, reason = "Demande rejetée") => {
+      try {
+        const requestRef = doc(db, collectionName, requestId);
+        
+        await updateDoc(requestRef, {
+          status: "rejeté",
+          rejectionReason: reason,
+          rejectedAt: serverTimestamp()
+        });
+        
+        showNotification("Demande rejetée", "info");
+        loadAdminPanel();
+        
+      } catch (error) {
+        console.error("Erreur lors du rejet:", error);
+        showNotification("Erreur: " + error.message, "danger");
+      }
+    };
+
+    // Fonction pour confirmer une soumission
+    window.confirmSubmission = async (submissionId) => {
+      try {
+        const submissionRef = doc(db, "submissions", submissionId);
+        const submissionSnap = await getDoc(submissionRef);
+        
+        if (!submissionSnap.exists()) {
+          showNotification("Soumission introuvable", "danger");
+          return;
+        }
+        
+        const submissionData = submissionSnap.data();
+        await confirmAction('submissions', submissionId, 'proof', submissionData);
+        showNotification("Soumission confirmée avec succès!", "success");
+        loadPublications();
+      } catch (error) {
+        showNotification("Erreur lors de la confirmation: " + error.message, "danger");
+      }
+    };
+
+    // Fonction pour annuler une soumission
+    window.cancelSubmission = async (submissionId) => {
+      try {
+        await rejectRequest('submissions', submissionId);
+        showNotification("Soumission annulée", "info");
+        loadPublications();
+      } catch (error) {
+        showNotification("Erreur lors de l'annulation: " + error.message, "danger");
+      }
+    };
+
+    // --- Nouvelle section Historique ---
+    async function loadHistory() {
+      try {
+        // Charger l'historique des dépôts
+        const depositQuery = query(collection(db, "depot_requests"), where("userId", "==", userId));
+        const depositSnap = await getDocs(depositQuery);
+        const depositList = document.getElementById('depositHistory');
+        depositList.innerHTML = '';
+        
+        if (depositSnap.empty) {
+          depositList.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center py-4">
+                <div class="empty-state py-0">
+                  <i class="fas fa-inbox"></i>
+                  <p>Aucun historique de dépôt</p>
+                  </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          depositSnap.forEach(doc => {
+            const d = doc.data();
+            const date = d.createdAt ? new Date(d.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${date}</td>
+              <td>${d.montant} Ar</td>
+              <td>${d.method}</td>
+              <td><span class="history-badge badge-${d.status === 'confirmé' ? 'confirmed' : d.status === 'en attente' ? 'pending' : 'canceled'}">${d.status}</span></td>
+            `;
+            depositList.appendChild(row);
+          });
+        }
+        
+        // Charger l'historique des retraits
+        const withdrawQuery = query(collection(db, "retrait_requests"), where("userId", "==", userId));
+        const withdrawSnap = await getDocs(withdrawQuery);
+        const withdrawList = document.getElementById('withdrawHistory');
+        withdrawList.innerHTML = '';
+        
+        if (withdrawSnap.empty) {
+          withdrawList.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center py-4">
+                <div class="empty-state py-0">
+                  <i class="fas fa-inbox"></i>
+                  <p>Aucun historique de retrait</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          withdrawSnap.forEach(doc => {
+            const d = doc.data();
+            const date = d.createdAt ? new Date(d.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${date}</td>
+              <td>${d.montant} Ar</td>
+              <td>${d.frais || 0} Ar</td>
+              <td><span class="history-badge badge-${d.status === 'confirmé' ? 'confirmed' : d.status === 'en attente' ? 'pending' : 'canceled'}">${d.status}</span></td>
+            `;
+            withdrawList.appendChild(row);
+          });
+        }
+        
+        // Charger l'historique des preuves
+        const proofQuery = query(collection(db, "submissions"), where("userId", "==", userId));
+        const proofSnap = await getDocs(proofQuery);
+        const proofList = document.getElementById('proofHistory');
+        proofList.innerHTML = '';
+        
+        if (proofSnap.empty) {
+          proofList.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center py-4">
+                <div class="empty-state py-0">
+                  <i class="fas fa-inbox"></i>
+                  <p>Aucun historique de preuve</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          proofSnap.forEach(doc => {
+            const d = doc.data();
+            const date = d.createdAt ? new Date(d.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${date}</td>
+              <td>${d.taskId.substring(0, 8)}...</td>
+              <td><span class="history-badge badge-${d.status === 'confirmé' ? 'confirmed' : d.status === 'en attente' ? 'pending' : 'canceled'}">${d.status}</span></td>
+              <td>${d.status === 'confirmé' ? '50 Ar' : '-'}</td>
+            `;
+            proofList.appendChild(row);
+          });
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement de l'historique:", error);
+        showNotification("Erreur lors du chargement de l'historique", "danger");
+      }
+    }
+
+    // Ajout de la fonction à l'objet window pour la rendre accessible globalement
+    window.loadHistory = loadHistory;
+
+    window.openConfirmationModal = (submissionId, submissionData) => {
+      document.getElementById('confirmationTaskId').textContent = submissionData.taskId || 'Inconnu';
+      document.getElementById('confirmationName').value = submissionData.name || 'Non spécifié';
+      document.getElementById('confirmationProof').value = submissionData.proof || 'Aucun lien';
+      
+      // Configurer les boutons de confirmation
+      document.getElementById('confirmSubmissionBtn').onclick = () => {
+        confirmAction('submissions', submissionId, 'proof', submissionData);
+        bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+      };
+      
+      document.getElementById('cancelSubmissionBtn').onclick = () => {
+        rejectRequest('submissions', submissionId);
+        bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+      };
+      
+      // Ouvrir la modal
+      new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+    };
+
+    window.confirmAction = async (col, id, type, d) => {
+      try {
+        // Mettre à jour le statut de la demande
+        await updateDoc(doc(db, col, id), {
+          status: 'confirmé',
+          confirmedAt: serverTimestamp()
+        });
+        
+        const uRef = doc(db, 'users', d.userId);
+        const uSnap = await getDoc(uRef);
+        const u = uSnap.exists() ? uSnap.data() : {gain: 0, depot: 0, bonus: 0};
+        
+        if (type === 'depot') {
+          // Créditer le solde de dépôt
+          await updateDoc(uRef, {depot: u.depot + d.montant});
+          showNotification('Dépôt confirmé!', 'success');
+        } else if (type === 'retrait') {
+          // Débiter le solde de gains (montant + frais)
+          const total = d.montant + (d.frais || 0);
+          if (u.gain < total) {
+            showNotification("Solde de gains insuffisant pour l'utilisateur", "warning");
+            // Remettre le statut en attente? Ou rejeter? Pour l'instant, on rejette.
+            await updateDoc(doc(db, col, id), {
+              status: 'rejeté',
+              rejectionReason: 'Solde insuffisant',
+              rejectedAt: serverTimestamp()
+            });
+            return;
+          }
+          await updateDoc(uRef, {gain: u.gain - total});
+          showNotification('Retrait confirmé!', 'success');
+        } else if (type === 'proof') {
+          // Récupérer la tâche pour obtenir le budget
+          const taskRef = doc(db, 'tasks', d.taskId);
+          const taskSnap = await getDoc(taskRef);
+          if (!taskSnap.exists()) {
+            throw new Error('Tâche introuvable');
+          }
+          const taskData = taskSnap.data();
+          
+          // Compatibilité avec ancienne version
+          const taskBudget = taskData.budgetPerParticipant || taskData.budget || 0;
+          
+          // Créditer le solde de gains du participant
+          await updateDoc(uRef, {gain: u.gain + taskBudget});
+          
+          // Ajouter la tâche complétée à la liste de l'utilisateur
+          const completedTasks = u.completedTasks || [];
+          if (!completedTasks.includes(d.taskId)) {
+            completedTasks.push(d.taskId);
+            await updateDoc(uRef, {completedTasks});
+          }
+          
+          // Mettre à jour la tâche : incrémenter le compteur de participants
+          const newCount = (taskData.completedCount || 0) + 1;
+          await updateDoc(taskRef, {
+            completedCount: newCount
+          });
+          
+          // Déduire le montant du dépôt du publisher
+          const publisherRef = doc(db, 'users', taskData.publisher);
+          const publisherSnap = await getDoc(publisherRef);
+          const publisherData = publisherSnap.data();
+          
+          await updateDoc(publisherRef, {
+            depot: publisherData.depot - taskBudget
+          });
+          
+          // Si l'utilisateur a un parrain, créditer le parrain avec 5% du gain
+          if (u.referrer) {
+            const referrerRef = doc(db, 'users', u.referrer);
+            const referrerSnap = await getDoc(referrerRef);
+            if (referrerSnap.exists()) {
+              const referrerData = referrerSnap.data();
+              const bonusAmount = taskBudget * 0.05;
+              await updateDoc(referrerRef, {
+                bonus: (referrerData.bonus || 0) + bonusAmount
+              });
+              
+              // Afficher un log pour confirmer
+              console.log(`Crédité le parrain ${u.referrer} avec ${bonusAmount} Ar`);
+            }
+          }
+          
+          // Vérifier si le solde est épuisé et désactiver la tâche si nécessaire
+          const updatedPublisherSnap = await getDoc(publisherRef);
+          const updatedPublisherData = updatedPublisherSnap.data();
+          
+          if (updatedPublisherData.depot < taskBudget) {
+            await updateDoc(taskRef, {
+              status: 'inactive'
+            });
+            showNotification('Le solde de dépôt est épuisé pour cette tâche. Tâche désactivée.', 'info');
+          }
+          
+          showNotification(`Tâche confirmée! ${taskBudget} Ar crédités.`, 'success');
+        }
+        
+        // Recharger le panel admin
+        loadAdminPanel();
+        // Recharger les soldes si l'admin est aussi un utilisateur
+        loadBalances();
+      } catch (error) {
+        showNotification("Erreur lors de la confirmation: " + error.message, 'danger');
+      }
+    };
+
+    // Fonction pour réactiver une tâche
+    window.reactivateTask = async (taskId) => {
+      try {
+        const taskRef = doc(db, "tasks", taskId);
+        const taskSnap = await getDoc(taskRef);
+        if (!taskSnap.exists()) {
+          showNotification("Tâche introuvable", "danger");
+          return;
+        }
+        
+        const taskData = taskSnap.data();
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        
+        // Compatibilité avec ancienne version
+        const taskBudget = taskData.budgetPerParticipant || taskData.budget || 0;
+        
+        if (userData.depot < taskBudget) {
+          showNotification("Solde de dépôt insuffisant pour réactiver cette tâche", "warning");
+          return;
+        }
+        
+        await updateDoc(taskRef, {
+          status: "active"
+        });
+        
+        showNotification("Tâche réactivée avec succès!", "success");
+        loadPublications();
+      } catch (error) {
+        showNotification("Erreur lors de la réactivation: " + error.message, "danger");
+      }
+    };
+
+    // Setup real-time listeners for balances
+    function setupRealtimeListeners() {
+      const userRef = doc(db, "users", userId);
+      
+      onSnapshot(userRef, (doc) => {
+        if (doc.exists()) {
+          const data = doc.data();
+          document.getElementById("gainBalance").textContent = data.gain + " Ar";
+          document.getElementById("depositBalance").textContent = data.depot + " Ar";
+          document.getElementById("bonusBalance").textContent = data.bonus + " Ar";
+          document.getElementById("referralsCount").textContent = data.referrals ? data.referrals.length : 0;
+          document.getElementById("totalReferralBonus").textContent = data.bonus + " Ar";
+        }
+      });
+    }
+
+    // Fonctions utilitaires
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      showNotification('ID copié dans le presse-papiers!', 'success');
+    }
+    
+    function copyReferralLink() {
+      const link = document.getElementById('referralLink');
+      link.select();
+      document.execCommand('copy');
+      showNotification('Lien copié dans le presse-papiers!', 'success');
+    }
+    
+    function copyPayeerAccount() {
+      const payeerAccount = document.getElementById('payeerAccount');
+      payeerAccount.select();
+      document.execCommand('copy');
+      showNotification('Compte PAYEER copié dans le presse-papiers!', 'success');
+    }
+
+    function shareReferral() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Microtâche Mila Vola',
+          text: 'Rejoignez la plateforme Microtâche Mila Vola et gagnez de l\'argent en réalisant des microtâches!',
+          url: document.getElementById('referralLink').value
+        })
+        .catch(error => console.log('Erreur de partage:', error));
+      } else {
+        copyReferralLink();
+      }
+    }
+
+    // Fonction d'affichage de notification
+    function showNotification(message, type) {
+      const notificationArea = document.getElementById('notificationArea');
+      const notification = document.createElement('div');
+      notification.className = `notification bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'danger'}`;
+      notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+      `;
+      
+      notificationArea.appendChild(notification);
+      
+      // Supprimer la notification après 3 secondes
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Vérifier le paramètre de référence dans l'URL
+    function checkReferral() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref');
+      if (ref) {
+        document.getElementById('referralCodeInput').value = ref;
+        showNotification("Vous avez été invité par un parrain! Utilisez le code d'accès pour bénéficier des avantages.", "info");
+      }
+    }
+
+    // Vérifier le statut de connexion au chargement
+    checkLoginStatus();
+    checkReferral();
+  </script>
+</body>
+</html>
