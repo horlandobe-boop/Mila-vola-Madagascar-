@@ -674,13 +674,12 @@
     
     <div class="hourly-task">
       <h3><i class="fas fa-clock me-2"></i>Tâche Horaire</h3>
-      <p>Recevez un bonus toutes les heures selon votre niveau (Réclamation manuelle)</p>
+      <p>Recevez un bonus toutes les 60 minutes selon votre niveau (Réclamation manuelle)</p>
       <div class="hourly-reward" id="currentHourlyReward">5 Ar</div>
       <button class="btn-gambling btn-warning" id="claimHourlyBtn" onclick="claimHourlyReward()">
         <i class="fas fa-gift"></i> RÉCLAMER LE BONUS
       </button>
       <div class="timer" id="hourlyCountdown">Disponible dans: 60:00</div>
-      <div class="timer" id="nextAvailableTime" style="color: #FF9800; margin-top: 0.5rem;"></div>
     </div>
     
     <div class="game-container">
@@ -845,7 +844,7 @@
         <li><i class="fas fa-check"></i> <strong>Pourcentage:</strong> +1% = perte automatique. Moins de 1% = chance de gain</li>
         <li><i class="fas fa-check"></i> <strong>Retrait:</strong> 10% de frais pour transférer vers votre compte principal</li>
         <li><i class="fas fa-check"></i> <strong>Parrainage:</strong> Recevez 50% des gains de vos filleuls</li>
-        <li><i class="fas fa-check"></i> <strong>Bonus horaire:</strong> Réclamation manuelle uniquement. Si vous ne réclamez pas, le bonus n'est pas cumulé</li>
+        <li><i class="fas fa-check"></i> <strong>Bonus horaire:</strong> Toutes les 60 minutes exactement. Réclamez manuellement</li>
       </ul>
     </div>
   </div>
@@ -913,7 +912,7 @@
       writeBatch, arrayUnion, arrayRemove
     } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-    // Configuration Firebase (identique au code principal)
+    // Configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAC-P6WFH1kqfYQi3PdCWpy4LSUqvtX_vo",
       authDomain: "mila-vola.firebaseapp.com",
@@ -938,6 +937,8 @@
     let currentLoss = 0;
     let gamesPlayed = 0;
     let gameInterval = null;
+    let hourlyTimerInterval = null;
+    let lastHourlyClaimTime = null;
     
     // Niveaux et récompenses horaires
     const levels = [
@@ -999,7 +1000,7 @@
           const userData = userSnap.data();
           
           // Initialiser les données gambling si elles n'existent pas
-          if (!userData.gamblingBalance) {
+          if (typeof userData.gamblingBalance === 'undefined') {
             await updateDoc(userRef, {
               gamblingBalance: 0,
               gamblingLevel: 1,
@@ -1007,14 +1008,18 @@
               totalGamblingLost: 0,
               lastHourlyClaim: null,
               referralCommission: 0,
-              referralEarnings: 0,
-              hourlyRewardAvailable: false
+              referralEarnings: 0
             });
           }
           
           // Charger le solde principal
           const mainBalance = userData.gain || 0;
           document.getElementById('mainBalance').textContent = mainBalance.toLocaleString();
+          
+          // Charger le temps de la dernière réclamation
+          if (userData.lastHourlyClaim) {
+            lastHourlyClaimTime = userData.lastHourlyClaim.toDate();
+          }
         }
       } catch (error) {
         console.error("Erreur lors du chargement des données:", error);
@@ -1062,10 +1067,10 @@
     // Démarrer le minuteur horaire
     function startHourlyTimer() {
       updateHourlyTimer();
-      setInterval(updateHourlyTimer, 1000);
+      hourlyTimerInterval = setInterval(updateHourlyTimer, 1000);
     }
 
-    // Mettre à jour le minuteur horaire
+    // Mettre à jour le minuteur horaire - NOUVELLE VERSION SIMPLIFIÉE
     async function updateHourlyTimer() {
       try {
         const userRef = doc(db, "users", userId);
@@ -1074,70 +1079,72 @@
         if (userSnap.exists()) {
           const userData = userSnap.data();
           const currentLevel = userData.gamblingLevel || 1;
-          const lastHourlyClaim = userData.lastHourlyClaim ? userData.lastHourlyClaim.toDate() : null;
-          const hourlyRewardAvailable = userData.hourlyRewardAvailable || false;
           
           // Mettre à jour la récompense horaire
           const hourlyReward = levels[currentLevel - 1].hourlyReward;
           document.getElementById('hourlyReward').textContent = hourlyReward + ' Ar/h';
           document.getElementById('currentHourlyReward').textContent = hourlyReward + ' Ar';
           
-          // Calculer le temps restant
           const now = new Date();
-          let timeRemaining = 3600; // 1 heure en secondes
-          let nextAvailable = new Date(now.getTime() + 3600000); // Maintenant + 1 heure
           
-          if (lastHourlyClaim) {
-            const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
-            timeRemaining = Math.max(0, 3600 - timeSinceLastClaim);
-            nextAvailable = new Date(lastHourlyClaim.getTime() + 3600000);
+          // Si l'utilisateur n'a jamais réclamé
+          if (!userData.lastHourlyClaim) {
+            // Première fois - disponible immédiatement
+            updateClaimButton(true, 0);
+            return;
           }
           
-          // Mettre à jour le bouton et le minuteur
-          const claimBtn = document.getElementById('claimHourlyBtn');
-          const timerElement = document.getElementById('hourlyCountdown');
-          const nextTimeElement = document.getElementById('nextAvailableTime');
+          // Calculer le temps écoulé depuis la dernière réclamation (en secondes)
+          const lastClaimTime = userData.lastHourlyClaim.toDate();
+          const timeElapsedSeconds = Math.floor((now.getTime() - lastClaimTime.getTime()) / 1000);
           
-          // Formater la date de prochaine disponibilité
-          const nextTimeStr = nextAvailable.toLocaleTimeString('fr-FR', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false 
-          });
+          // Temps total pour attendre: 60 minutes = 3600 secondes
+          const totalWaitTime = 3600;
           
-          if (hourlyRewardAvailable) {
-            // Récompense disponible (l'utilisateur n'a pas encore réclamé)
-            claimBtn.disabled = false;
-            claimBtn.innerHTML = '<i class="fas fa-gift"></i> RÉCLAMER LE BONUS';
-            timerElement.textContent = 'Disponible maintenant!';
-            timerElement.style.color = '#4CAF50';
-            nextTimeElement.textContent = `Prochaine disponibilité: ${nextTimeStr}`;
-          } else if (timeRemaining <= 0) {
-            // L'heure est passée, marquer la récompense comme disponible
-            if (!hourlyRewardAvailable) {
-              await updateDoc(userRef, {
-                hourlyRewardAvailable: true
-              });
-            }
+          // Temps restant avant de pouvoir réclamer à nouveau
+          let timeRemaining = totalWaitTime - timeElapsedSeconds;
+          
+          // Si le temps écoulé est supérieur à 60 minutes, la récompense est disponible
+          if (timeElapsedSeconds >= totalWaitTime) {
+            updateClaimButton(true, 0);
           } else {
-            // En attente
-            claimBtn.disabled = true;
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-            claimBtn.innerHTML = `<i class="fas fa-clock"></i> ATTENDRE ${minutes}:${seconds.toString().padStart(2, '0')}`;
-            timerElement.textContent = `Disponible dans: ${minutes}:${seconds.toString().padStart(2, '0')}`;
-            timerElement.style.color = '#FF9800';
-            nextTimeElement.textContent = `Prochaine disponibilité: ${nextTimeStr}`;
+            // Sinon, afficher le décompte (60:00 à 00:00)
+            updateClaimButton(false, timeRemaining);
           }
-          
-          document.getElementById('hourlyTimer').textContent = `Prochain gain: ${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}`;
         }
       } catch (error) {
         console.error("Erreur lors de la mise à jour du minuteur:", error);
       }
     }
 
-    // Réclamer la récompense horaire
+    // Mettre à jour le bouton de réclamation - VERSION SIMPLIFIÉE
+    function updateClaimButton(isAvailable, timeRemaining) {
+      const claimBtn = document.getElementById('claimHourlyBtn');
+      const timerElement = document.getElementById('hourlyCountdown');
+      const hourlyTimerElement = document.getElementById('hourlyTimer');
+      
+      if (isAvailable) {
+        // Récompense disponible
+        claimBtn.disabled = false;
+        claimBtn.innerHTML = '<i class="fas fa-gift"></i> RÉCLAMER LE BONUS';
+        timerElement.textContent = 'Disponible maintenant!';
+        timerElement.style.color = '#4CAF50';
+        hourlyTimerElement.textContent = 'Prochain gain: 00:00';
+      } else {
+        // En attente - décompte de 60 minutes à 0
+        claimBtn.disabled = true;
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const timeDisplay = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        claimBtn.innerHTML = `<i class="fas fa-clock"></i> ATTENDRE ${timeDisplay}`;
+        timerElement.textContent = `Disponible dans: ${timeDisplay}`;
+        timerElement.style.color = '#FF9800';
+        hourlyTimerElement.textContent = `Prochain gain: ${timeDisplay}`;
+      }
+    }
+
+    // Réclamer la récompense horaire - VERSION SIMPLIFIÉE
     async function claimHourlyReward() {
       try {
         const userRef = doc(db, "users", userId);
@@ -1147,32 +1154,27 @@
           const userData = userSnap.data();
           const currentLevel = userData.gamblingLevel || 1;
           const hourlyReward = levels[currentLevel - 1].hourlyReward;
-          const hourlyRewardAvailable = userData.hourlyRewardAvailable || false;
           
-          // Vérifier si la récompense est disponible
-          if (!hourlyRewardAvailable) {
-            showNotification("La récompense horaire n'est pas encore disponible", "warning");
-            return;
-          }
-          
-          // Vérifier si une heure s'est écoulée depuis la dernière réclamation
-          const lastHourlyClaim = userData.lastHourlyClaim ? userData.lastHourlyClaim.toDate() : null;
+          // Vérifier si le bonus est disponible
           const now = new Date();
-          
-          if (lastHourlyClaim) {
-            const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
-            if (timeSinceLastClaim < 3600) {
-              showNotification("La récompense horaire n'est pas encore disponible", "warning");
+          if (userData.lastHourlyClaim) {
+            const lastClaimTime = userData.lastHourlyClaim.toDate();
+            const timeElapsedSeconds = Math.floor((now.getTime() - lastClaimTime.getTime()) / 1000);
+            
+            if (timeElapsedSeconds < 3600) {
+              const timeRemaining = 3600 - timeElapsedSeconds;
+              const minutes = Math.floor(timeRemaining / 60);
+              const seconds = timeRemaining % 60;
+              showNotification(`Veuillez attendre encore ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, "warning");
               return;
             }
           }
           
-          // Ajouter la récompense au solde gambling
+          // Mettre à jour avec le temps serveur exact
           await updateDoc(userRef, {
             gamblingBalance: increment(hourlyReward),
             lastHourlyClaim: serverTimestamp(),
-            totalGamblingWon: increment(hourlyReward),
-            hourlyRewardAvailable: false
+            totalGamblingWon: increment(hourlyReward)
           });
           
           // Enregistrer dans l'historique
@@ -1185,9 +1187,9 @@
             timestamp: serverTimestamp()
           });
           
-          showNotification(`Récompense horaire de ${hourlyReward} Ar réclamée!`, "success");
+          showNotification(`Récompense horaire de ${hourlyReward} Ar réclamée! Prochaine réclamation dans 60 minutes.`, "success");
           
-          // Mettre à jour l'interface
+          // Mettre à jour l'interface immédiatement
           updateHourlyTimer();
         }
       } catch (error) {
@@ -1829,6 +1831,13 @@
     // Initialiser l'application au chargement
     window.addEventListener('DOMContentLoaded', async () => {
       await initApp();
+    });
+
+    // Nettoyer les intervalles lorsque la page se ferme
+    window.addEventListener('beforeunload', () => {
+      if (hourlyTimerInterval) {
+        clearInterval(hourlyTimerInterval);
+      }
     });
 
     // Rendre les fonctions accessibles globalement
