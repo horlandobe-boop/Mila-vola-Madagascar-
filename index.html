@@ -529,7 +529,7 @@
     
     .login-container {
       max-width: 480px;
-      margin: 100px auto;
+      margin: 50px auto;
       padding: 2.5rem;
       background: white;
       border-radius: var(--border-radius);
@@ -1192,6 +1192,151 @@
       background-color: var(--gray-100);
     }
     
+    /* Styles pour les pages d'authentification */
+    .auth-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 30px auto;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow-hover);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .auth-header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    
+    .auth-logo i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .auth-body {
+      padding: 2rem;
+    }
+    
+    .auth-tabs {
+      background: white;
+      border-radius: 50px;
+      padding: 0.35rem;
+      box-shadow: var(--box-shadow);
+      margin-bottom: 1.5rem;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .auth-tabs .nav-link {
+      border-radius: 50px;
+      padding: 0.65rem 1.25rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      transition: var(--transition);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .auth-tabs .nav-link.active, 
+    .auth-tabs .nav-link:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .captcha-box {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .captcha-question {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .password-toggle {
+      cursor: pointer;
+    }
+    
+    .google-btn {
+      background: white;
+      color: #444;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 0.75rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      transition: var(--transition);
+    }
+    
+    .google-btn:hover {
+      background: #f8f9fa;
+      border-color: #ccc;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--gray-300);
+    }
+    
+    .divider span {
+      padding: 0 1rem;
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+    
+    .forgot-link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    
+    .forgot-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .forgot-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .referral-display {
+      background: var(--primary-light);
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px dashed var(--primary);
+      margin-bottom: 1rem;
+      text-align: center;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
     @media (max-width: 768px) {
       .section-card {
         padding: 1.5rem;
@@ -1220,9 +1365,13 @@
         overflow-x: auto;
       }
       
-      .login-container {
-        margin: 60px auto;
-        padding: 1.75rem;
+      .auth-container {
+        margin: 15px;
+        padding: 1rem;
+      }
+      
+      .auth-body {
+        padding: 1.5rem;
       }
       
       .whatsapp-input-group {
@@ -1262,39 +1411,6 @@
     
     .pending-notification {
       animation: pulse 2s infinite;
-    }
-    
-    /* Nouveau style pour les onglets de connexion */
-    .auth-tabs {
-      background: white;
-      border-radius: 50px;
-      padding: 0.35rem;
-      box-shadow: var(--box-shadow);
-      margin-bottom: 1.5rem;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border: 1px solid var(--gray-200);
-    }
-    
-    .auth-tabs .nav-link {
-      border-radius: 50px;
-      padding: 0.65rem 1.25rem;
-      font-weight: 500;
-      color: var(--gray-600);
-      transition: var(--transition);
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .auth-tabs .nav-link.active, 
-    .auth-tabs .nav-link:hover {
-      background: var(--primary);
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
     }
     
     /* Mot de passe oublié */
@@ -1358,25 +1474,27 @@
   </style>
 </head>
 <body>
-  <!-- Page de connexion -->
-  <div id="loginPage" class="container">
-    <div class="login-container">
-      <div class="login-logo">
+  <!-- Page d'authentification -->
+  <div id="authPage" class="auth-container">
+    <div class="auth-header">
+      <div class="auth-logo">
         <i class="fas fa-tasks"></i>
         <h2>Microtâche Mila Vola</h2>
         <p>Plateforme pour gagner de l'argent en réalisant des microtâches</p>
       </div>
-      
+    </div>
+    
+    <div class="auth-body">
       <!-- Onglets -->
-      <ul class="nav auth-tabs justify-content-center" id="authTabs" role="tablist">
+      <ul class="nav auth-tabs" id="authTabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="login-tab" data-bs-toggle="pill" data-bs-target="#login" type="button" role="tab">
-            <i class="fas fa-sign-in-alt me-1"></i> Hiditra (Connexion)
+          <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">
+            <i class="fas fa-sign-in-alt me-1"></i> Connexion
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="signup-tab" data-bs-toggle="pill" data-bs-target="#signup" type="button" role="tab">
-            <i class="fas fa-user-plus me-1"></i> Hisoratra anarana (Inscription)
+          <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab">
+            <i class="fas fa-user-plus me-1"></i> Inscription
           </button>
         </li>
       </ul>
@@ -1385,19 +1503,48 @@
         <!-- Formulaire de connexion -->
         <div class="tab-pane fade show active" id="login" role="tabpanel">
           <form id="loginForm">
+            <!-- Numéro de téléphone -->
             <div class="mb-3">
-              <label for="loginFirstName" class="form-label">Anarana voalohany</label>
-              <input type="text" class="form-control" id="loginFirstName" required>
+              <label for="loginPhone" class="form-label">Numéro de téléphone</label>
+              <input type="tel" class="form-control" id="loginPhone" placeholder="261 34 123 456" required>
             </div>
+            
+            <!-- Mot de passe -->
             <div class="mb-3">
-              <label for="loginSecurityCode" class="form-label">Teny miafina</label>
-              <input type="password" class="form-control" id="loginSecurityCode" required>
+              <label for="loginPassword" class="form-label">Mot de passe</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="loginPassword" placeholder="Votre mot de passe" required>
+                <span class="input-group-text password-toggle" id="toggleLoginPassword">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
-              <i class="fas fa-sign-in-alt me-1"></i> Hiditra
+            
+            <!-- Captcha calcul -->
+            <div class="captcha-box">
+              <div class="captcha-question" id="loginCaptchaQuestion">3 + 5 = ?</div>
+              <input type="number" class="form-control" id="loginCaptchaAnswer" placeholder="Votre réponse" required>
+              <small class="text-muted">Résolvez le calcul pour prouver que vous n'êtes pas un robot</small>
+            </div>
+            
+            <!-- Bouton connexion -->
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+              <i class="fas fa-sign-in-alt me-1"></i> Se connecter
             </button>
-            <div class="forgot-password mt-3">
-              <a href="#" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">Mot de passe oublié ?</a>
+            
+            <!-- Séparateur -->
+            <div class="divider">
+              <span>Ou continuer avec</span>
+            </div>
+            
+            <!-- Bouton Google -->
+            <button type="button" class="btn google-btn mb-3" id="loginWithGoogle">
+              <i class="fab fa-google me-2"></i> Google
+            </button>
+            
+            <!-- Lien mot de passe oublié -->
+            <div class="forgot-link">
+              <a href="#" id="forgotPasswordLink">Mot de passe oublié ?</a>
             </div>
           </form>
         </div>
@@ -1405,20 +1552,82 @@
         <!-- Formulaire d'inscription -->
         <div class="tab-pane fade" id="signup" role="tabpanel">
           <form id="signupForm">
+            <!-- Nom -->
             <div class="mb-3">
-              <label for="signupFirstName" class="form-label">Anarana voalohany</label>
-              <input type="text" class="form-control" id="signupFirstName" required>
+              <label for="signupLastName" class="form-label">Nom</label>
+              <input type="text" class="form-control" id="signupLastName" placeholder="Votre nom" required>
             </div>
+            
+            <!-- Prénom -->
             <div class="mb-3">
-              <label for="signupSecurityCode" class="form-label">Teny miafina</label>
-              <input type="password" class="form-control" id="signupSecurityCode" required>
+              <label for="signupFirstName" class="form-label">Prénom</label>
+              <input type="text" class="form-control" id="signupFirstName" placeholder="Votre prénom" required>
             </div>
+            
+            <!-- Numéro de téléphone -->
             <div class="mb-3">
-              <label for="referralCodeInput" class="form-label">Code de parrainage (facultatif)</label>
-              <input type="text" class="form-control" id="referralCodeInput" placeholder="Entrez le code de votre parrain">
+              <label for="signupPhone" class="form-label">Numéro de téléphone</label>
+              <input type="tel" class="form-control" id="signupPhone" placeholder="261 34 123 456" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
-              <i class="fas fa-user-plus me-1"></i> Hisoratra anarana
+            
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="signupEmail" class="form-label">Adresse e-mail</label>
+              <input type="email" class="form-control" id="signupEmail" placeholder="votre@email.com" required>
+            </div>
+            
+            <!-- Mot de passe -->
+            <div class="mb-3">
+              <label for="signupPassword" class="form-label">Mot de passe</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="signupPassword" placeholder="Créez un mot de passe" required>
+                <span class="input-group-text password-toggle" id="toggleSignupPassword">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
+            </div>
+            
+            <!-- Répéter mot de passe -->
+            <div class="mb-3">
+              <label for="signupConfirmPassword" class="form-label">Répéter le mot de passe</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Répétez votre mot de passe" required>
+                <span class="input-group-text password-toggle" id="toggleSignupConfirmPassword">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
+            </div>
+            
+            <!-- Code de parrainage -->
+            <div class="mb-3">
+              <label for="referralCode" class="form-label">Code de parrainage</label>
+              <div class="referral-display" id="referralCodeDisplay">
+                Aucun code détecté
+              </div>
+              <input type="text" class="form-control" id="referralCode" placeholder="Code de parrainage (optionnel)">
+              <small class="text-muted">Ce champ se remplit automatiquement si vous venez d'un lien de parrainage</small>
+            </div>
+            
+            <!-- Captcha calcul -->
+            <div class="captcha-box">
+              <div class="captcha-question" id="signupCaptchaQuestion">7 + 8 = ?</div>
+              <input type="number" class="form-control" id="signupCaptchaAnswer" placeholder="Votre réponse" required>
+              <small class="text-muted">Résolvez le calcul pour prouver que vous n'êtes pas un robot</small>
+            </div>
+            
+            <!-- Bouton inscription -->
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+              <i class="fas fa-user-plus me-1"></i> S'inscrire
+            </button>
+            
+            <!-- Séparateur -->
+            <div class="divider">
+              <span>Ou continuer avec</span>
+            </div>
+            
+            <!-- Bouton Google -->
+            <button type="button" class="btn google-btn" id="signupWithGoogle">
+              <i class="fab fa-google me-2"></i> Google
             </button>
           </form>
         </div>
@@ -1441,7 +1650,7 @@
                 <i class="fas fa-user fa-lg text-primary"></i>
               </div>
               <button id="logoutBtn" class="logout-btn">
-                <i class="fas fa-sign-out-alt me-1"></i> Hivoaka
+                <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
               </button>
             </div>
           </div>
@@ -1450,7 +1659,7 @@
     </div>
 
     <div id="firebaseStatus" class="firebase-status status-connected">
-      <i class="fas fa-circle-check"></i> Mila vola 
+      <i class="fas fa-circle-check"></i> Connecté à Firebase
     </div>
 
     <div id="notificationArea"></div>
@@ -1482,10 +1691,8 @@
         <a class="nav-link" href="#publicationSection" onclick="showSection('publicationSection')"><i class="fas fa-bullhorn me-1"></i> Publication</a>
         <a class="nav-link" href="#settingsSection" onclick="showSection('settingsSection')"><i class="fas fa-sliders-h me-1"></i> Paramètres</a>
         <a class="nav-link" href="#historySection" onclick="showSection('historySection'); loadHistory()"><i class="fas fa-history me-1"></i> Historique</a>
-        <a class="nav-link" href="roue.html" onclick=" showSection('historySection')"><i class="fas fa-history me-1"></i>La roue de la fortu</a> 
-        
-        
-        <a class="nav-link" href="game.html" onclick=" showSection('historySection')"><i class="fas fa-history me-1"></i>Mila vola gambling</a> 
+        <a class="nav-link" href="roue.html"><i class="fas fa-history me-1"></i>La roue de la fortune</a> 
+        <a class="nav-link" href="game.html"><i class="fas fa-history me-1"></i>Mila vola gambling</a> 
       </nav>
 
       <!-- Admin Section -->
@@ -1497,7 +1704,7 @@
           <div class="admin-search-container">
             <input type="text" id="searchDepot" class="form-control" placeholder="Rechercher par nom ou ID...">
             <button class="btn btn-primary" onclick="filterAdminTable('depotList', 'searchDepot')">
-              <i class="fas fa-search me-1"></i> Hitady
+              <i class="fas fa-search me-1"></i> Rechercher
             </button>
           </div>
           <table class="admin-table">
@@ -1528,7 +1735,7 @@
           <div class="admin-search-container">
             <input type="text" id="searchRetrait" class="form-control" placeholder="Rechercher par nom ou ID...">
             <button class="btn btn-primary" onclick="filterAdminTable('retraitList', 'searchRetrait')">
-              <i class="fas fa-search me-1"></i> Hitady
+              <i class="fas fa-search me-1"></i> Rechercher
             </button>
           </div>
           <table class="admin-table">
@@ -1560,7 +1767,7 @@
           <div class="admin-search-container">
             <input type="text" id="searchProof" class="form-control" placeholder="Rechercher par nom ou ID...">
             <button class="btn btn-primary" onclick="filterAdminTable('submissionList', 'searchProof')">
-              <i class="fas fa-search me-1"></i> Hitady
+              <i class="fas fa-search me-1"></i> Rechercher
             </button>
           </div>
           <table class="admin-table">
@@ -1682,7 +1889,7 @@
         <div class="task-search-container">
           <input type="text" id="taskSearchInput" class="form-control" placeholder="Rechercher par description ou ID de tâche...">
           <button class="btn btn-primary" type="button" onclick="searchTasks()">
-            <i class="fas fa-search me-1"></i> Hitady
+            <i class="fas fa-search me-1"></i> Rechercher
           </button>
         </div>
         
@@ -1919,7 +2126,7 @@
       <div class="modal fade" id="depositModal" tabindex="-1">
         <div class="modal-dialog">
           <form id="depositForm" class="modal-content">
-            <div class="modal-header card-header-gradient">
+            <div class="modal-header">
               <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Dépôt</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1952,15 +2159,14 @@
                 
                 <div class="deposit-info">
                   <p><i class="fas fa-info-circle me-2"></i>Après avoir effectué le paiement, envoyez la preuve de paiement sur Facebook à :</p>
-                  <p class="text-center fw-bold"><a href="https://www.facebook.com/profile.php?id=61578558871898" target="_blank">Envoyé la preuve 
-</a></p>
+                  <p class="text-center fw-bold"><a href="https://www.facebook.com/profile.php?id=61578558871898" target="_blank">Envoyez la preuve</a></p>
                   <p class="small">Capture d'écran du paiement requis avant de soumettre ce formulaire</p>
                 </div>
               </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button type="submit" class="btn btn-primary" style="background: var(--primary); border: none; padding: 0.65rem 1.25rem; font-weight: 600; border-radius: 10px;">Envoyer</button>
+              <button type="submit" class="btn btn-primary">Envoyer</button>
             </div>
           </form>
         </div>
@@ -1970,7 +2176,7 @@
       <div class="modal fade" id="withdrawModal" tabindex="-1">
         <div class="modal-dialog">
           <form id="withdrawForm" class="modal-content">
-            <div class="modal-header card-header-gradient">
+            <div class="modal-header">
               <h5 class="modal-title"><i class="fas fa-minus-circle me-2"></i>Retrait</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1992,7 +2198,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button type="submit" class="btn btn-primary" style="background: var(--primary); border: none; padding: 0.65rem 1.25rem; font-weight: 600; border-radius: 10px;">Envoyer</button>
+              <button type="submit" class="btn btn-primary">Envoyer</button>
             </div>
           </form>
         </div>
@@ -2003,7 +2209,7 @@
         <div class="modal-dialog">
           <form id="submitProofForm" class="modal-content">
             <input id="taskIdHidden" type="hidden">
-            <div class="modal-header card-header-gradient">
+            <div class="modal-header">
               <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Envoyer Preuve</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -2028,17 +2234,17 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button type="submit" class="btn btn-primary" style="background: var(--primary); border: none; padding: 0.65rem 1.25rem; font-weight: 600; border-radius: 10px;">Envoyer</button>
+              <button type="submit" class="btn btn-primary">Envoyer</button>
             </div>
           </form>
         </div>
       </div>
       
-      <!-- Task Details Modal (Nouveau) -->
+      <!-- Task Details Modal -->
       <div class="modal fade" id="taskDetailsModal" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
-            <div class="modal-header card-header-gradient">
+            <div class="modal-header">
               <h5 class="modal-title"><i class="fas fa-tasks me-2"></i>Détails de la tâche</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -2079,7 +2285,7 @@
       <div class="modal fade" id="confirmationModal" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
-            <div class="modal-header card-header-gradient">
+            <div class="modal-header">
               <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Confirmer la Soumission</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -2113,7 +2319,7 @@
       <div class="modal fade" id="resetPasswordModal" tabindex="-1">
         <div class="modal-dialog">
           <form id="resetPasswordForm" class="modal-content">
-            <div class="modal-header card-header-gradient">
+            <div class="modal-header">
               <h5 class="modal-title"><i class="fas fa-key me-2"></i>Réinitialiser le mot de passe</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -2138,7 +2344,7 @@
       <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
-            <div class="modal-header card-header-gradient">
+            <div class="modal-header">
               <h5 class="modal-title"><i class="fas fa-trash me-2"></i>Confirmer la suppression</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -2173,6 +2379,10 @@
       serverTimestamp, query, where, getDocs, setDoc,
       updateDoc, deleteDoc, onSnapshot, arrayUnion
     } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import { 
+      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
     // Firebase configuration
     const firebaseConfig = {
@@ -2188,20 +2398,24 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
 
     // Update Firebase status
     const firebaseStatus = document.getElementById('firebaseStatus');
-    firebaseStatus.innerHTML = '<i class="fas fa-circle-check"></i> Firebase Connected';
+    firebaseStatus.innerHTML = '<i class="fas fa-circle-check"></i> Connecté à Firebase';
 
     // Variables globales
     let userId = "";
     let isAdmin = false;
     let userName = "";
+    let userEmail = "";
+    let userPhone = "";
     let userWhatsApp = "";
     let userReferrer = null;
 
     // Page elements
-    const loginPage = document.getElementById('loginPage');
+    const authPage = document.getElementById('authPage');
     const appContainer = document.getElementById('appContainer');
     const logoutBtn = document.getElementById('logoutBtn');
     const welcomeMessage = document.getElementById('welcomeMessage');
@@ -2213,23 +2427,47 @@
     const cancelEditBtn = document.getElementById('cancelEditBtn');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-    // Gestion du type de tâche
-    taskTypeSelect.addEventListener('change', function() {
-      if (this.value === 'social') {
-        socialMediaContainer.style.display = 'block';
-      } else {
-        socialMediaContainer.style.display = 'none';
-      }
+    // Variables pour les captchas
+    let loginCaptchaAnswer = 0;
+    let signupCaptchaAnswer = 0;
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      // Générer les captchas initiaux
+      generateLoginCaptcha();
+      generateSignupCaptcha();
+      
+      // Vérifier le code de parrainage dans l'URL
+      checkReferralCode();
+      
+      // Vérifier si l'utilisateur est déjà connecté
+      checkLoginStatus();
+      
+      // Gestionnaires d'événements
+      setupEventListeners();
     });
 
+    // Gestion du type de tâche
+    if (taskTypeSelect) {
+      taskTypeSelect.addEventListener('change', function() {
+        if (this.value === 'social') {
+          socialMediaContainer.style.display = 'block';
+        } else {
+          socialMediaContainer.style.display = 'none';
+        }
+      });
+    }
+
     // Gestion de la méthode de dépôt
-    depositMethodSelect.addEventListener('change', function() {
-      if (this.value === 'PAYEER') {
-        payeerContainer.style.display = 'block';
-      } else {
-        payeerContainer.style.display = 'none';
-      }
-    });
+    if (depositMethodSelect) {
+      depositMethodSelect.addEventListener('change', function() {
+        if (this.value === 'PAYEER') {
+          payeerContainer.style.display = 'block';
+        } else {
+          payeerContainer.style.display = 'none';
+        }
+      });
+    }
 
     // Fonction pour afficher une section
     window.showSection = (sectionId) => {
@@ -2263,217 +2501,500 @@
       }
     };
 
-    // Vérifier si l'utilisateur est déjà connecté
-    function checkLoginStatus() {
-      const savedUser = localStorage.getItem('milaVolaUser');
-      if (savedUser) {
-        const userData = JSON.parse(savedUser);
-        userId = userData.id;
-        userName = userData.name;
-        isAdmin = userData.isAdmin;
-        userWhatsApp = userData.whatsapp || "";
-        userReferrer = userData.referrer || null;
-        
-        // Masquer la page de connexion et afficher l'application
-        loginPage.style.display = 'none';
-        appContainer.style.display = 'block';
-        
-        // Mettre à jour le message de bienvenue
-        welcomeMessage.textContent = `Bienvenue, ${userName} !`;
-        
-        // Charger l'application
-        loadApplication();
+    // Générer un calcul captcha pour la connexion
+    function generateLoginCaptcha() {
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      loginCaptchaAnswer = num1 + num2;
+      
+      document.getElementById('loginCaptchaQuestion').textContent = 
+        `${num1} + ${num2} = ?`;
+      document.getElementById('loginCaptchaAnswer').value = '';
+    }
+
+    // Générer un calcul captcha pour l'inscription
+    function generateSignupCaptcha() {
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      signupCaptchaAnswer = num1 + num2;
+      
+      document.getElementById('signupCaptchaQuestion').textContent = 
+        `${num1} + ${num2} = ?`;
+      document.getElementById('signupCaptchaAnswer').value = '';
+    }
+
+    // Vérifier le code de parrainage dans l'URL
+    function checkReferralCode() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const refCode = urlParams.get('ref');
+      
+      if (refCode) {
+        document.getElementById('referralCodeDisplay').textContent = refCode;
+        document.getElementById('referralCode').value = refCode;
+        document.getElementById('referralCode').readOnly = true;
+      } else {
+        document.getElementById('referralCodeDisplay').textContent = 'Aucun code de parrainage détecté';
       }
     }
 
-    // Gestion du formulaire de connexion
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Configurer les gestionnaires d'événements
+    function setupEventListeners() {
+      // Afficher/masquer les mots de passe
+      document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('loginPassword');
+        const icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+          passwordField.type = 'text';
+          icon.className = 'fas fa-eye-slash';
+        } else {
+          passwordField.type = 'password';
+          icon.className = 'fas fa-eye';
+        }
+      });
       
-      const firstName = document.getElementById('loginFirstName').value.trim();
-      const securityCode = document.getElementById('loginSecurityCode').value;
+      document.getElementById('toggleSignupPassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('signupPassword');
+        const icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+          passwordField.type = 'text';
+          icon.className = 'fas fa-eye-slash';
+        } else {
+          passwordField.type = 'password';
+          icon.className = 'fas fa-eye';
+        }
+      });
       
-      if (!firstName || !securityCode) {
-        alert('Ampidiro ny anarana sy ny teny miafina');
-        return;
+      document.getElementById('toggleSignupConfirmPassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('signupConfirmPassword');
+        const icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+          passwordField.type = 'text';
+          icon.className = 'fas fa-eye-slash';
+        } else {
+          passwordField.type = 'password';
+          icon.className = 'fas fa-eye';
+        }
+      });
+      
+      // Formulaire de connexion
+      document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        loginUser();
+      });
+      
+      // Formulaire d'inscription
+      document.getElementById('signupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        registerUser();
+      });
+      
+      // Mot de passe oublié
+      document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        const modal = new bootstrap.Modal(document.getElementById('resetPasswordModal'));
+        modal.show();
+      });
+      
+      // Formulaire mot de passe oublié
+      document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        resetPassword();
+      });
+      
+      // Connexion avec Google
+      document.getElementById('loginWithGoogle').addEventListener('click', function() {
+        loginWithGoogle();
+      });
+      
+      // Inscription avec Google
+      document.getElementById('signupWithGoogle').addEventListener('click', function() {
+        signupWithGoogle();
+      });
+      
+      // Déconnexion
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('milaVolaUser');
+          auth.signOut().then(() => {
+            location.reload();
+          });
+        });
       }
       
-      // Créer un ID utilisateur basé sur le nom
-      const userID = firstName.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(1000 + Math.random() * 9000);
-      
-      try {
-        // Vérifier si l'utilisateur existe déjà
-        const userRef = doc(db, "users", userID);
-        const userSnap = await getDoc(userRef);
-        
-        if (userSnap.exists()) {
-          // Vérifier le mot de passe
-          const userData = userSnap.data();
-          if (userData.securityCode !== securityCode) {
-            alert('Teny miafina diso!');
+      // Gestion WhatsApp
+      if (saveWhatsAppBtn) {
+        saveWhatsAppBtn.addEventListener('click', async () => {
+          const whatsapp = document.getElementById('pubWhatsApp').value.trim();
+          
+          if (!whatsapp || whatsapp.length < 10) {
+            showNotification("Veuillez entrer un numéro WhatsApp valide", "warning");
             return;
           }
-        } else {
-          // Créer un nouvel utilisateur
-          await setDoc(userRef, {
-            name: firstName,
-            securityCode: securityCode,
-            gain: 0,
-            depot: 0,
-            bonus: 0,
-            createdAt: serverTimestamp(),
-            isAdmin: false,
-            completedTasks: [],
-            whatsapp: "",
-            referrals: [],
-            referrer: null
-          });
-        }
-        
-        // Récupérer les informations de l'utilisateur
-        const userDoc = await getDoc(userRef);
-        const userData = userDoc.data();
-        
-        // Stocker les informations de l'utilisateur
-        userId = userID;
-        userName = userData.name;
-        isAdmin = userData.isAdmin || false;
-        userWhatsApp = userData.whatsapp || "";
-        userReferrer = userData.referrer || null;
-        
-        // Sauvegarder dans localStorage
-        localStorage.setItem('milaVolaUser', JSON.stringify({
-          id: userId,
-          name: userName,
-          isAdmin: isAdmin,
-          whatsapp: userWhatsApp,
-          referrer: userReferrer
-        }));
-        
-        // Mettre à jour le message de bienvenue
-        welcomeMessage.textContent = `Bienvenue, ${userName} !`;
-        
-        // Masquer la page de connexion et afficher l'application
-        loginPage.style.display = 'none';
-        appContainer.style.display = 'block';
-        
-        // Charger l'application
-        loadApplication();
-        
-      } catch (error) {
-        console.error("Erreur de connexion:", error);
-        alert("Erreur de connexion: " + error.message);
+          
+          try {
+            const userRef = doc(db, "users", userId);
+            await updateDoc(userRef, {
+              whatsapp: whatsapp
+            });
+            
+            userWhatsApp = whatsapp;
+            showNotification("Numéro WhatsApp enregistré!", "success");
+          } catch (error) {
+            showNotification("Erreur lors de l'enregistrement: " + error.message, "danger");
+          }
+        });
       }
-    });
+      
+      // Générer un nouveau captcha quand on change d'onglet
+      document.getElementById('login-tab').addEventListener('click', function() {
+        generateLoginCaptcha();
+      });
+      
+      document.getElementById('signup-tab').addEventListener('click', function() {
+        generateSignupCaptcha();
+      });
+    }
 
-    // Gestion du formulaire d'inscription
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Vérifier si l'utilisateur est déjà connecté
+    function checkLoginStatus() {
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          // L'utilisateur est connecté avec Firebase Auth
+          userId = user.uid;
+          userEmail = user.email;
+          
+          try {
+            // Vérifier si l'utilisateur existe dans Firestore
+            const userRef = doc(db, "users", userId);
+            const userSnap = await getDoc(userRef);
+            
+            if (userSnap.exists()) {
+              // Utilisateur existe dans Firestore
+              const userData = userSnap.data();
+              userName = userData.firstName + ' ' + userData.lastName;
+              isAdmin = userData.isAdmin || false;
+              userPhone = userData.phone || "";
+              userWhatsApp = userData.whatsapp || "";
+              userReferrer = userData.referrer || null;
+              
+              // Mettre à jour le message de bienvenue
+              welcomeMessage.textContent = `Bienvenue, ${userData.firstName} !`;
+              
+              // Sauvegarder dans localStorage
+              localStorage.setItem('milaVolaUser', JSON.stringify({
+                id: userId,
+                email: userEmail,
+                name: userName,
+                isAdmin: isAdmin,
+                phone: userPhone,
+                whatsapp: userWhatsApp,
+                referrer: userReferrer
+              }));
+              
+              // Masquer la page d'authentification et afficher l'application
+              authPage.style.display = 'none';
+              appContainer.style.display = 'block';
+              
+              // Charger l'application
+              loadApplication();
+            } else {
+              // L'utilisateur n'existe pas dans Firestore, le déconnecter
+              await auth.signOut();
+              showNotification("Votre compte n'existe pas dans la base de données. Veuillez vous inscrire.", "danger");
+            }
+          } catch (error) {
+            console.error("Erreur lors de la vérification de l'utilisateur:", error);
+            showNotification("Erreur de connexion: " + error.message, "danger");
+          }
+        } else {
+          // L'utilisateur n'est pas connecté
+          authPage.style.display = 'block';
+          appContainer.style.display = 'none';
+        }
+      });
+    }
+
+    // Fonction de connexion
+    async function loginUser() {
+      const phone = document.getElementById('loginPhone').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const captchaAnswer = parseInt(document.getElementById('loginCaptchaAnswer').value);
       
-      const firstName = document.getElementById('signupFirstName').value.trim();
-      const securityCode = document.getElementById('signupSecurityCode').value;
-      const referralCode = document.getElementById('referralCodeInput').value.trim();
-      
-      if (!firstName || !securityCode) {
-        alert('Ampidiro ny anarana sy ny teny miafina');
+      // Validation
+      if (!phone || !password) {
+        showNotification("Veuillez remplir tous les champs", "danger");
         return;
       }
       
-      // Créer un ID utilisateur
-      const userID = firstName.toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(1000 + Math.random() * 9000);
+      if (captchaAnswer !== loginCaptchaAnswer) {
+        showNotification("Réponse au calcul incorrecte. Veuillez réessayer.", "danger");
+        generateLoginCaptcha();
+        return;
+      }
       
       try {
-        // Vérifier si l'utilisateur existe déjà
-        const userRef = doc(db, "users", userID);
-        const userSnap = await getDoc(userRef);
+        // Chercher l'utilisateur par téléphone dans Firestore
+        const usersQuery = query(collection(db, "users"), where("phone", "==", phone));
+        const querySnapshot = await getDocs(usersQuery);
         
-        if (userSnap.exists()) {
-          alert('Ce nom d\'utilisateur existe déjà. Veuillez en choisir un autre.');
+        if (querySnapshot.empty) {
+          showNotification("Numéro de téléphone incorrect", "danger");
           return;
         }
         
-        let referrerId = null;
+        // Récupérer l'email de l'utilisateur
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        const userEmail = userData.email;
+        
+        // Se connecter avec Firebase Auth
+        await signInWithEmailAndPassword(auth, userEmail, password);
+        
+        showNotification("Connexion réussie!", "success");
+        
+      } catch (error) {
+        console.error("Erreur de connexion:", error);
+        
+        let errorMessage = "Erreur de connexion";
+        if (error.code === 'auth/wrong-password') {
+          errorMessage = "Mot de passe incorrect";
+        } else if (error.code === 'auth/user-not-found') {
+          errorMessage = "Utilisateur non trouvé";
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = "Email invalide";
+        }
+        
+        showNotification(errorMessage, "danger");
+      }
+    }
+
+    // Fonction d'inscription
+    async function registerUser() {
+      const lastName = document.getElementById('signupLastName').value.trim();
+      const firstName = document.getElementById('signupFirstName').value.trim();
+      const phone = document.getElementById('signupPhone').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('signupConfirmPassword').value;
+      const referralCode = document.getElementById('referralCode').value.trim();
+      const captchaAnswer = parseInt(document.getElementById('signupCaptchaAnswer').value);
+      
+      // Validation
+      if (!lastName || !firstName || !phone || !email || !password || !confirmPassword) {
+        showNotification("Veuillez remplir tous les champs obligatoires", "danger");
+        return;
+      }
+      
+      // Validation email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showNotification("Veuillez entrer une adresse email valide", "danger");
+        return;
+      }
+      
+      // Validation mot de passe
+      if (password.length < 6) {
+        showNotification("Le mot de passe doit contenir au moins 6 caractères", "danger");
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        showNotification("Les mots de passe ne correspondent pas", "danger");
+        return;
+      }
+      
+      if (captchaAnswer !== signupCaptchaAnswer) {
+        showNotification("Réponse au calcul incorrecte. Veuillez réessayer.", "danger");
+        generateSignupCaptcha();
+        return;
+      }
+      
+      try {
+        // Vérifier si le téléphone existe déjà
+        const phoneQuery = query(collection(db, "users"), where("phone", "==", phone));
+        const phoneSnapshot = await getDocs(phoneQuery);
+        
+        if (!phoneSnapshot.empty) {
+          showNotification("Ce numéro de téléphone est déjà utilisé", "danger");
+          return;
+        }
+        
+        // Vérifier si l'email existe déjà
+        const emailQuery = query(collection(db, "users"), where("email", "==", email));
+        const emailSnapshot = await getDocs(emailQuery);
+        
+        if (!emailSnapshot.empty) {
+          showNotification("Cette adresse email est déjà utilisée", "danger");
+          return;
+        }
+        
         // Vérifier le code de parrainage
+        let referrerId = null;
         if (referralCode) {
           const referrerRef = doc(db, "users", referralCode);
           const referrerSnap = await getDoc(referrerRef);
           if (referrerSnap.exists()) {
             referrerId = referralCode;
           } else {
-            alert('Code de parrainage invalide. Veuillez vérifier ou laisser vide.');
+            showNotification("Code de parrainage invalide. Veuillez vérifier ou laisser vide.", "warning");
             return;
           }
         }
         
-        // Créer un nouvel utilisateur
+        // Créer l'utilisateur avec Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // Créer le profil utilisateur dans Firestore
+        const userRef = doc(db, "users", user.uid);
         await setDoc(userRef, {
-          name: firstName,
-          securityCode: securityCode,
+          uid: user.uid,
+          lastName: lastName,
+          firstName: firstName,
+          phone: phone,
+          email: email,
           gain: 0,
           depot: 0,
-          bonus: 0, // Solde bonus de parrainage
-          referrer: referrerId, // ID du parrain
-          referrals: [], // Liste des filleuls
+          bonus: 0,
+          referrer: referrerId,
+          referrals: [],
           createdAt: serverTimestamp(),
           isAdmin: false,
           completedTasks: [],
-          whatsapp: ""
+          whatsapp: "",
+          name: firstName + ' ' + lastName // Pour la compatibilité
         });
         
         // Si le parrain est valide, mettre à jour son compte
         if (referrerId) {
           const referrerRef = doc(db, "users", referrerId);
           await updateDoc(referrerRef, {
-            referrals: arrayUnion(userID)
+            referrals: arrayUnion(user.uid)
           });
           
-          // Afficher une notification de succès
           showNotification(`Inscription réussie avec parrainage (${referralCode}) !`, "success");
+        } else {
+          showNotification("Inscription réussie!", "success");
         }
         
-        // Connecter l'utilisateur après inscription
-        userId = userID;
-        userName = firstName;
-        isAdmin = false;
-        userReferrer = referrerId;
-        
-        // Sauvegarder dans localStorage
-        localStorage.setItem('milaVolaUser', JSON.stringify({
-          id: userId,
-          name: userName,
-          isAdmin: isAdmin,
-          referrer: userReferrer
-        }));
-        
-        // Mettre à jour le message de bienvenue
-        welcomeMessage.textContent = `Bienvenue, ${userName} !`;
-        
-        // Masquer la page de connexion et afficher l'application
-        loginPage.style.display = 'none';
-        appContainer.style.display = 'block';
-        
-        // Charger l'application
-        loadApplication();
+        // Connecter automatiquement l'utilisateur
+        await signInWithEmailAndPassword(auth, email, password);
         
       } catch (error) {
         console.error("Erreur lors de l'inscription:", error);
-        alert("Erreur lors de l'inscription: " + error.message);
+        
+        let errorMessage = "Erreur lors de l'inscription";
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = "Cette adresse email est déjà utilisée";
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = "Le mot de passe est trop faible";
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = "Adresse email invalide";
+        }
+        
+        showNotification(errorMessage, "danger");
       }
-    });
+    }
 
-    // Déconnexion
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('milaVolaUser');
-      location.reload();
-    });
+    // Fonction de réinitialisation de mot de passe
+    async function resetPassword() {
+      const email = document.getElementById('resetEmail').value.trim();
+      
+      if (!email) {
+        showNotification("Veuillez entrer votre adresse email", "danger");
+        return;
+      }
+      
+      try {
+        await sendPasswordResetEmail(auth, email);
+        
+        // Fermer le modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal'));
+        modal.hide();
+        
+        showNotification(`Un lien de réinitialisation a été envoyé à ${email}`, "success");
+      } catch (error) {
+        console.error("Erreur lors de l'envoi du lien de réinitialisation:", error);
+        
+        let errorMessage = "Erreur lors de l'envoi du lien";
+        if (error.code === 'auth/user-not-found') {
+          errorMessage = "Aucun compte trouvé avec cette adresse email";
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = "Adresse email invalide";
+        }
+        
+        showNotification(errorMessage, "danger");
+      }
+    }
+
+    // Fonction de connexion avec Google
+    async function loginWithGoogle() {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        
+        // Vérifier si l'utilisateur existe dans Firestore
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (!userSnap.exists()) {
+          // Créer un nouvel utilisateur dans Firestore
+          const userName = user.displayName || "Utilisateur Google";
+          const nameParts = userName.split(' ');
+          const firstName = nameParts[0] || "";
+          const lastName = nameParts.slice(1).join(' ') || "";
+          
+          await setDoc(userRef, {
+            uid: user.uid,
+            lastName: lastName,
+            firstName: firstName,
+            phone: "",
+            email: user.email,
+            gain: 0,
+            depot: 0,
+            bonus: 0,
+            referrer: null,
+            referrals: [],
+            createdAt: serverTimestamp(),
+            isAdmin: false,
+            completedTasks: [],
+            whatsapp: "",
+            name: userName,
+            googleAccount: true
+          });
+          
+          showNotification("Compte Google créé avec succès!", "success");
+        } else {
+          showNotification("Connexion avec Google réussie!", "success");
+        }
+        
+      } catch (error) {
+        console.error("Erreur lors de la connexion avec Google:", error);
+        showNotification("Erreur lors de la connexion avec Google: " + error.message, "danger");
+      }
+    }
+
+    // Fonction d'inscription avec Google
+    async function signupWithGoogle() {
+      // Pour l'inscription avec Google, c'est la même chose que la connexion
+      // car Google crée automatiquement un compte
+      await loginWithGoogle();
+    }
 
     // Charger l'application après connexion
     async function loadApplication() {
       await loadBalances();
       await loadTasks();
       await loadPublications();
-      document.getElementById("referralCode").textContent = userId;
-      document.getElementById('referralLink').value = window.location.href.split('?')[0] + '?ref=' + userId;
+      
+      // Mettre à jour les informations de parrainage
+      if (userId) {
+        document.getElementById("referralCode").textContent = userId;
+        document.getElementById('referralLink').value = window.location.origin + window.location.pathname + '?ref=' + userId;
+      }
       
       // Cacher le lien admin si l'utilisateur n'est pas admin
       const adminNavLink = document.getElementById('adminNavLink');
@@ -2548,7 +3069,7 @@
             
             const row = document.createElement('tr');
             row.innerHTML = `
-              <td>${referralData.name}</td>
+              <td>${referralData.firstName} ${referralData.lastName}</td>
               <td>${date}</td>
               <td>${referralData.gain ? (referralData.gain * 0.05).toFixed(2) : '0'} Ar</td>
             `;
@@ -2584,6 +3105,7 @@
       }
     }
 
+    // Dépôt
     document.getElementById("depositForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const montant = parseFloat(document.getElementById("depositAmount").value);
@@ -2595,7 +3117,7 @@
             userId, userName, montant, method,
             status: "en attente", createdAt: serverTimestamp()
           });
-          showNotification("Dépôt voaray! Votre demande est en cours de traitement.", "success");
+          showNotification("Dépôt envoyé! Votre demande est en cours de traitement.", "success");
           
           // Reset form and close modal
           e.target.reset();
@@ -2604,10 +3126,11 @@
           showNotification("Erreur lors du dépôt: " + error.message, "danger");
         }
       } else {
-        showNotification("Ampidiro araka ny tokony ho izy ny vola (min 2000 Ar) sy fomba fandoavana.", "warning");
+        showNotification("Veuillez entrer un montant valide (min 2000 Ar) et sélectionner une méthode de paiement.", "warning");
       }
     });
 
+    // Retrait
     document.getElementById("withdrawForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const nom = document.getElementById("withdrawName").value;
@@ -2631,13 +3154,13 @@
             userId, userName, nom, phone, montant, frais,
             status: "en attente", createdAt: serverTimestamp()
           });
-          showNotification("Retrait voaray! Votre demande est en cours de traitement.", "success");
+          showNotification("Retrait envoyé! Votre demande est en cours de traitement.", "success");
           
           // Reset form and close modal
           e.target.reset();
           bootstrap.Modal.getInstance(document.getElementById('withdrawModal')).hide();
         } else {
-          showNotification("Tsara indrindra ny ≥ 500 Ar", "warning");
+          showNotification("Le montant minimum est de 500 Ar", "warning");
         }
       } catch (error) {
         showNotification("Erreur lors du retrait: " + error.message, "danger");
@@ -2785,7 +3308,7 @@
         if (taskSnap.exists()) {
           const taskData = taskSnap.data();
           
-          // Récupérer le budget (compatibilité avec ancienne version)
+          // Récupérer le budget
           const budget = taskData.budgetPerParticipant || taskData.budget || 0;
           
           let socialText = '';
@@ -2845,6 +3368,7 @@
       }
     };
 
+    // Envoyer une preuve
     document.getElementById("submitProofForm").addEventListener("submit", async e => {
       e.preventDefault();
       const taskId = document.getElementById("taskIdHidden").value;
@@ -2852,7 +3376,7 @@
       const proof = document.getElementById("userProof").value;
       
       if (!taskId || !name || !proof) {
-        showNotification("Ampidiro ny angona rehetra", "warning");
+        showNotification("Veuillez remplir tous les champs", "warning");
         return;
       }
       
@@ -2872,7 +3396,7 @@
           status: "en attente", createdAt: serverTimestamp()
         });
         
-        showNotification("Porofo nalefa! Ny mpitantana dia handinika azy.", "success");
+        showNotification("Preuve envoyée! L'administrateur va l'examiner.", "success");
         
         // Recharger les tâches pour afficher la notification
         loadTasks();
@@ -2890,7 +3414,7 @@
       
       // Mettre à jour le lien WhatsApp
       const whatsappBtn = document.getElementById('whatsappProofBtn');
-      const defaultMessage = "Nanatanteraka ny asa tamin'ny Microtâche Mila Vola aho. Izao ny porofoko:";
+      const defaultMessage = "J'ai réalisé la tâche sur Microtâche Mila Vola. Voici ma preuve:";
       
       if (whatsapp) {
         whatsappBtn.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(defaultMessage)}`;
@@ -2901,28 +3425,6 @@
       // Ouvrir la modal
       new bootstrap.Modal(document.getElementById('proofModal')).show();
     };
-
-    // --- Gestion WhatsApp ---
-    saveWhatsAppBtn.addEventListener('click', async () => {
-      const whatsapp = document.getElementById('pubWhatsApp').value.trim();
-      
-      if (!whatsapp || whatsapp.length < 10) {
-        showNotification("Ampidiro ny laharana WhatsApp araka ny tokony ho izy", "warning");
-        return;
-      }
-      
-      try {
-        const userRef = doc(db, "users", userId);
-        await updateDoc(userRef, {
-          whatsapp: whatsapp
-        });
-        
-        userWhatsApp = whatsapp;
-        showNotification("Laharana WhatsApp voarakitra!", "success");
-      } catch (error) {
-        showNotification("Erreur lors de l'enregistrement: " + error.message, "danger");
-      }
-    });
 
     // --- Section Publication ---
     async function loadPublications() {
@@ -2962,7 +3464,7 @@
             statusBadge = '<span class="badge bg-secondary">Inactive</span>';
           }
           
-          // Récupérer le budget (compatibilité avec ancienne version)
+          // Récupérer le budget
           const budget = d.budgetPerParticipant || d.budget || 0;
           const completedCount = d.completedCount || 0;
           
@@ -3114,6 +3616,7 @@
       }
     }
 
+    // Publier une tâche
     document.getElementById('publishForm').addEventListener('submit', async e => {
       e.preventDefault();
       const desc = document.getElementById('pubDescription').value;
@@ -3125,7 +3628,7 @@
       const editTaskId = document.getElementById('editTaskId').value;
       
       if (budgetPerParticipant < 5) {
-        showNotification('Budget ≥ 5 Ar par participant', 'warning');
+        showNotification('Budget minimum: 5 Ar par participant', 'warning');
         return;
       }
       
@@ -3198,7 +3701,7 @@
             completedCount: 0
           });
           
-          showNotification('Asa navoaka! Le solde ne sera déduit que lorsque les participants enverront des preuves.', 'success');
+          showNotification('Tâche publiée! Le solde ne sera déduit que lorsque les participants enverront des preuves.', 'success');
         }
         
         loadPublications();
@@ -3277,44 +3780,46 @@
     };
 
     // Gestionnaire d'événement pour le bouton de suppression confirmée
-    confirmDeleteBtn.addEventListener('click', async () => {
-      const taskId = document.getElementById('deleteTaskId').value;
-      
-      if (!taskId) {
-        return;
-      }
-      
-      try {
-        const taskRef = doc(db, "tasks", taskId);
-        const taskSnap = await getDoc(taskRef);
+    if (confirmDeleteBtn) {
+      confirmDeleteBtn.addEventListener('click', async () => {
+        const taskId = document.getElementById('deleteTaskId').value;
         
-        if (!taskSnap.exists()) {
-          showNotification("Tâche introuvable", "danger");
+        if (!taskId) {
           return;
         }
         
-        const taskData = taskSnap.data();
-        
-        // Vérifier que l'utilisateur est bien le propriétaire de la tâche
-        if (taskData.publisher !== userId) {
-          showNotification("Vous n'êtes pas autorisé à supprimer cette tâche", "danger");
-          return;
+        try {
+          const taskRef = doc(db, "tasks", taskId);
+          const taskSnap = await getDoc(taskRef);
+          
+          if (!taskSnap.exists()) {
+            showNotification("Tâche introuvable", "danger");
+            return;
+          }
+          
+          const taskData = taskSnap.data();
+          
+          // Vérifier que l'utilisateur est bien le propriétaire de la tâche
+          if (taskData.publisher !== userId) {
+            showNotification("Vous n'êtes pas autorisé à supprimer cette tâche", "danger");
+            return;
+          }
+          
+          // Supprimer la tâche
+          await deleteDoc(taskRef);
+          
+          showNotification('Publication supprimée avec succès!', 'success');
+          
+          // Fermer le modal
+          bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+          
+          // Recharger les publications
+          loadPublications();
+        } catch (error) {
+          showNotification("Erreur lors de la suppression: " + error.message, "danger");
         }
-        
-        // Supprimer la tâche
-        await deleteDoc(taskRef);
-        
-        showNotification('Publication supprimée avec succès!', 'success');
-        
-        // Fermer le modal
-        bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-        
-        // Recharger les publications
-        loadPublications();
-      } catch (error) {
-        showNotification("Erreur lors de la suppression: " + error.message, "danger");
-      }
-    });
+      });
+    }
 
     // --- Section Admin ---
     async function loadAdminPanel() {
@@ -3596,7 +4101,7 @@
       }
     };
 
-    // --- Nouvelle section Historique ---
+    // --- Section Historique ---
     async function loadHistory() {
       try {
         // Charger l'historique des dépôts
@@ -3930,20 +4435,6 @@
         notification.remove();
       }, 3000);
     }
-
-    // Vérifier le paramètre de référence dans l'URL
-    function checkReferral() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const ref = urlParams.get('ref');
-      if (ref) {
-        document.getElementById('referralCodeInput').value = ref;
-        showNotification("Vous avez été invité par un parrain! Utilisez le code d'accès pour bénéficier des avantages.", "info");
-      }
-    }
-
-    // Vérifier le statut de connexion au chargement
-    checkLoginStatus();
-    checkReferral();
   </script>
 </body>
 </html>
