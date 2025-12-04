@@ -777,7 +777,7 @@
       right: 20px;
       padding: 15px 25px;
       border-radius: var(--border-radius);
-      background: var(--success);
+      background: var(--primary);
       color: white;
       box-shadow: var(--box-shadow);
       z-index: 2000;
@@ -2506,18 +2506,19 @@
     import { 
       getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
       signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail,
-      signOut
+      signOut, onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-    // Firebase configuration
+    // NOUVELLE CONFIGURATION FIREBASE
     const firebaseConfig = {
-      apiKey: "AIzaSyAC-P6WFH1kqfYQi3PdCWpy4LSUqvtX_vo",
-      authDomain: "mila-vola.firebaseapp.com",
-      projectId: "mila-vola",
-      storageBucket: "mila-vola.appspot.com",
-      messagingSenderId: "690624768352",
-      appId: "1:690624768352:web:668994ef2664c5b99dd605",
-      measurementId: "G-C3FZTKQHFP"
+      apiKey: "AIzaSyCKOfOqZLr7BGmZbs87Co3tjkSS11rj2M0",
+      authDomain: "mila-vola-55d6e.firebaseapp.com",
+      databaseURL: "https://mila-vola-55d6e-default-rtdb.firebaseio.com",
+      projectId: "mila-vola-55d6e",
+      storageBucket: "mila-vola-55d6e.firebasestorage.app",
+      messagingSenderId: "968310917440",
+      appId: "1:968310917440:web:6cec76c1c5a502f98912a5",
+      measurementId: "G-77V0HPGTV7"
     };
 
     // Initialize Firebase
@@ -2525,10 +2526,6 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
-
-    // Update Firebase status
-    const firebaseStatus = document.getElementById('firebaseStatus');
-    firebaseStatus.innerHTML = '<i class="fas fa-circle-check"></i> Connecté à Firebase';
 
     // Variables globales
     let userId = "";
@@ -2802,11 +2799,261 @@
       if (confirmDeleteBtn) {
         confirmDeleteBtn.addEventListener('click', handleDeleteTask);
       }
+      
+      // Formulaire de dépôt
+      document.getElementById("depositForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const montant = parseFloat(document.getElementById("depositAmount").value);
+        const method = document.getElementById("depositMethod").value;
+        
+        if (montant >= 2000 && method) {
+          try {
+            await addDoc(collection(db, "depot_requests"), {
+              userId, userName, montant, method,
+              status: "en attente", createdAt: serverTimestamp()
+            });
+            showNotification("Dépôt envoyé! Votre demande est en cours de traitement.", "success");
+            
+            // Reset form and close modal
+            e.target.reset();
+            bootstrap.Modal.getInstance(document.getElementById('depositModal')).hide();
+          } catch (error) {
+            showNotification("Erreur lors du dépôt: " + error.message, "danger");
+          }
+        } else {
+          showNotification("Veuillez entrer un montant valide (min 2000 Ar) et sélectionner une méthode de paiement.", "warning");
+        }
+      });
+      
+      // Formulaire de retrait
+      document.getElementById("withdrawForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nom = document.getElementById("withdrawName").value;
+        const phone = document.getElementById("withdrawPhone").value;
+        const method = document.getElementById("withdrawMethod").value;
+        const montant = parseFloat(document.getElementById("withdrawAmount").value);
+        
+        // Vérifier le montant minimum
+        if (montant < 5000) {
+          showNotification("Le montant minimum de retrait est de 5000 Ar", "warning");
+          return;
+        }
+        
+        try {
+          // Vérifier le solde de gains
+          const userRef = doc(db, "users", userId);
+          const userSnap = await getDoc(userRef);
+          const userData = userSnap.data();
+          
+          if (montant > userData.gain) {
+            showNotification("Solde de gains insuffisant. Vous ne pouvez retirer que votre solde de gains.", "warning");
+            return;
+          }
+          
+          // Vérifier si le numéro est déjà utilisé pour une autre méthode de paiement
+          const phoneConflict = await checkPhonePaymentConflict(phone, method);
+          if (phoneConflict) {
+            // Bloquer le compte
+            await updateDoc(userRef, {
+              blocked: true
+            });
+            
+            showNotification("Ce numéro est déjà utilisé pour une autre méthode de paiement. Votre compte a été bloqué.", "danger");
+            showBlockedAccount();
+            return;
+          }
+          
+          // Vérifier si l'utilisateur a déjà utilisé ce numéro avec une méthode différente
+          const userWithdrawalsQuery = query(
+            collection(db, "retrait_requests"),
+            where("userId", "==", userId),
+            where("phone", "==", phone)
+          );
+          const userWithdrawalsSnap = await getDocs(userWithdrawalsQuery);
+          
+          if (!userWithdrawalsSnap.empty) {
+            // Vérifier si la méthode est différente
+            let methodConflict = false;
+            userWithdrawalsSnap.forEach(doc => {
+              const data = doc.data();
+              if (data.method !== method && (data.status === "en attente" || data.status === "confirmé")) {
+                methodConflict = true;
+              }
+            });
+            
+            if (methodConflict) {
+              // Bloquer le compte
+              await updateDoc(userRef, {
+                blocked: true
+              });
+              
+              showNotification("Vous ne pouvez pas utiliser le même numéro pour deux méthodes de paiement différentes. Votre compte a été bloqué.", "danger");
+              showBlockedAccount();
+              return;
+            }
+          }
+          
+          // Procéder au retrait
+          const frais = montant * 0.1;
+          await addDoc(collection(db, "retrait_requests"), {
+            userId, userName, nom, phone, method, montant, frais,
+            status: "en attente", createdAt: serverTimestamp()
+          });
+          
+          showNotification("Retrait envoyé! Votre demande est en cours de traitement.", "success");
+          
+          // Reset form and close modal
+          e.target.reset();
+          bootstrap.Modal.getInstance(document.getElementById('withdrawModal')).hide();
+        } catch (error) {
+          showNotification("Erreur lors du retrait: " + error.message, "danger");
+        }
+      });
+      
+      // Formulaire de preuve
+      document.getElementById("submitProofForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        const taskId = document.getElementById("taskIdHidden").value;
+        const name = document.getElementById("userName").value;
+        const proof = document.getElementById("userProof").value;
+        
+        if (!taskId || !name || !proof) {
+          showNotification("Veuillez remplir tous les champs", "warning");
+          return;
+        }
+        
+        try {
+          // Vérifier si l'utilisateur a déjà soumis une preuve pour cette tâche
+          const submissionKey = `${userId}_${taskId}`;
+          const submissionRef = doc(db, "submissions", submissionKey);
+          const submissionSnap = await getDoc(submissionRef);
+          
+          if (submissionSnap.exists()) {
+            showNotification("Vous avez déjà soumis une preuve pour cette tâche.", "warning");
+            return;
+          }
+          
+          await setDoc(submissionRef, {
+            userId, userName, taskId, name, proof,
+            status: "en attente", createdAt: serverTimestamp()
+          });
+          
+          showNotification("Preuve envoyée! L'administrateur va l'examiner.", "success");
+          
+          // Recharger les tâches pour afficher la notification
+          loadTasks();
+          
+          // Reset form and close modal
+          e.target.reset();
+          bootstrap.Modal.getInstance(document.getElementById('proofModal')).hide();
+        } catch (error) {
+          showNotification("Erreur lors de l'envoi de la preuve: " + error.message, "danger");
+        }
+      });
+      
+      // Formulaire de publication
+      document.getElementById('publishForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const desc = document.getElementById('pubDescription').value;
+        const budgetPerParticipant = parseInt(document.getElementById('pubBudgetPerParticipant').value);
+        const url = document.getElementById('pubURL').value;
+        const cond = document.getElementById('pubConditions').value;
+        const taskType = document.getElementById('taskType').value;
+        const socialMedia = document.getElementById('socialMedia').value;
+        const editTaskId = document.getElementById('editTaskId').value;
+        
+        if (budgetPerParticipant < 5) {
+          showNotification('Budget minimum: 5 Ar par participant', 'warning');
+          return;
+        }
+        
+        if (!taskType) {
+          showNotification('Sélectionnez un type de tâche', 'warning');
+          return;
+        }
+        
+        if (taskType === 'social' && !socialMedia) {
+          showNotification('Sélectionnez un réseau social', 'warning');
+          return;
+        }
+        
+        try {
+          // Mode édition
+          if (editTaskId) {
+            const taskRef = doc(db, "tasks", editTaskId);
+            const taskSnap = await getDoc(taskRef);
+            
+            if (!taskSnap.exists()) {
+              showNotification("Tâche introuvable", "danger");
+              return;
+            }
+            
+            const taskData = taskSnap.data();
+            
+            // Vérifier que l'utilisateur est bien le propriétaire de la tâche
+            if (taskData.publisher !== userId) {
+              showNotification("Vous n'êtes pas autorisé à modifier cette tâche", "danger");
+              return;
+            }
+            
+            // Mettre à jour la tâche
+            await updateDoc(taskRef, {
+              description: desc,
+              budgetPerParticipant: budgetPerParticipant,
+              url: url,
+              cond: cond,
+              taskType: taskType,
+              socialMedia: taskType === 'social' ? socialMedia : '',
+              whatsapp: userWhatsApp
+            });
+            
+            showNotification('Tâche modifiée avec succès!', 'success');
+          } else {
+            // Mode création
+            // Vérifier le solde de dépôt
+            const userRef = doc(db, "users", userId);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+            
+            if (userData.depot < budgetPerParticipant) {
+              showNotification('Solde de dépôt insuffisant pour réactiver cette tâche', 'warning');
+              return;
+            }
+            
+            // Créer la tâche sans déduire le solde
+            await addDoc(collection(db,'tasks'),{
+              publisher: userId,
+              publisherName: userName,
+              description: desc,
+              budgetPerParticipant: budgetPerParticipant,
+              url,
+              cond,
+              taskType,
+              socialMedia: taskType === 'social' ? socialMedia : '',
+              status: 'active',
+              whatsapp: userWhatsApp,
+              createdAt: serverTimestamp(),
+              completedCount: 0
+            });
+            
+            showNotification('Tâche publiée! Le solde ne sera déduit que lorsque les participants enverront des preuves.', 'success');
+          }
+          
+          loadPublications();
+          
+          // Reset form
+          e.target.reset();
+          socialMediaContainer.style.display = 'none';
+          cancelEdit();
+        } catch (error) {
+          showNotification("Erreur lors de la publication: " + error.message, 'danger');
+        }
+      });
     }
 
     // Vérifier si l'utilisateur est déjà connecté
     function checkLoginStatus() {
-      auth.onAuthStateChanged(async (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
           // L'utilisateur est connecté avec Firebase Auth
           userId = user.uid;
@@ -2893,6 +3140,12 @@
         return;
       }
       
+      // Afficher l'indicateur de chargement
+      const loginBtn = document.querySelector('#loginForm button[type="submit"]');
+      const originalText = loginBtn.innerHTML;
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Connexion en cours...';
+      loginBtn.disabled = true;
+      
       try {
         // Chercher l'utilisateur par téléphone dans Firestore
         const usersQuery = query(collection(db, "users"), where("phone", "==", phone));
@@ -2900,6 +3153,8 @@
         
         if (querySnapshot.empty) {
           showNotification("Numéro de téléphone incorrect", "danger");
+          loginBtn.innerHTML = originalText;
+          loginBtn.disabled = false;
           return;
         }
         
@@ -2911,7 +3166,13 @@
         // Se connecter avec Firebase Auth
         await signInWithEmailAndPassword(auth, userEmail, password);
         
-        showNotification("Connexion réussie!", "success");
+        // Afficher la notification bleue pendant 1 seconde
+        showNotification("Connexion réussie!", "info", 1000);
+        
+        // Recharger la page après 1 seconde
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
         
       } catch (error) {
         console.error("Erreur de connexion:", error);
@@ -2926,6 +3187,8 @@
         }
         
         showNotification(errorMessage, "danger");
+        loginBtn.innerHTML = originalText;
+        loginBtn.disabled = false;
       }
     }
 
@@ -2970,6 +3233,12 @@
         return;
       }
       
+      // Afficher l'indicateur de chargement
+      const signupBtn = document.querySelector('#signupForm button[type="submit"]');
+      const originalText = signupBtn.innerHTML;
+      signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Inscription en cours...';
+      signupBtn.disabled = true;
+      
       try {
         // Vérifier si le téléphone existe déjà
         const phoneQuery = query(collection(db, "users"), where("phone", "==", phone));
@@ -2977,6 +3246,8 @@
         
         if (!phoneSnapshot.empty) {
           showNotification("Ce numéro de téléphone est déjà utilisé", "danger");
+          signupBtn.innerHTML = originalText;
+          signupBtn.disabled = false;
           return;
         }
         
@@ -2986,6 +3257,8 @@
         
         if (!emailSnapshot.empty) {
           showNotification("Cette adresse email est déjà utilisée", "danger");
+          signupBtn.innerHTML = originalText;
+          signupBtn.disabled = false;
           return;
         }
         
@@ -2998,6 +3271,8 @@
             referrerId = referralCode;
           } else {
             showNotification("Code de parrainage invalide. Veuillez vérifier ou laisser vide.", "warning");
+            signupBtn.innerHTML = originalText;
+            signupBtn.disabled = false;
             return;
           }
         }
@@ -3037,13 +3312,17 @@
           // Mettre à jour les stats du parrain en temps réel
           updateReferrerStats(referrerId);
           
-          showNotification(`Inscription réussie avec parrainage (${referralCode}) !`, "success");
+          // Afficher la notification bleue pendant 1 seconde
+          showNotification(`Inscription réussie avec parrainage (${referralCode}) !`, "info", 1000);
         } else {
-          showNotification("Inscription réussie!", "success");
+          // Afficher la notification bleue pendant 1 seconde
+          showNotification("Inscription réussie!", "info", 1000);
         }
         
-        // Connecter automatiquement l'utilisateur
-        await signInWithEmailAndPassword(auth, email, password);
+        // Recharger la page après 1 seconde
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
         
       } catch (error) {
         console.error("Erreur lors de l'inscription:", error);
@@ -3058,27 +3337,8 @@
         }
         
         showNotification(errorMessage, "danger");
-      }
-    }
-
-    // Mettre à jour les stats du parrain en temps réel
-    async function updateReferrerStats(referrerId) {
-      try {
-        const referrerRef = doc(db, "users", referrerId);
-        const referrerSnap = await getDoc(referrerRef);
-        
-        if (referrerSnap.exists()) {
-          const referrerData = referrerSnap.data();
-          const referralsCount = referrerData.referrals ? referrerData.referrals.length : 0;
-          
-          // Mettre à jour l'interface si c'est le parrain actuel
-          if (userId === referrerId) {
-            document.getElementById("referralsCount").textContent = referralsCount;
-            loadReferrals();
-          }
-        }
-      } catch (error) {
-        console.error("Erreur lors de la mise à jour des stats du parrain:", error);
+        signupBtn.innerHTML = originalText;
+        signupBtn.disabled = false;
       }
     }
 
@@ -3116,6 +3376,12 @@
     // Fonction de connexion avec Google
     async function loginWithGoogle() {
       try {
+        // Afficher l'indicateur de chargement
+        const googleBtn = document.getElementById('loginWithGoogle');
+        const originalText = googleBtn.innerHTML;
+        googleBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Connexion en cours...';
+        googleBtn.disabled = true;
+        
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         
@@ -3150,22 +3416,114 @@
             googleAccount: true
           });
           
-          showNotification("Compte Google créé avec succès!", "success");
+          // Afficher la notification bleue pendant 1 seconde
+          showNotification("Compte Google créé avec succès!", "info", 1000);
         } else {
-          showNotification("Connexion avec Google réussie!", "success");
+          // Afficher la notification bleue pendant 1 seconde
+          showNotification("Connexion avec Google réussie!", "info", 1000);
         }
+        
+        // Recharger la page après 1 seconde
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
         
       } catch (error) {
         console.error("Erreur lors de la connexion avec Google:", error);
         showNotification("Erreur lors de la connexion avec Google: " + error.message, "danger");
+        
+        // Réactiver le bouton
+        const googleBtn = document.getElementById('loginWithGoogle');
+        googleBtn.innerHTML = '<i class="fab fa-google me-2"></i> Google';
+        googleBtn.disabled = false;
       }
     }
 
     // Fonction d'inscription avec Google
     async function signupWithGoogle() {
-      // Pour l'inscription avec Google, c'est la même chose que la connexion
-      // car Google crée automatiquement un compte
-      await loginWithGoogle();
+      try {
+        // Afficher l'indicateur de chargement
+        const googleBtn = document.getElementById('signupWithGoogle');
+        const originalText = googleBtn.innerHTML;
+        googleBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Inscription en cours...';
+        googleBtn.disabled = true;
+        
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        
+        // Vérifier si l'utilisateur existe dans Firestore
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (!userSnap.exists()) {
+          // Créer un nouvel utilisateur dans Firestore
+          const userName = user.displayName || "Utilisateur Google";
+          const nameParts = userName.split(' ');
+          const firstName = nameParts[0] || "";
+          const lastName = nameParts.slice(1).join(' ') || "";
+          
+          await setDoc(userRef, {
+            uid: user.uid,
+            lastName: lastName,
+            firstName: firstName,
+            phone: "",
+            email: user.email,
+            gain: 0,
+            depot: 0,
+            bonus: 0,
+            referrer: null,
+            referrals: [],
+            createdAt: serverTimestamp(),
+            isAdmin: false,
+            completedTasks: [],
+            whatsapp: "",
+            blocked: false,
+            name: userName,
+            googleAccount: true
+          });
+          
+          // Afficher la notification bleue pendant 1 seconde
+          showNotification("Inscription avec Google réussie!", "info", 1000);
+        } else {
+          // Afficher la notification bleue pendant 1 seconde
+          showNotification("Connexion avec Google réussie!", "info", 1000);
+        }
+        
+        // Recharger la page après 1 seconde
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+        
+      } catch (error) {
+        console.error("Erreur lors de l'inscription avec Google:", error);
+        showNotification("Erreur lors de l'inscription avec Google: " + error.message, "danger");
+        
+        // Réactiver le bouton
+        const googleBtn = document.getElementById('signupWithGoogle');
+        googleBtn.innerHTML = '<i class="fab fa-google me-2"></i> Google';
+        googleBtn.disabled = false;
+      }
+    }
+
+    // Mettre à jour les stats du parrain en temps réel
+    async function updateReferrerStats(referrerId) {
+      try {
+        const referrerRef = doc(db, "users", referrerId);
+        const referrerSnap = await getDoc(referrerRef);
+        
+        if (referrerSnap.exists()) {
+          const referrerData = referrerSnap.data();
+          const referralsCount = referrerData.referrals ? referrerData.referrals.length : 0;
+          
+          // Mettre à jour l'interface si c'est le parrain actuel
+          if (userId === referrerId) {
+            document.getElementById("referralsCount").textContent = referralsCount;
+            loadReferrals();
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour des stats du parrain:", error);
+      }
     }
 
     // Charger l'application après connexion
@@ -3251,7 +3609,7 @@
     }
 
     // Transférer le bonus vers les gains
-    async function transferBonus() {
+    window.transferBonus = async function() {
       try {
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
@@ -3273,116 +3631,6 @@
         showNotification("Erreur lors du transfert: " + error.message, "danger");
       }
     }
-
-    // Dépôt
-    document.getElementById("depositForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const montant = parseFloat(document.getElementById("depositAmount").value);
-      const method = document.getElementById("depositMethod").value;
-      
-      if (montant >= 2000 && method) {
-        try {
-          await addDoc(collection(db, "depot_requests"), {
-            userId, userName, montant, method,
-            status: "en attente", createdAt: serverTimestamp()
-          });
-          showNotification("Dépôt envoyé! Votre demande est en cours de traitement.", "success");
-          
-          // Reset form and close modal
-          e.target.reset();
-          bootstrap.Modal.getInstance(document.getElementById('depositModal')).hide();
-        } catch (error) {
-          showNotification("Erreur lors du dépôt: " + error.message, "danger");
-        }
-      } else {
-        showNotification("Veuillez entrer un montant valide (min 2000 Ar) et sélectionner une méthode de paiement.", "warning");
-      }
-    });
-
-    // Retrait - MODIFIÉ POUR VÉRIFIER LE NUMÉRO UNIQUE
-    document.getElementById("withdrawForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const nom = document.getElementById("withdrawName").value;
-      const phone = document.getElementById("withdrawPhone").value;
-      const method = document.getElementById("withdrawMethod").value;
-      const montant = parseFloat(document.getElementById("withdrawAmount").value);
-      
-      // Vérifier le montant minimum
-      if (montant < 5000) {
-        showNotification("Le montant minimum de retrait est de 5000 Ar", "warning");
-        return;
-      }
-      
-      try {
-        // Vérifier le solde de gains
-        const userRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userRef);
-        const userData = userSnap.data();
-        
-        if (montant > userData.gain) {
-          showNotification("Solde de gains insuffisant. Vous ne pouvez retirer que votre solde de gains.", "warning");
-          return;
-        }
-        
-        // Vérifier si le numéro est déjà utilisé pour une autre méthode de paiement
-        const phoneConflict = await checkPhonePaymentConflict(phone, method);
-        if (phoneConflict) {
-          // Bloquer le compte
-          await updateDoc(userRef, {
-            blocked: true
-          });
-          
-          showNotification("Ce numéro est déjà utilisé pour une autre méthode de paiement. Votre compte a été bloqué.", "danger");
-          showBlockedAccount();
-          return;
-        }
-        
-        // Vérifier si l'utilisateur a déjà utilisé ce numéro avec une méthode différente
-        const userWithdrawalsQuery = query(
-          collection(db, "retrait_requests"),
-          where("userId", "==", userId),
-          where("phone", "==", phone)
-        );
-        const userWithdrawalsSnap = await getDocs(userWithdrawalsQuery);
-        
-        if (!userWithdrawalsSnap.empty) {
-          // Vérifier si la méthode est différente
-          let methodConflict = false;
-          userWithdrawalsSnap.forEach(doc => {
-            const data = doc.data();
-            if (data.method !== method && (data.status === "en attente" || data.status === "confirmé")) {
-              methodConflict = true;
-            }
-          });
-          
-          if (methodConflict) {
-            // Bloquer le compte
-            await updateDoc(userRef, {
-              blocked: true
-            });
-            
-            showNotification("Vous ne pouvez pas utiliser le même numéro pour deux méthodes de paiement différentes. Votre compte a été bloqué.", "danger");
-            showBlockedAccount();
-            return;
-          }
-        }
-        
-        // Procéder au retrait
-        const frais = montant * 0.1;
-        await addDoc(collection(db, "retrait_requests"), {
-          userId, userName, nom, phone, method, montant, frais,
-          status: "en attente", createdAt: serverTimestamp()
-        });
-        
-        showNotification("Retrait envoyé! Votre demande est en cours de traitement.", "success");
-        
-        // Reset form and close modal
-        e.target.reset();
-        bootstrap.Modal.getInstance(document.getElementById('withdrawModal')).hide();
-      } catch (error) {
-        showNotification("Erreur lors du retrait: " + error.message, "danger");
-      }
-    });
 
     // Vérifier les conflits de numéro de téléphone
     async function checkPhonePaymentConflict(phone, method) {
@@ -3547,7 +3795,7 @@
     }
 
     // Fonction de recherche de tâches
-    function searchTasks() {
+    window.searchTasks = function() {
       const searchTerm = document.getElementById('taskSearchInput').value.toLowerCase();
       const table = document.getElementById('taskList');
       const rows = table.getElementsByTagName('tr');
@@ -3639,47 +3887,6 @@
         showNotification("Erreur lors du chargement de la tâche: " + error.message, "danger");
       }
     };
-
-    // Envoyer une preuve
-    document.getElementById("submitProofForm").addEventListener("submit", async e => {
-      e.preventDefault();
-      const taskId = document.getElementById("taskIdHidden").value;
-      const name = document.getElementById("userName").value;
-      const proof = document.getElementById("userProof").value;
-      
-      if (!taskId || !name || !proof) {
-        showNotification("Veuillez remplir tous les champs", "warning");
-        return;
-      }
-      
-      try {
-        // Vérifier si l'utilisateur a déjà soumis une preuve pour cette tâche
-        const submissionKey = `${userId}_${taskId}`;
-        const submissionRef = doc(db, "submissions", submissionKey);
-        const submissionSnap = await getDoc(submissionRef);
-        
-        if (submissionSnap.exists()) {
-          showNotification("Vous avez déjà soumis une preuve pour cette tâche.", "warning");
-          return;
-        }
-        
-        await setDoc(submissionRef, {
-          userId, userName, taskId, name, proof,
-          status: "en attente", createdAt: serverTimestamp()
-        });
-        
-        showNotification("Preuve envoyée! L'administrateur va l'examiner.", "success");
-        
-        // Recharger les tâches pour afficher la notification
-        loadTasks();
-        
-        // Reset form and close modal
-        e.target.reset();
-        bootstrap.Modal.getInstance(document.getElementById('proofModal')).hide();
-      } catch (error) {
-        showNotification("Erreur lors de l'envoi de la preuve: " + error.message, "danger");
-      }
-    });
 
     window.openProofModal = async (id, whatsapp) => {
       document.getElementById('taskIdHidden').value = id;
@@ -3887,105 +4094,6 @@
         console.error("Error loading publications:", error);
       }
     }
-
-    // Publier une tâche
-    document.getElementById('publishForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      const desc = document.getElementById('pubDescription').value;
-      const budgetPerParticipant = parseInt(document.getElementById('pubBudgetPerParticipant').value);
-      const url = document.getElementById('pubURL').value;
-      const cond = document.getElementById('pubConditions').value;
-      const taskType = document.getElementById('taskType').value;
-      const socialMedia = document.getElementById('socialMedia').value;
-      const editTaskId = document.getElementById('editTaskId').value;
-      
-      if (budgetPerParticipant < 5) {
-        showNotification('Budget minimum: 5 Ar par participant', 'warning');
-        return;
-      }
-      
-      if (!taskType) {
-        showNotification('Sélectionnez un type de tâche', 'warning');
-        return;
-      }
-      
-      if (taskType === 'social' && !socialMedia) {
-        showNotification('Sélectionnez un réseau social', 'warning');
-        return;
-      }
-      
-      try {
-        // Mode édition
-        if (editTaskId) {
-          const taskRef = doc(db, "tasks", editTaskId);
-          const taskSnap = await getDoc(taskRef);
-          
-          if (!taskSnap.exists()) {
-            showNotification("Tâche introuvable", "danger");
-            return;
-          }
-          
-          const taskData = taskSnap.data();
-          
-          // Vérifier que l'utilisateur est bien le propriétaire de la tâche
-          if (taskData.publisher !== userId) {
-            showNotification("Vous n'êtes pas autorisé à modifier cette tâche", "danger");
-            return;
-          }
-          
-          // Mettre à jour la tâche
-          await updateDoc(taskRef, {
-            description: desc,
-            budgetPerParticipant: budgetPerParticipant,
-            url: url,
-            cond: cond,
-            taskType: taskType,
-            socialMedia: taskType === 'social' ? socialMedia : '',
-            whatsapp: userWhatsApp
-          });
-          
-          showNotification('Tâche modifiée avec succès!', 'success');
-        } else {
-          // Mode création
-          // Vérifier le solde de dépôt
-          const userRef = doc(db, "users", userId);
-          const userSnap = await getDoc(userRef);
-          const userData = userSnap.data();
-          
-          if (userData.depot < budgetPerParticipant) {
-            showNotification('Solde de dépôt insuffisant pour réactiver cette tâche', 'warning');
-            return;
-          }
-          
-          // Créer la tâche sans déduire le solde
-          await addDoc(collection(db,'tasks'),{
-            publisher: userId,
-            publisherName: userName,
-            description: desc,
-            budgetPerParticipant: budgetPerParticipant,
-            url,
-            cond,
-            taskType,
-            socialMedia: taskType === 'social' ? socialMedia : '',
-            status: 'active',
-            whatsapp: userWhatsApp,
-            createdAt: serverTimestamp(),
-            completedCount: 0
-          });
-          
-          showNotification('Tâche publiée! Le solde ne sera déduit que lorsque les participants enverront des preuves.', 'success');
-        }
-        
-        loadPublications();
-        
-        // Reset form
-        e.target.reset();
-        socialMediaContainer.style.display = 'none';
-        cancelEdit();
-      } catch (error) {
-        showNotification("Erreur lors de la publication: " + error.message, 'danger');
-      }
-    });
 
     // Fonction pour éditer une publication
     window.editPublication = async (taskId) => {
@@ -4364,26 +4472,26 @@
     }
 
     // Fonctions utilitaires
-    function copyToClipboard(text) {
+    window.copyToClipboard = function(text) {
       navigator.clipboard.writeText(text);
       showNotification('ID copié dans le presse-papiers!', 'success');
-    }
+    };
     
-    function copyReferralLink() {
+    window.copyReferralLink = function() {
       const link = document.getElementById('referralLink');
       link.select();
       document.execCommand('copy');
       showNotification('Lien copié dans le presse-papiers!', 'success');
-    }
+    };
     
-    function copyPayeerAccount() {
+    window.copyPayeerAccount = function() {
       const payeerAccount = document.getElementById('payeerAccount');
       payeerAccount.select();
       document.execCommand('copy');
       showNotification('Compte PAYEER copié dans le presse-papiers!', 'success');
-    }
+    };
 
-    function shareReferral() {
+    window.shareReferral = function() {
       if (navigator.share) {
         navigator.share({
           title: 'Microtâche Mila Vola',
@@ -4394,7 +4502,7 @@
       } else {
         copyReferralLink();
       }
-    }
+    };
 
     // Fonction de déconnexion
     async function logoutUser() {
@@ -4408,22 +4516,25 @@
     }
 
     // Fonction d'affichage de notification
-    function showNotification(message, type) {
+    function showNotification(message, type, duration = 3000) {
       const notificationArea = document.getElementById('notificationArea');
       const notification = document.createElement('div');
-      notification.className = `notification bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'danger'}`;
+      notification.className = `notification ${type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : type === 'info' ? 'bg-primary' : 'bg-danger'}`;
       notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'info' ? 'info-circle' : 'exclamation-circle'}"></i>
         <span>${message}</span>
       `;
       
       notificationArea.appendChild(notification);
       
-      // Supprimer la notification après 3 secondes
+      // Supprimer la notification après la durée spécifiée
       setTimeout(() => {
         notification.remove();
-      }, 3000);
+      }, duration);
     }
+    
+    // Ajouter la fonction logoutUser à l'objet window pour qu'elle soit accessible depuis le bouton de déconnexion
+    window.logoutUser = logoutUser;
   </script>
 </body>
 </html>
