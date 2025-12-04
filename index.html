@@ -1471,6 +1471,176 @@
       background: #d0343f;
       color: white;
     }
+    
+    /* Menu hamburger */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin-left: 10px;
+    }
+    
+    .menu-toggle span {
+      width: 100%;
+      height: 3px;
+      background-color: white;
+      border-radius: 10px;
+      transition: var(--transition);
+    }
+    
+    .menu-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    .menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .menu-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+    
+    /* Style pour les trois petits points */
+    .menu-dots {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1001;
+      background: var(--primary);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .menu-dots i {
+      font-size: 1.2rem;
+    }
+    
+    /* Menu latéral */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 280px;
+      height: 100vh;
+      background: white;
+      z-index: 1100;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      transition: var(--transition);
+      padding-top: 60px;
+      overflow-y: auto;
+    }
+    
+    .side-menu.active {
+      left: 0;
+    }
+    
+    .side-menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1099;
+      display: none;
+    }
+    
+    .side-menu-overlay.active {
+      display: block;
+    }
+    
+    .side-menu-header {
+      padding: 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      margin-bottom: 1rem;
+    }
+    
+    .side-menu-nav {
+      padding: 0 1rem;
+    }
+    
+    .side-menu-nav .nav-link {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      color: var(--gray-700);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition);
+    }
+    
+    .side-menu-nav .nav-link:hover,
+    .side-menu-nav .nav-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    
+    .side-menu-nav .nav-link i {
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Nouveau style pour l'alerte de compte bloqué */
+    .account-blocked {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .blocked-message {
+      background: white;
+      padding: 2.5rem;
+      border-radius: var(--border-radius);
+      max-width: 500px;
+      text-align: center;
+      box-shadow: var(--box-shadow-hover);
+    }
+    
+    .blocked-message i {
+      font-size: 4rem;
+      color: var(--danger);
+      margin-bottom: 1.5rem;
+    }
+    
+    .blocked-message h3 {
+      color: var(--danger);
+      margin-bottom: 1rem;
+    }
+    
+    /* Nouveau style pour les sections masquées */
+    .section-hidden {
+      display: none !important;
+    }
+    
+    /* Style pour le numéro de téléphone unique */
+    .phone-warning {
+      font-size: 0.8rem;
+      color: var(--danger);
+      margin-top: 0.25rem;
+    }
   </style>
 </head>
 <body>
@@ -1635,6 +1805,43 @@
     </div>
   </div>
 
+  <!-- Menu latéral -->
+  <div class="side-menu-overlay" id="sideMenuOverlay"></div>
+  <div class="side-menu" id="sideMenu">
+    <div class="side-menu-header">
+      <h5>Microtâche Mila Vola</h5>
+      <p class="mb-0 small">Navigation</p>
+    </div>
+    <div class="side-menu-nav">
+      <a class="nav-link" href="#accountSection" onclick="showSection('accountSection')">
+        <i class="fas fa-wallet"></i> Compte
+      </a>
+      <a class="nav-link" href="#tasksSection" onclick="showSection('tasksSection')">
+        <i class="fas fa-tasks"></i> Asa
+      </a>
+      <a class="nav-link" href="#publicationSection" onclick="showSection('publicationSection')">
+        <i class="fas fa-bullhorn"></i> Publication
+      </a>
+      <a class="nav-link" href="#settingsSection" onclick="showSection('settingsSection')">
+        <i class="fas fa-sliders-h"></i> Paramètres
+      </a>
+      <a class="nav-link" href="#historySection" onclick="showSection('historySection'); loadHistory()">
+        <i class="fas fa-history"></i> Historique
+      </a>
+      <a class="nav-link" href="roue.html">
+        <i class="fas fa-gift"></i> La roue de la fortune
+      </a>
+      <a class="nav-link" href="game.html">
+        <i class="fas fa-dice"></i> Mila vola gambling
+      </a>
+    </div>
+  </div>
+
+  <!-- Trois petits points en haut à gauche -->
+  <div class="menu-dots" id="menuDots" onclick="toggleSideMenu()">
+    <i class="fas fa-bars"></i>
+  </div>
+
   <!-- Page principale (cachée par défaut) -->
   <div id="appContainer" class="app-container" style="display:none;">
     <div class="header">
@@ -1680,116 +1887,6 @@
             <div class="stat-number">1.2M Ar</div>
             <div class="stat-label">Gains Distribués</div>
           </div>
-        </div>
-      </div>
-
-      <!-- Navigation -->
-      <nav class="nav nav-pills justify-content-center mb-4">
-        <a class="nav-link" href="#adminSection" onclick="showSection('adminSection')" id="adminNavLink"><i class="fas fa-cog me-1"></i> Admin</a>
-        <a class="nav-link active" href="#accountSection" onclick="showSection('accountSection')"><i class="fas fa-wallet me-1"></i> Compte</a>
-        <a class="nav-link" href="#tasksSection" onclick="showSection('tasksSection')"><i class="fas fa-tasks me-1"></i> Asa</a>
-        <a class="nav-link" href="#publicationSection" onclick="showSection('publicationSection')"><i class="fas fa-bullhorn me-1"></i> Publication</a>
-        <a class="nav-link" href="#settingsSection" onclick="showSection('settingsSection')"><i class="fas fa-sliders-h me-1"></i> Paramètres</a>
-        <a class="nav-link" href="#historySection" onclick="showSection('historySection'); loadHistory()"><i class="fas fa-history me-1"></i> Historique</a>
-        <a class="nav-link" href="roue.html"><i class="fas fa-history me-1"></i>La roue de la fortune</a> 
-        <a class="nav-link" href="game.html"><i class="fas fa-history me-1"></i>Mila vola gambling</a> 
-      </nav>
-
-      <!-- Admin Section -->
-      <div id="adminSection" class="mb-5" style="display:none;">
-        <h4 class="section-title"><i class="fas fa-cog me-2"></i>Admin Panel</h4>
-        
-        <div class="admin-card">
-          <h5 class="admin-header"><i class="fas fa-money-bill-wave me-2"></i>Demandes de Dépôt</h5>
-          <div class="admin-search-container">
-            <input type="text" id="searchDepot" class="form-control" placeholder="Rechercher par nom ou ID...">
-            <button class="btn btn-primary" onclick="filterAdminTable('depotList', 'searchDepot')">
-              <i class="fas fa-search me-1"></i> Rechercher
-            </button>
-          </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Montant</th>
-                <th>Méthode</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="depotList">
-              <tr>
-                <td colspan="5" class="text-center py-4">
-                  <div class="empty-state py-0">
-                    <i class="fas fa-inbox"></i>
-                    <p>Aucune demande de dépôt en attente</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        <div class="admin-card">
-          <h5 class="admin-header"><i class="fas fa-hand-holding-usd me-2"></i>Demandes de Retrait</h5>
-          <div class="admin-search-container">
-            <input type="text" id="searchRetrait" class="form-control" placeholder="Rechercher par nom ou ID...">
-            <button class="btn btn-primary" onclick="filterAdminTable('retraitList', 'searchRetrait')">
-              <i class="fas fa-search me-1"></i> Rechercher
-            </button>
-          </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Téléphone</th>
-                <th>Montant</th>
-                <th>Frais</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="retraitList">
-              <tr>
-                <td colspan="6" class="text-center py-4">
-                  <div class="empty-state py-0">
-                    <i class="fas fa-inbox"></i>
-                    <p>Aucune demande de retrait en attente</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        <div class="admin-card">
-          <h5 class="admin-header"><i class="fas fa-check-circle me-2"></i>Soumissions de Preuves</h5>
-          <div class="admin-search-container">
-            <input type="text" id="searchProof" class="form-control" placeholder="Rechercher par nom ou ID...">
-            <button class="btn btn-primary" onclick="filterAdminTable('submissionList', 'searchProof')">
-              <i class="fas fa-search me-1"></i> Rechercher
-            </button>
-          </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Utilisateur</th>
-                <th>Tâche</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="submissionList">
-              <tr>
-                <td colspan="4" class="text-center py-4">
-                  <div class="empty-state py-0">
-                    <i class="fas fa-inbox"></i>
-                    <p>Aucune soumission de preuve en attente</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
 
@@ -1879,7 +1976,7 @@
       </div>
 
       <!-- Tasks Section - Modifiée pour utiliser un tableau -->
-      <div id="tasksSection" class="mb-5">
+      <div id="tasksSection" class="mb-5 section-hidden">
         <h4 class="section-title"><i class="fas fa-tasks me-2"></i>Asa</h4>
         <div class="alert alert-info">
           <i class="fas fa-info-circle me-2"></i>Complétez des tâches pour gagner de l'argent. Chaque tâche validée rapporte 50 Ar.
@@ -1918,7 +2015,7 @@
       </div>
 
       <!-- Publication Section -->
-      <div id="publicationSection" class="mb-5" style="display:none;">
+      <div id="publicationSection" class="mb-5 section-hidden">
         <h4 class="section-title"><i class="fas fa-bullhorn me-2"></i>Publication</h4>
         <div class="section-card mb-4">
           <form id="publishForm" class="mb-3">
@@ -2010,7 +2107,7 @@
       </div>
 
       <!-- Settings Section -->
-      <div id="settingsSection" class="mb-5">
+      <div id="settingsSection" class="mb-5 section-hidden">
         <h4 class="section-title"><i class="fas fa-sliders-h me-2"></i>Paramètres</h4>
         <div class="section-card">
           <h5><i class="fas fa-user-friends me-2"></i>Programme de Parrainage</h5>
@@ -2036,7 +2133,7 @@
       </div>
 
       <!-- Nouvelle section Historique -->
-      <div id="historySection" class="mb-5" style="display:none;">
+      <div id="historySection" class="mb-5 section-hidden">
         <h4 class="section-title"><i class="fas fa-history me-2"></i>Historique des Transactions</h4>
         
         <!-- Historique des Dépôts -->
@@ -2188,10 +2285,22 @@
               <div class="mb-3">
                 <label class="form-label">Numéro de Téléphone</label>
                 <input id="withdrawPhone" type="tel" class="form-control" placeholder="Votre numéro" required>
+                <div class="phone-warning" id="phoneWarning" style="display: none;">
+                  <i class="fas fa-exclamation-triangle"></i> Ce numéro est déjà utilisé pour une autre méthode de paiement
+                </div>
               </div>
               <div class="mb-3">
-                <label class="form-label">Montant (≥ 500 Ar)</label>
-                <input id="withdrawAmount" type="number" class="form-control" placeholder="Ex: 500" min="500" required>
+                <label class="form-label">Méthode de Paiement</label>
+                <select id="withdrawMethod" class="form-select" required>
+                  <option value="">Sélectionnez une méthode</option>
+                  <option value="MVOLA">MVOLA</option>
+                  <option value="Orange Money">Orange Money</option>
+                  <option value="Airtel Money">Airtel Money</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Montant (≥ 5000 Ar)</label>
+                <input id="withdrawAmount" type="number" class="form-control" placeholder="Ex: 5000" min="5000" required>
                 <div class="form-text">Frais: 10% du montant</div>
                 <div class="form-text text-danger">Attention: Seul le solde de gains peut être retiré</div>
               </div>
@@ -2370,6 +2479,20 @@
     </footer>
   </div>
 
+  <!-- Écran de compte bloqué -->
+  <div id="accountBlocked" class="account-blocked" style="display: none;">
+    <div class="blocked-message">
+      <i class="fas fa-ban"></i>
+      <h3>Compte Bloqué</h3>
+      <p>Votre compte a été bloqué car vous avez utilisé le même numéro de téléphone pour deux méthodes de paiement différentes.</p>
+      <p>Veuillez contacter le support pour résoudre ce problème.</p>
+      <p class="small mt-3">Contact: support@milavola.mg</p>
+      <button class="btn btn-danger mt-3" onclick="logoutUser()">
+        <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
+      </button>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module">
     // Import Firebase modules
@@ -2377,11 +2500,13 @@
     import { 
       getFirestore, collection, addDoc, getDoc, doc,
       serverTimestamp, query, where, getDocs, setDoc,
-      updateDoc, deleteDoc, onSnapshot, arrayUnion
+      updateDoc, deleteDoc, onSnapshot, arrayUnion,
+      orderBy, limit
     } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
     import { 
       getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-      signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail
+      signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail,
+      signOut
     } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
     // Firebase configuration
@@ -2413,6 +2538,7 @@
     let userPhone = "";
     let userWhatsApp = "";
     let userReferrer = null;
+    let isBlocked = false;
 
     // Page elements
     const authPage = document.getElementById('authPage');
@@ -2426,6 +2552,10 @@
     const payeerContainer = document.getElementById('payeerContainer');
     const cancelEditBtn = document.getElementById('cancelEditBtn');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const menuDots = document.getElementById('menuDots');
+    const sideMenu = document.getElementById('sideMenu');
+    const sideMenuOverlay = document.getElementById('sideMenuOverlay');
+    const accountBlocked = document.getElementById('accountBlocked');
 
     // Variables pour les captchas
     let loginCaptchaAnswer = 0;
@@ -2446,6 +2576,15 @@
       // Gestionnaires d'événements
       setupEventListeners();
     });
+
+    // Fonction pour basculer le menu latéral
+    window.toggleSideMenu = function() {
+      sideMenu.classList.toggle('active');
+      sideMenuOverlay.classList.toggle('active');
+    };
+
+    // Fermer le menu quand on clique sur l'overlay
+    sideMenuOverlay.addEventListener('click', toggleSideMenu);
 
     // Gestion du type de tâche
     if (taskTypeSelect) {
@@ -2471,33 +2610,29 @@
 
     // Fonction pour afficher une section
     window.showSection = (sectionId) => {
-      // Masquer toutes les sections
-      document.getElementById('adminSection').style.display = 'none';
-      document.getElementById('accountSection').style.display = 'none';
-      document.getElementById('tasksSection').style.display = 'none';
-      document.getElementById('publicationSection').style.display = 'none';
-      document.getElementById('settingsSection').style.display = 'none';
-      document.getElementById('historySection').style.display = 'none';
+      // Fermer le menu latéral
+      sideMenu.classList.remove('active');
+      sideMenuOverlay.classList.remove('active');
       
-      // Vérifier l'accès admin
-      if (sectionId === 'adminSection' && !isAdmin) {
-        showNotification("Accès non autorisé à la section admin", "danger");
-        showSection('accountSection');
-        return;
-      }
+      // Masquer toutes les sections
+      document.getElementById('accountSection').classList.add('section-hidden');
+      document.getElementById('tasksSection').classList.add('section-hidden');
+      document.getElementById('publicationSection').classList.add('section-hidden');
+      document.getElementById('settingsSection').classList.add('section-hidden');
+      document.getElementById('historySection').classList.add('section-hidden');
       
       // Afficher la section demandée
-      document.getElementById(sectionId).style.display = 'block';
+      document.getElementById(sectionId).classList.remove('section-hidden');
       
       // Charger les données si nécessaire
-      if (sectionId === 'adminSection' && isAdmin) {
-        loadAdminPanel();
-      } else if (sectionId === 'tasksSection') {
+      if (sectionId === 'tasksSection') {
         loadTasks();
-      } else if (sectionId === 'publicationSection' && isAdmin) {
+      } else if (sectionId === 'publicationSection') {
         loadPublications();
       } else if (sectionId === 'accountSection') {
         loadReferrals();
+      } else if (sectionId === 'historySection') {
+        loadHistory();
       }
     };
 
@@ -2617,10 +2752,7 @@
       // Déconnexion
       if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-          localStorage.removeItem('milaVolaUser');
-          auth.signOut().then(() => {
-            location.reload();
-          });
+          logoutUser();
         });
       }
       
@@ -2656,6 +2788,20 @@
       document.getElementById('signup-tab').addEventListener('click', function() {
         generateSignupCaptcha();
       });
+      
+      // Vérification du numéro de téléphone pour le retrait
+      const withdrawPhoneInput = document.getElementById('withdrawPhone');
+      const withdrawMethodSelect = document.getElementById('withdrawMethod');
+      
+      if (withdrawPhoneInput && withdrawMethodSelect) {
+        withdrawPhoneInput.addEventListener('input', checkPhonePaymentMethod);
+        withdrawMethodSelect.addEventListener('change', checkPhonePaymentMethod);
+      }
+      
+      // Gestion de la suppression
+      if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', handleDeleteTask);
+      }
     }
 
     // Vérifier si l'utilisateur est déjà connecté
@@ -2674,6 +2820,14 @@
             if (userSnap.exists()) {
               // Utilisateur existe dans Firestore
               const userData = userSnap.data();
+              
+              // Vérifier si le compte est bloqué
+              if (userData.blocked) {
+                showBlockedAccount();
+                return;
+              }
+              
+              isBlocked = false;
               userName = userData.firstName + ' ' + userData.lastName;
               isAdmin = userData.isAdmin || false;
               userPhone = userData.phone || "";
@@ -2691,12 +2845,14 @@
                 isAdmin: isAdmin,
                 phone: userPhone,
                 whatsapp: userWhatsApp,
-                referrer: userReferrer
+                referrer: userReferrer,
+                blocked: false
               }));
               
               // Masquer la page d'authentification et afficher l'application
               authPage.style.display = 'none';
               appContainer.style.display = 'block';
+              menuDots.style.display = 'flex';
               
               // Charger l'application
               loadApplication();
@@ -2713,6 +2869,8 @@
           // L'utilisateur n'est pas connecté
           authPage.style.display = 'block';
           appContainer.style.display = 'none';
+          menuDots.style.display = 'none';
+          accountBlocked.style.display = 'none';
         }
       });
     }
@@ -2865,15 +3023,19 @@
           isAdmin: false,
           completedTasks: [],
           whatsapp: "",
+          blocked: false,
           name: firstName + ' ' + lastName // Pour la compatibilité
         });
         
-        // Si le parrain est valide, mettre à jour son compte
+        // Si le parrain est valide, mettre à jour son compte en temps réel
         if (referrerId) {
           const referrerRef = doc(db, "users", referrerId);
           await updateDoc(referrerRef, {
             referrals: arrayUnion(user.uid)
           });
+          
+          // Mettre à jour les stats du parrain en temps réel
+          updateReferrerStats(referrerId);
           
           showNotification(`Inscription réussie avec parrainage (${referralCode}) !`, "success");
         } else {
@@ -2896,6 +3058,27 @@
         }
         
         showNotification(errorMessage, "danger");
+      }
+    }
+
+    // Mettre à jour les stats du parrain en temps réel
+    async function updateReferrerStats(referrerId) {
+      try {
+        const referrerRef = doc(db, "users", referrerId);
+        const referrerSnap = await getDoc(referrerRef);
+        
+        if (referrerSnap.exists()) {
+          const referrerData = referrerSnap.data();
+          const referralsCount = referrerData.referrals ? referrerData.referrals.length : 0;
+          
+          // Mettre à jour l'interface si c'est le parrain actuel
+          if (userId === referrerId) {
+            document.getElementById("referralsCount").textContent = referralsCount;
+            loadReferrals();
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour des stats du parrain:", error);
       }
     }
 
@@ -2962,6 +3145,7 @@
             isAdmin: false,
             completedTasks: [],
             whatsapp: "",
+            blocked: false,
             name: userName,
             googleAccount: true
           });
@@ -2996,26 +3180,11 @@
         document.getElementById('referralLink').value = window.location.origin + window.location.pathname + '?ref=' + userId;
       }
       
-      // Cacher le lien admin si l'utilisateur n'est pas admin
-      const adminNavLink = document.getElementById('adminNavLink');
-      if (adminNavLink) {
-        adminNavLink.style.display = isAdmin ? 'block' : 'none';
-      }
-      
-      // Gestion des sections admin/publication
-      if (isAdmin) {
-        document.getElementById('adminSection').style.display = 'none';
-        document.getElementById('publicationSection').style.display = 'none';
-      } else {
-        document.getElementById('adminSection').style.display = 'none';
-        document.getElementById('publicationSection').style.display = 'none';
-      }
-      
-      // Afficher la section Compte par défaut
-      document.getElementById('accountSection').style.display = 'block';
-      
       // Setup real-time listeners
       setupRealtimeListeners();
+      
+      // Afficher la section Compte par défaut
+      showSection('accountSection');
     }
 
     // --- Section Compte ---
@@ -3130,12 +3299,19 @@
       }
     });
 
-    // Retrait
+    // Retrait - MODIFIÉ POUR VÉRIFIER LE NUMÉRO UNIQUE
     document.getElementById("withdrawForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const nom = document.getElementById("withdrawName").value;
       const phone = document.getElementById("withdrawPhone").value;
+      const method = document.getElementById("withdrawMethod").value;
       const montant = parseFloat(document.getElementById("withdrawAmount").value);
+      
+      // Vérifier le montant minimum
+      if (montant < 5000) {
+        showNotification("Le montant minimum de retrait est de 5000 Ar", "warning");
+        return;
+      }
       
       try {
         // Vérifier le solde de gains
@@ -3148,24 +3324,120 @@
           return;
         }
         
-        if (montant >= 500) {
-          const frais = montant * 0.1;
-          await addDoc(collection(db, "retrait_requests"), {
-            userId, userName, nom, phone, montant, frais,
-            status: "en attente", createdAt: serverTimestamp()
+        // Vérifier si le numéro est déjà utilisé pour une autre méthode de paiement
+        const phoneConflict = await checkPhonePaymentConflict(phone, method);
+        if (phoneConflict) {
+          // Bloquer le compte
+          await updateDoc(userRef, {
+            blocked: true
           });
-          showNotification("Retrait envoyé! Votre demande est en cours de traitement.", "success");
           
-          // Reset form and close modal
-          e.target.reset();
-          bootstrap.Modal.getInstance(document.getElementById('withdrawModal')).hide();
-        } else {
-          showNotification("Le montant minimum est de 500 Ar", "warning");
+          showNotification("Ce numéro est déjà utilisé pour une autre méthode de paiement. Votre compte a été bloqué.", "danger");
+          showBlockedAccount();
+          return;
         }
+        
+        // Vérifier si l'utilisateur a déjà utilisé ce numéro avec une méthode différente
+        const userWithdrawalsQuery = query(
+          collection(db, "retrait_requests"),
+          where("userId", "==", userId),
+          where("phone", "==", phone)
+        );
+        const userWithdrawalsSnap = await getDocs(userWithdrawalsQuery);
+        
+        if (!userWithdrawalsSnap.empty) {
+          // Vérifier si la méthode est différente
+          let methodConflict = false;
+          userWithdrawalsSnap.forEach(doc => {
+            const data = doc.data();
+            if (data.method !== method && (data.status === "en attente" || data.status === "confirmé")) {
+              methodConflict = true;
+            }
+          });
+          
+          if (methodConflict) {
+            // Bloquer le compte
+            await updateDoc(userRef, {
+              blocked: true
+            });
+            
+            showNotification("Vous ne pouvez pas utiliser le même numéro pour deux méthodes de paiement différentes. Votre compte a été bloqué.", "danger");
+            showBlockedAccount();
+            return;
+          }
+        }
+        
+        // Procéder au retrait
+        const frais = montant * 0.1;
+        await addDoc(collection(db, "retrait_requests"), {
+          userId, userName, nom, phone, method, montant, frais,
+          status: "en attente", createdAt: serverTimestamp()
+        });
+        
+        showNotification("Retrait envoyé! Votre demande est en cours de traitement.", "success");
+        
+        // Reset form and close modal
+        e.target.reset();
+        bootstrap.Modal.getInstance(document.getElementById('withdrawModal')).hide();
       } catch (error) {
         showNotification("Erreur lors du retrait: " + error.message, "danger");
       }
     });
+
+    // Vérifier les conflits de numéro de téléphone
+    async function checkPhonePaymentConflict(phone, method) {
+      try {
+        const retraitQuery = query(
+          collection(db, "retrait_requests"),
+          where("phone", "==", phone),
+          where("status", "in", ["en attente", "confirmé"])
+        );
+        const querySnapshot = await getDocs(retraitQuery);
+        
+        for (const doc of querySnapshot.docs) {
+          const data = doc.data();
+          // Si une demande existe avec le même numéro mais une méthode différente
+          if (data.method !== method && data.userId !== userId) {
+            return true;
+          }
+        }
+        return false;
+      } catch (error) {
+        console.error("Erreur lors de la vérification du conflit:", error);
+        return false;
+      }
+    }
+
+    // Vérifier en temps réel le numéro de téléphone
+    async function checkPhonePaymentMethod() {
+      const phone = document.getElementById('withdrawPhone').value.trim();
+      const method = document.getElementById('withdrawMethod').value;
+      const warning = document.getElementById('phoneWarning');
+      
+      if (!phone || !method) {
+        warning.style.display = 'none';
+        return;
+      }
+      
+      try {
+        const conflict = await checkPhonePaymentConflict(phone, method);
+        if (conflict) {
+          warning.style.display = 'block';
+        } else {
+          warning.style.display = 'none';
+        }
+      } catch (error) {
+        warning.style.display = 'none';
+      }
+    }
+
+    // Afficher l'écran de compte bloqué
+    function showBlockedAccount() {
+      isBlocked = true;
+      appContainer.style.display = 'none';
+      menuDots.style.display = 'none';
+      accountBlocked.style.display = 'flex';
+    }
 
     // --- Section Asa (Proof) ---
     async function loadTasks() {
@@ -3780,326 +4052,44 @@
     };
 
     // Gestionnaire d'événement pour le bouton de suppression confirmée
-    if (confirmDeleteBtn) {
-      confirmDeleteBtn.addEventListener('click', async () => {
-        const taskId = document.getElementById('deleteTaskId').value;
-        
-        if (!taskId) {
-          return;
-        }
-        
-        try {
-          const taskRef = doc(db, "tasks", taskId);
-          const taskSnap = await getDoc(taskRef);
-          
-          if (!taskSnap.exists()) {
-            showNotification("Tâche introuvable", "danger");
-            return;
-          }
-          
-          const taskData = taskSnap.data();
-          
-          // Vérifier que l'utilisateur est bien le propriétaire de la tâche
-          if (taskData.publisher !== userId) {
-            showNotification("Vous n'êtes pas autorisé à supprimer cette tâche", "danger");
-            return;
-          }
-          
-          // Supprimer la tâche
-          await deleteDoc(taskRef);
-          
-          showNotification('Publication supprimée avec succès!', 'success');
-          
-          // Fermer le modal
-          bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-          
-          // Recharger les publications
-          loadPublications();
-        } catch (error) {
-          showNotification("Erreur lors de la suppression: " + error.message, "danger");
-        }
-      });
-    }
-
-    // --- Section Admin ---
-    async function loadAdminPanel() {
-      if (!isAdmin) {
-        showNotification("Accès non autorisé", "danger");
+    async function handleDeleteTask() {
+      const taskId = document.getElementById('deleteTaskId').value;
+      
+      if (!taskId) {
         return;
       }
       
       try {
-        // Charger les demandes de dépôt
-        const depotQuery = query(collection(db, "depot_requests"), where("status", "==", "en attente"));
-        const depotSnapshot = await getDocs(depotQuery);
+        const taskRef = doc(db, "tasks", taskId);
+        const taskSnap = await getDoc(taskRef);
         
-        const depotList = document.getElementById('depotList');
-        depotList.innerHTML = '';
-        
-        if (depotSnapshot.empty) {
-          depotList.innerHTML = `
-            <tr>
-              <td colspan="5" class="text-center py-4">
-                <div class="empty-state py-0">
-                  <i class="fas fa-inbox"></i>
-                  <p>Aucune demande de dépôt en attente</p>
-                </div>
-              </td>
-            </tr>
-          `;
-        } else {
-          depotSnapshot.forEach((doc) => {
-            const data = doc.data();
-            const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${data.userName || data.userId}</td>
-              <td>${data.montant} Ar</td>
-              <td>${data.method}</td>
-              <td>${date}</td>
-              <td class="admin-actions">
-                <button class='btn btn-success btn-sm me-1' onclick='confirmDeposit("${doc.id}", "${data.userId}", ${data.montant})'>
-                  <i class="fas fa-check me-1"></i> Confirmer
-                </button>
-                <button class='btn btn-danger btn-sm' onclick='rejectRequest("depot_requests", "${doc.id}")'>
-                  <i class="fas fa-times me-1"></i> Rejeter
-                </button>
-              </td>
-            `;
-            depotList.appendChild(row);
-          });
+        if (!taskSnap.exists()) {
+          showNotification("Tâche introuvable", "danger");
+          return;
         }
         
-        // Charger les demandes de retrait
-        const retraitQuery = query(collection(db, "retrait_requests"), where("status", "==", "en attente"));
-        const retraitSnapshot = await getDocs(retraitQuery);
+        const taskData = taskSnap.data();
         
-        const retraitList = document.getElementById('retraitList');
-        retraitList.innerHTML = '';
-        
-        if (retraitSnapshot.empty) {
-          retraitList.innerHTML = `
-            <tr>
-              <td colspan="6" class="text-center py-4">
-                <div class="empty-state py-0">
-                  <i class="fas fa-inbox"></i>
-                  <p>Aucune demande de retrait en attente</p>
-                </div>
-              </td>
-            </tr>
-          `;
-        } else {
-          retraitSnapshot.forEach((doc) => {
-            const data = doc.data();
-            const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${data.nom || data.userName || data.userId}</td>
-              <td>${data.phone || 'Non spécifié'}</td>
-              <td>${data.montant} Ar</td>
-              <td>${data.frais || 0} Ar</td>
-              <td>${date}</td>
-              <td class="admin-actions">
-                <button class='btn btn-success btn-sm me-1' onclick='confirmWithdrawal("${doc.id}", "${data.userId}", ${data.montant}, ${data.frais || 0})'>
-                  <i class="fas fa-check me-1"></i> Confirmer
-                </button>
-                <button class='btn btn-danger btn-sm' onclick='rejectRequest("retrait_requests", "${doc.id}")'>
-                  <i class="fas fa-times me-1"></i> Rejeter
-                </button>
-              </td>
-            `;
-            retraitList.appendChild(row);
-          });
+        // Vérifier que l'utilisateur est bien le propriétaire de la tâche
+        if (taskData.publisher !== userId) {
+          showNotification("Vous n'êtes pas autorisé à supprimer cette tâche", "danger");
+          return;
         }
         
-        // Charger les soumissions de preuves
-        const proofQuery = query(collection(db, "submissions"), where("status", "==", "en attente"));
-        const proofSnapshot = await getDocs(proofQuery);
+        // Supprimer la tâche
+        await deleteDoc(taskRef);
         
-        const submissionList = document.getElementById('submissionList');
-        submissionList.innerHTML = '';
+        showNotification('Publication supprimée avec succès!', 'success');
         
-        if (proofSnapshot.empty) {
-          submissionList.innerHTML = `
-            <tr>
-              <td colspan="4" class="text-center py-4">
-                <div class="empty-state py-0">
-                  <i class="fas fa-inbox"></i>
-                  <p>Aucune soumission de preuve en attente</p>
-                </div>
-              </td>
-            </tr>
-          `;
-        } else {
-          proofSnapshot.forEach((doc) => {
-            const data = doc.data();
-            const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${data.userName || data.userId}</td>
-              <td>${data.taskId || 'Inconnue'}</td>
-              <td>${date}</td>
-              <td class="admin-actions">
-                <button class='btn btn-success btn-sm me-1' onclick='openConfirmationModal("${doc.id}",${JSON.stringify(data)})'>
-                  <i class="fas fa-check me-1"></i> Voir
-                </button>
-                <button class='btn btn-danger btn-sm' onclick='rejectRequest("submissions", "${doc.id}")'>
-                  <i class="fas fa-times me-1"></i> Rejeter
-                </button>
-              </td>
-            `;
-            submissionList.appendChild(row);
-          });
-        }
+        // Fermer le modal
+        bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+        
+        // Recharger les publications
+        loadPublications();
       } catch (error) {
-        console.error("Erreur lors du chargement du panel admin:", error);
-        showNotification("Erreur lors du chargement: " + error.message, "danger");
+        showNotification("Erreur lors de la suppression: " + error.message, "danger");
       }
     }
-
-    window.filterAdminTable = (tableId, searchId) => {
-      const searchTerm = document.getElementById(searchId).value.toLowerCase();
-      const table = document.getElementById(tableId);
-      const rows = table.getElementsByTagName('tr');
-      
-      for (let i = 0; i < rows.length; i++) {
-        const cells = rows[i].getElementsByTagName('td');
-        let found = false;
-        
-        for (let j = 0; j < cells.length; j++) {
-          const cellText = cells[j].textContent || cells[j].innerText;
-          if (cellText.toLowerCase().indexOf(searchTerm) > -1) {
-            found = true;
-            break;
-          }
-        }
-        
-        if (found) {
-          rows[i].style.display = '';
-        } else {
-          rows[i].style.display = 'none';
-        }
-      }
-    };
-
-    // Fonctions d'administration
-    window.confirmDeposit = async (depositId, userId, amount) => {
-      try {
-        const userRef = doc(db, "users", userId);
-        const depositRef = doc(db, "depot_requests", depositId);
-        
-        // Mettre à jour le statut du dépôt
-        await updateDoc(depositRef, {
-          status: "confirmé",
-          confirmedAt: serverTimestamp()
-        });
-        
-        // Augmenter le solde de dépôt de l'utilisateur
-        const userSnap = await getDoc(userRef);
-        const userData = userSnap.data();
-        
-        await updateDoc(userRef, {
-          depot: (userData.depot || 0) + amount
-        });
-        
-        showNotification("Dépôt confirmé avec succès!", "success");
-        loadAdminPanel();
-        loadBalances();
-        
-      } catch (error) {
-        console.error("Erreur lors de la confirmation du dépôt:", error);
-        showNotification("Erreur: " + error.message, "danger");
-      }
-    };
-
-    window.confirmWithdrawal = async (withdrawalId, userId, amount, fees) => {
-      try {
-        const userRef = doc(db, "users", userId);
-        const withdrawalRef = doc(db, "retrait_requests", withdrawalId);
-        
-        // Mettre à jour le statut du retrait
-        await updateDoc(withdrawalRef, {
-          status: "confirmé",
-          confirmedAt: serverTimestamp()
-        });
-        
-        // Diminuer le solde de gains de l'utilisateur
-        const userSnap = await getDoc(userRef);
-        const userData = userSnap.data();
-        
-        const totalAmount = amount + fees;
-        
-        if (userData.gain < totalAmount) {
-          showNotification("Solde de gains insuffisant pour l'utilisateur", "warning");
-          return;
-        }
-        
-        await updateDoc(userRef, {
-          gain: (userData.gain || 0) - totalAmount
-        });
-        
-        showNotification("Retrait confirmé avec succès!", "success");
-        loadAdminPanel();
-        loadBalances();
-        
-      } catch (error) {
-        console.error("Erreur lors de la confirmation du retrait:", error);
-        showNotification("Erreur: " + error.message, "danger");
-      }
-    };
-
-    window.rejectRequest = async (collectionName, requestId, reason = "Demande rejetée") => {
-      try {
-        const requestRef = doc(db, collectionName, requestId);
-        
-        await updateDoc(requestRef, {
-          status: "rejeté",
-          rejectionReason: reason,
-          rejectedAt: serverTimestamp()
-        });
-        
-        showNotification("Demande rejetée", "info");
-        loadAdminPanel();
-        
-      } catch (error) {
-        console.error("Erreur lors du rejet:", error);
-        showNotification("Erreur: " + error.message, "danger");
-      }
-    };
-
-    // Fonction pour confirmer une soumission
-    window.confirmSubmission = async (submissionId) => {
-      try {
-        const submissionRef = doc(db, "submissions", submissionId);
-        const submissionSnap = await getDoc(submissionRef);
-        
-        if (!submissionSnap.exists()) {
-          showNotification("Soumission introuvable", "danger");
-          return;
-        }
-        
-        const submissionData = submissionSnap.data();
-        await confirmAction('submissions', submissionId, 'proof', submissionData);
-        showNotification("Soumission confirmée avec succès!", "success");
-        loadPublications();
-      } catch (error) {
-        showNotification("Erreur lors de la confirmation: " + error.message, "danger");
-      }
-    };
-
-    // Fonction pour annuler une soumission
-    window.cancelSubmission = async (submissionId) => {
-      try {
-        await rejectRequest('submissions', submissionId);
-        showNotification("Soumission annulée", "info");
-        loadPublications();
-      } catch (error) {
-        showNotification("Erreur lors de l'annulation: " + error.message, "danger");
-      }
-    };
 
     // --- Section Historique ---
     async function loadHistory() {
@@ -4208,130 +4198,111 @@
     // Ajout de la fonction à l'objet window pour la rendre accessible globalement
     window.loadHistory = loadHistory;
 
-    window.openConfirmationModal = (submissionId, submissionData) => {
-      document.getElementById('confirmationTaskId').textContent = submissionData.taskId || 'Inconnu';
-      document.getElementById('confirmationName').value = submissionData.name || 'Non spécifié';
-      document.getElementById('confirmationProof').value = submissionData.proof || 'Aucun lien';
-      
-      // Configurer les boutons de confirmation
-      document.getElementById('confirmSubmissionBtn').onclick = () => {
-        confirmAction('submissions', submissionId, 'proof', submissionData);
-        bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
-      };
-      
-      document.getElementById('cancelSubmissionBtn').onclick = () => {
-        rejectRequest('submissions', submissionId);
-        bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
-      };
-      
-      // Ouvrir la modal
-      new bootstrap.Modal(document.getElementById('confirmationModal')).show();
-    };
-
-    window.confirmAction = async (col, id, type, d) => {
+    // Fonction pour confirmer une soumission
+    window.confirmSubmission = async (submissionId) => {
       try {
-        // Mettre à jour le statut de la demande
-        await updateDoc(doc(db, col, id), {
+        const submissionRef = doc(db, "submissions", submissionId);
+        const submissionSnap = await getDoc(submissionRef);
+        
+        if (!submissionSnap.exists()) {
+          showNotification("Soumission introuvable", "danger");
+          return;
+        }
+        
+        const submissionData = submissionSnap.data();
+        
+        // Confirmer la soumission
+        await updateDoc(submissionRef, {
           status: 'confirmé',
           confirmedAt: serverTimestamp()
         });
         
-        const uRef = doc(db, 'users', d.userId);
+        // Récupérer la tâche pour obtenir le budget
+        const taskRef = doc(db, 'tasks', submissionData.taskId);
+        const taskSnap = await getDoc(taskRef);
+        if (!taskSnap.exists()) {
+          throw new Error('Tâche introuvable');
+        }
+        const taskData = taskSnap.data();
+        
+        // Compatibilité avec ancienne version
+        const taskBudget = taskData.budgetPerParticipant || taskData.budget || 0;
+        
+        // Créditer le solde de gains du participant
+        const uRef = doc(db, 'users', submissionData.userId);
         const uSnap = await getDoc(uRef);
         const u = uSnap.exists() ? uSnap.data() : {gain: 0, depot: 0, bonus: 0};
         
-        if (type === 'depot') {
-          // Créditer le solde de dépôt
-          await updateDoc(uRef, {depot: u.depot + d.montant});
-          showNotification('Dépôt confirmé!', 'success');
-        } else if (type === 'retrait') {
-          // Débiter le solde de gains (montant + frais)
-          const total = d.montant + (d.frais || 0);
-          if (u.gain < total) {
-            showNotification("Solde de gains insuffisant pour l'utilisateur", "warning");
-            // Remettre le statut en attente? Ou rejeter? Pour l'instant, on rejette.
-            await updateDoc(doc(db, col, id), {
-              status: 'rejeté',
-              rejectionReason: 'Solde insuffisant',
-              rejectedAt: serverTimestamp()
-            });
-            return;
-          }
-          await updateDoc(uRef, {gain: u.gain - total});
-          showNotification('Retrait confirmé!', 'success');
-        } else if (type === 'proof') {
-          // Récupérer la tâche pour obtenir le budget
-          const taskRef = doc(db, 'tasks', d.taskId);
-          const taskSnap = await getDoc(taskRef);
-          if (!taskSnap.exists()) {
-            throw new Error('Tâche introuvable');
-          }
-          const taskData = taskSnap.data();
-          
-          // Compatibilité avec ancienne version
-          const taskBudget = taskData.budgetPerParticipant || taskData.budget || 0;
-          
-          // Créditer le solde de gains du participant
-          await updateDoc(uRef, {gain: u.gain + taskBudget});
-          
-          // Ajouter la tâche complétée à la liste de l'utilisateur
-          const completedTasks = u.completedTasks || [];
-          if (!completedTasks.includes(d.taskId)) {
-            completedTasks.push(d.taskId);
-            await updateDoc(uRef, {completedTasks});
-          }
-          
-          // Mettre à jour la tâche : incrémenter le compteur de participants
-          const newCount = (taskData.completedCount || 0) + 1;
-          await updateDoc(taskRef, {
-            completedCount: newCount
-          });
-          
-          // Déduire le montant du dépôt du publisher
-          const publisherRef = doc(db, 'users', taskData.publisher);
-          const publisherSnap = await getDoc(publisherRef);
-          const publisherData = publisherSnap.data();
-          
-          await updateDoc(publisherRef, {
-            depot: publisherData.depot - taskBudget
-          });
-          
-          // Si l'utilisateur a un parrain, créditer le parrain avec 5% du gain
-          if (u.referrer) {
-            const referrerRef = doc(db, 'users', u.referrer);
-            const referrerSnap = await getDoc(referrerRef);
-            if (referrerSnap.exists()) {
-              const referrerData = referrerSnap.data();
-              const bonusAmount = taskBudget * 0.05;
-              await updateDoc(referrerRef, {
-                bonus: (referrerData.bonus || 0) + bonusAmount
-              });
-              
-              // Afficher un log pour confirmer
-              console.log(`Crédité le parrain ${u.referrer} avec ${bonusAmount} Ar`);
-            }
-          }
-          
-          // Vérifier si le solde est épuisé et désactiver la tâche si nécessaire
-          const updatedPublisherSnap = await getDoc(publisherRef);
-          const updatedPublisherData = updatedPublisherSnap.data();
-          
-          if (updatedPublisherData.depot < taskBudget) {
-            await updateDoc(taskRef, {
-              status: 'inactive'
-            });
-            showNotification('Le solde de dépôt est épuisé pour cette tâche. Tâche désactivée.', 'info');
-          }
-          
-          showNotification(`Tâche confirmée! ${taskBudget} Ar crédités.`, 'success');
+        await updateDoc(uRef, {gain: u.gain + taskBudget});
+        
+        // Ajouter la tâche complétée à la liste de l'utilisateur
+        const completedTasks = u.completedTasks || [];
+        if (!completedTasks.includes(submissionData.taskId)) {
+          completedTasks.push(submissionData.taskId);
+          await updateDoc(uRef, {completedTasks});
         }
         
-        // Recharger le panel admin
-        loadAdminPanel();
-        // Recharger les soldes si l'admin est aussi un utilisateur
-        loadBalances();
+        // Mettre à jour la tâche : incrémenter le compteur de participants
+        const newCount = (taskData.completedCount || 0) + 1;
+        await updateDoc(taskRef, {
+          completedCount: newCount
+        });
+        
+        // Déduire le montant du dépôt du publisher
+        const publisherRef = doc(db, 'users', taskData.publisher);
+        const publisherSnap = await getDoc(publisherRef);
+        const publisherData = publisherSnap.data();
+        
+        await updateDoc(publisherRef, {
+          depot: publisherData.depot - taskBudget
+        });
+        
+        // Si l'utilisateur a un parrain, créditer le parrain avec 5% du gain
+        if (u.referrer) {
+          const referrerRef = doc(db, 'users', u.referrer);
+          const referrerSnap = await getDoc(referrerRef);
+          if (referrerSnap.exists()) {
+            const referrerData = referrerSnap.data();
+            const bonusAmount = taskBudget * 0.05;
+            await updateDoc(referrerRef, {
+              bonus: (referrerData.bonus || 0) + bonusAmount
+            });
+            
+            // Mettre à jour les stats du parrain en temps réel
+            updateReferrerStats(u.referrer);
+          }
+        }
+        
+        // Vérifier si le solde est épuisé et désactiver la tâche si nécessaire
+        const updatedPublisherSnap = await getDoc(publisherRef);
+        const updatedPublisherData = updatedPublisherSnap.data();
+        
+        if (updatedPublisherData.depot < taskBudget) {
+          await updateDoc(taskRef, {
+            status: 'inactive'
+          });
+          showNotification('Le solde de dépôt est épuisé pour cette tâche. Tâche désactivée.', 'info');
+        }
+        
+        showNotification(`Soumission confirmée! ${taskBudget} Ar crédités.`, 'success');
+        loadPublications();
       } catch (error) {
-        showNotification("Erreur lors de la confirmation: " + error.message, 'danger');
+        showNotification("Erreur lors de la confirmation: " + error.message, "danger");
+      }
+    };
+
+    // Fonction pour annuler une soumission
+    window.cancelSubmission = async (submissionId) => {
+      try {
+        await updateDoc(doc(db, "submissions", submissionId), {
+          status: 'rejeté',
+          rejectedAt: serverTimestamp()
+        });
+        
+        showNotification("Soumission annulée", "info");
+        loadPublications();
+      } catch (error) {
+        showNotification("Erreur lors de l'annulation: " + error.message, "danger");
       }
     };
 
@@ -4376,6 +4347,13 @@
       onSnapshot(userRef, (doc) => {
         if (doc.exists()) {
           const data = doc.data();
+          
+          // Vérifier si le compte est bloqué
+          if (data.blocked && !isBlocked) {
+            showBlockedAccount();
+            return;
+          }
+          
           document.getElementById("gainBalance").textContent = data.gain + " Ar";
           document.getElementById("depositBalance").textContent = data.depot + " Ar";
           document.getElementById("bonusBalance").textContent = data.bonus + " Ar";
@@ -4415,6 +4393,17 @@
         .catch(error => console.log('Erreur de partage:', error));
       } else {
         copyReferralLink();
+      }
+    }
+
+    // Fonction de déconnexion
+    async function logoutUser() {
+      try {
+        await signOut(auth);
+        localStorage.removeItem('milaVolaUser');
+        location.reload();
+      } catch (error) {
+        console.error("Erreur lors de la déconnexion:", error);
       }
     }
 
