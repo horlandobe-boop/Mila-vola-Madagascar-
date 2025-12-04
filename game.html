@@ -632,13 +632,42 @@
     .notification.warning {
       background: linear-gradient(135deg, #FF9800, #EF6C00);
     }
+    
+    .timer-display {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 1px solid var(--gambling-accent);
+      text-align: center;
+    }
+    
+    .countdown-animation {
+      animation: countdownPulse 1s infinite;
+    }
+    
+    @keyframes countdownPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .available-now {
+      animation: availablePulse 2s infinite;
+    }
+    
+    @keyframes availablePulse {
+      0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1><i class="fas fa-dice me-2"></i>Mila Vola Gambling</h1>
-      <p>Système de jeu avec niveaux et gains horaires</p>
+      <p>Système de jeu avec niveaux et gains horaires (60 minutes)</p>
     </div>
     
     <div class="stats-grid">
@@ -673,14 +702,31 @@
     </div>
     
     <div class="hourly-task">
-      <h3><i class="fas fa-clock me-2"></i>Tâche Horaire</h3>
-      <p>Recevez un bonus toutes les heures selon votre niveau (Réclamation manuelle)</p>
+      <h3><i class="fas fa-clock me-2"></i>Tâche Horaire (60 minutes)</h3>
+      <p>Recevez un bonus toutes les 60 minutes selon votre niveau (Réclamation manuelle)</p>
       <div class="hourly-reward" id="currentHourlyReward">5 Ar</div>
-      <button class="btn-gambling btn-warning" id="claimHourlyBtn" onclick="claimHourlyReward()">
-        <i class="fas fa-gift"></i> RÉCLAMER LE BONUS
+      
+      <div class="timer-display" id="timerDisplay">
+        <div style="font-size: 1.5rem; color: var(--gold); margin: 1rem 0;">
+          <i class="fas fa-stopwatch"></i>
+          <span id="countdownTimer">60:00</span>
+        </div>
+        <div style="font-size: 0.9rem; color: #aaa;">
+          <i class="fas fa-info-circle"></i>
+          Réclamez dans: <span id="timeRemaining">60 minutes</span>
+        </div>
+      </div>
+      
+      <button class="btn-gambling btn-warning" id="claimHourlyBtn" onclick="claimHourlyReward()" disabled>
+        <i class="fas fa-clock"></i> ATTENDRE 60:00
       </button>
-      <div class="timer" id="hourlyCountdown">Disponible dans: 60:00</div>
-      <div class="timer" id="nextAvailableTime" style="color: #FF9800; margin-top: 0.5rem;"></div>
+      
+      <div class="timer" id="nextClaimTime" style="margin-top: 1rem; color: #FF9800;">
+        Prochaine réclamation: <span id="nextAvailableTime">--:--</span>
+      </div>
+      <div class="timer" id="lastClaimTime" style="font-size: 0.9rem; color: #aaa;">
+        Dernière réclamation: <span id="lastClaimText">Jamais</span>
+      </div>
     </div>
     
     <div class="game-container">
@@ -837,6 +883,8 @@
       <h3><i class="fas fa-info-circle me-2"></i>Règles du Jeu</h3>
       <ul class="rules-list">
         <li><i class="fas fa-check"></i> <strong>Niveaux:</strong> Gagnez un bonus horaire selon votre niveau (réclamation manuelle)</li>
+        <li><i class="fas fa-check"></i> <strong>Temps de réclamation:</strong> Toutes les 60 minutes exactement</li>
+        <li><i class="fas fa-check"></i> <strong>Minuteur:</strong> Un compte à rebours de 60 minutes après chaque réclamation</li>
         <li><i class="fas fa-check"></i> <strong>Progression:</strong> Atteignez le montant total gagné/perdu pour monter de niveau</li>
         <li><i class="fas fa-check"></i> <strong>Mise minimum:</strong> 5 Ar (réglable de 5 à 10,000 Ar)</li>
         <li><i class="fas fa-check"></i> <strong>Take Profit:</strong> Le jeu s'arrête automatiquement lorsque ce profit est atteint</li>
@@ -846,6 +894,7 @@
         <li><i class="fas fa-check"></i> <strong>Retrait:</strong> 10% de frais pour transférer vers votre compte principal</li>
         <li><i class="fas fa-check"></i> <strong>Parrainage:</strong> Recevez 50% des gains de vos filleuls</li>
         <li><i class="fas fa-check"></i> <strong>Bonus horaire:</strong> Réclamation manuelle uniquement. Si vous ne réclamez pas, le bonus n'est pas cumulé</li>
+        <li><i class="fas fa-check"></i> <strong>Système 60min:</strong> "isaky ny 60min dia afaka Manao réclamation foana ny olona"</li>
       </ul>
     </div>
   </div>
@@ -910,19 +959,18 @@
       getFirestore, collection, addDoc, doc,
       serverTimestamp, getDoc, updateDoc, onSnapshot,
       query, where, getDocs, setDoc, increment,
-      writeBatch, arrayUnion, arrayRemove
+      writeBatch, arrayUnion, arrayRemove, orderBy, limit
     } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-    // NOUVELLE CONFIGURATION FIREBASE
+    // Configuration Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyCKOfOqZLr7BGmZbs87Co3tjkSS11rj2M0",
-      authDomain: "mila-vola-55d6e.firebaseapp.com",
-      databaseURL: "https://mila-vola-55d6e-default-rtdb.firebaseio.com",
-      projectId: "mila-vola-55d6e",
-      storageBucket: "mila-vola-55d6e.firebasestorage.app",
-      messagingSenderId: "968310917440",
-      appId: "1:968310917440:web:6cec76c1c5a502f98912a5",
-      measurementId: "G-77V0HPGTV7"
+      apiKey: "AIzaSyAC-P6WFH1kqfYQi3PdCWpy4LSUqvtX_vo",
+      authDomain: "mila-vola.firebaseapp.com",
+      projectId: "mila-vola",
+      storageBucket: "mila-vola.appspot.com",
+      messagingSenderId: "690624768352",
+      appId: "1:690624768352:web:668994ef2664c5b99dd605",
+      measurementId: "G-C3FZTKQHFP"
     };
 
     // Initialiser Firebase
@@ -939,6 +987,13 @@
     let currentLoss = 0;
     let gamesPlayed = 0;
     let gameInterval = null;
+    
+    // Variables pour le système horaire
+    let hourlyTimerInterval = null;
+    let nextClaimTime = null;
+    let canClaimHourly = false;
+    let countdownSeconds = 3600; // 60 minutes en secondes
+    let lastClaimTimestamp = null;
     
     // Niveaux et récompenses horaires
     const levels = [
@@ -977,11 +1032,11 @@
       // Configurer les écouteurs d'événements
       setupEventListeners();
       
+      // Initialiser le système horaire
+      await initHourlySystem();
+      
       // Mettre à jour l'interface
       updateUI();
-      
-      // Démarrer le minuteur horaire
-      startHourlyTimer();
       
       // Charger l'historique
       loadHistory();
@@ -1008,8 +1063,7 @@
               totalGamblingLost: 0,
               lastHourlyClaim: null,
               referralCommission: 0,
-              referralEarnings: 0,
-              hourlyRewardAvailable: false
+              referralEarnings: 0
             });
           }
           
@@ -1020,6 +1074,137 @@
       } catch (error) {
         console.error("Erreur lors du chargement des données:", error);
         showNotification("Erreur de chargement des données", "error");
+      }
+    }
+
+    // Initialiser le système horaire
+    async function initHourlySystem() {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const lastHourlyClaim = userData.lastHourlyClaim ? userData.lastHourlyClaim.toDate() : null;
+          
+          // Mettre à jour la récompense horaire selon le niveau
+          const currentLevel = userData.gamblingLevel || 1;
+          const hourlyReward = levels[currentLevel - 1].hourlyReward;
+          document.getElementById('hourlyReward').textContent = hourlyReward + ' Ar/h';
+          document.getElementById('currentHourlyReward').textContent = hourlyReward + ' Ar';
+          
+          // Calculer le temps écoulé depuis la dernière réclamation
+          const now = new Date();
+          
+          if (lastHourlyClaim) {
+            lastClaimTimestamp = lastHourlyClaim;
+            const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
+            
+            // Mettre à jour l'affichage de la dernière réclamation
+            const lastClaimText = lastHourlyClaim.toLocaleTimeString('fr-FR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            }) + ' - ' + lastHourlyClaim.toLocaleDateString('fr-FR');
+            document.getElementById('lastClaimText').textContent = lastClaimText;
+            
+            if (timeSinceLastClaim >= 3600) {
+              // 60 minutes se sont écoulées, la réclamation est disponible
+              enableHourlyClaim();
+            } else {
+              // Moins de 60 minutes, démarrer le minuteur avec le temps restant
+              countdownSeconds = 3600 - timeSinceLastClaim;
+              startHourlyCountdown();
+            }
+            
+            // Calculer l'heure de prochaine réclamation
+            nextClaimTime = new Date(lastHourlyClaim.getTime() + 3600000);
+            updateNextClaimTimeDisplay();
+          } else {
+            // Première réclamation, disponible immédiatement
+            enableHourlyClaim();
+            nextClaimTime = new Date(now.getTime() + 3600000);
+            updateNextClaimTimeDisplay();
+            document.getElementById('lastClaimText').textContent = 'Jamais';
+          }
+        }
+      } catch (error) {
+        console.error("Erreur initialisation système horaire:", error);
+      }
+    }
+
+    // Démarrer le compte à rebours
+    function startHourlyCountdown() {
+      if (hourlyTimerInterval) clearInterval(hourlyTimerInterval);
+      
+      hourlyTimerInterval = setInterval(() => {
+        countdownSeconds--;
+        
+        if (countdownSeconds <= 0) {
+          clearInterval(hourlyTimerInterval);
+          enableHourlyClaim();
+        } else {
+          updateCountdownDisplay();
+        }
+      }, 1000);
+      
+      updateCountdownDisplay();
+    }
+
+    // Mettre à jour l'affichage du compte à rebours
+    function updateCountdownDisplay() {
+      const minutes = Math.floor(countdownSeconds / 60);
+      const seconds = countdownSeconds % 60;
+      const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      document.getElementById('countdownTimer').textContent = timeStr;
+      document.getElementById('timeRemaining').textContent = `${minutes} minute${minutes > 1 ? 's' : ''}`;
+      
+      // Mettre à jour également le timer dans la grille de stats
+      document.getElementById('hourlyTimer').textContent = `Prochain gain: ${timeStr}`;
+      
+      const claimBtn = document.getElementById('claimHourlyBtn');
+      claimBtn.innerHTML = `<i class="fas fa-clock"></i> ATTENDRE ${timeStr}`;
+      claimBtn.disabled = true;
+      claimBtn.classList.remove('pulse');
+    }
+
+    // Activer la réclamation horaire
+    function enableHourlyClaim() {
+      const claimBtn = document.getElementById('claimHourlyBtn');
+      const timerDisplay = document.getElementById('timerDisplay');
+      
+      claimBtn.disabled = false;
+      claimBtn.innerHTML = '<i class="fas fa-gift"></i> RÉCLAMER LE BONUS';
+      claimBtn.classList.add('pulse');
+      
+      timerDisplay.innerHTML = `
+        <div style="font-size: 1.5rem; color: #4CAF50; margin: 1rem 0;">
+          <i class="fas fa-check-circle"></i>
+          <span>Disponible maintenant!</span>
+        </div>
+        <div style="font-size: 0.9rem; color: #4CAF50;">
+          <i class="fas fa-info-circle"></i>
+          Réclamez votre bonus horaire
+        </div>
+      `;
+      
+      // Mettre à jour le timer dans la grille de stats
+      document.getElementById('hourlyTimer').textContent = 'Disponible maintenant!';
+      
+      canClaimHourly = true;
+      showNotification("Bonus horaire disponible! Réclamez maintenant.", "success");
+    }
+
+    // Mettre à jour l'affichage de l'heure de prochaine réclamation
+    function updateNextClaimTimeDisplay() {
+      if (nextClaimTime) {
+        const timeStr = nextClaimTime.toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+        document.getElementById('nextAvailableTime').textContent = timeStr;
       }
     }
 
@@ -1053,6 +1238,13 @@
       });
       
       document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawFees);
+      
+      // Nettoyer l'intervalle lorsque la page se ferme
+      window.addEventListener('beforeunload', () => {
+        if (hourlyTimerInterval) {
+          clearInterval(hourlyTimerInterval);
+        }
+      });
     }
 
     // Mettre à jour l'interface
@@ -1060,86 +1252,13 @@
       // Cette fonction sera appelée par les écouteurs en temps réel
     }
 
-    // Démarrer le minuteur horaire
-    function startHourlyTimer() {
-      updateHourlyTimer();
-      setInterval(updateHourlyTimer, 1000);
-    }
-
-    // Mettre à jour le minuteur horaire
-    async function updateHourlyTimer() {
-      try {
-        const userRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userRef);
-        
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          const currentLevel = userData.gamblingLevel || 1;
-          const lastHourlyClaim = userData.lastHourlyClaim ? userData.lastHourlyClaim.toDate() : null;
-          const hourlyRewardAvailable = userData.hourlyRewardAvailable || false;
-          
-          // Mettre à jour la récompense horaire
-          const hourlyReward = levels[currentLevel - 1].hourlyReward;
-          document.getElementById('hourlyReward').textContent = hourlyReward + ' Ar/h';
-          document.getElementById('currentHourlyReward').textContent = hourlyReward + ' Ar';
-          
-          // Calculer le temps restant
-          const now = new Date();
-          let timeRemaining = 3600; // 1 heure en secondes
-          let nextAvailable = new Date(now.getTime() + 3600000); // Maintenant + 1 heure
-          
-          if (lastHourlyClaim) {
-            const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
-            timeRemaining = Math.max(0, 3600 - timeSinceLastClaim);
-            nextAvailable = new Date(lastHourlyClaim.getTime() + 3600000);
-          }
-          
-          // Mettre à jour le bouton et le minuteur
-          const claimBtn = document.getElementById('claimHourlyBtn');
-          const timerElement = document.getElementById('hourlyCountdown');
-          const nextTimeElement = document.getElementById('nextAvailableTime');
-          
-          // Formater la date de prochaine disponibilité
-          const nextTimeStr = nextAvailable.toLocaleTimeString('fr-FR', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false 
-          });
-          
-          if (hourlyRewardAvailable) {
-            // Récompense disponible (l'utilisateur n'a pas encore réclamé)
-            claimBtn.disabled = false;
-            claimBtn.innerHTML = '<i class="fas fa-gift"></i> RÉCLAMER LE BONUS';
-            timerElement.textContent = 'Disponible maintenant!';
-            timerElement.style.color = '#4CAF50';
-            nextTimeElement.textContent = `Prochaine disponibilité: ${nextTimeStr}`;
-          } else if (timeRemaining <= 0) {
-            // L'heure est passée, marquer la récompense comme disponible
-            if (!hourlyRewardAvailable) {
-              await updateDoc(userRef, {
-                hourlyRewardAvailable: true
-              });
-            }
-          } else {
-            // En attente
-            claimBtn.disabled = true;
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-            claimBtn.innerHTML = `<i class="fas fa-clock"></i> ATTENDRE ${minutes}:${seconds.toString().padStart(2, '0')}`;
-            timerElement.textContent = `Disponible dans: ${minutes}:${seconds.toString().padStart(2, '0')}`;
-            timerElement.style.color = '#FF9800';
-            nextTimeElement.textContent = `Prochaine disponibilité: ${nextTimeStr}`;
-          }
-          
-          document.getElementById('hourlyTimer').textContent = `Prochain gain: ${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}`;
-        }
-      } catch (error) {
-        console.error("Erreur lors de la mise à jour du minuteur:", error);
-      }
-    }
-
     // Réclamer la récompense horaire
     async function claimHourlyReward() {
+      if (!canClaimHourly) {
+        showNotification("Le bonus n'est pas encore disponible", "warning");
+        return;
+      }
+      
       try {
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
@@ -1148,32 +1267,12 @@
           const userData = userSnap.data();
           const currentLevel = userData.gamblingLevel || 1;
           const hourlyReward = levels[currentLevel - 1].hourlyReward;
-          const hourlyRewardAvailable = userData.hourlyRewardAvailable || false;
-          
-          // Vérifier si la récompense est disponible
-          if (!hourlyRewardAvailable) {
-            showNotification("La récompense horaire n'est pas encore disponible", "warning");
-            return;
-          }
-          
-          // Vérifier si une heure s'est écoulée depuis la dernière réclamation
-          const lastHourlyClaim = userData.lastHourlyClaim ? userData.lastHourlyClaim.toDate() : null;
-          const now = new Date();
-          
-          if (lastHourlyClaim) {
-            const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
-            if (timeSinceLastClaim < 3600) {
-              showNotification("La récompense horaire n'est pas encore disponible", "warning");
-              return;
-            }
-          }
           
           // Ajouter la récompense au solde gambling
           await updateDoc(userRef, {
             gamblingBalance: increment(hourlyReward),
             lastHourlyClaim: serverTimestamp(),
-            totalGamblingWon: increment(hourlyReward),
-            hourlyRewardAvailable: false
+            totalGamblingWon: increment(hourlyReward)
           });
           
           // Enregistrer dans l'historique
@@ -1183,16 +1282,38 @@
             type: "hourly_reward",
             amount: hourlyReward,
             level: currentLevel,
-            timestamp: serverTimestamp()
+            timestamp: serverTimestamp(),
+            description: `Bonus horaire niveau ${currentLevel}`
           });
           
-          showNotification(`Récompense horaire de ${hourlyReward} Ar réclamée!`, "success");
+          showNotification(`Récompense horaire de ${hourlyReward} Ar réclamée! Prochaine réclamation dans 60 minutes.`, "success");
           
-          // Mettre à jour l'interface
-          updateHourlyTimer();
+          // Réinitialiser le système pour 60 minutes
+          canClaimHourly = false;
+          countdownSeconds = 3600;
+          nextClaimTime = new Date(new Date().getTime() + 3600000);
+          lastClaimTimestamp = new Date();
+          
+          // Mettre à jour l'affichage de la dernière réclamation
+          const now = new Date();
+          const lastClaimText = now.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          }) + ' - ' + now.toLocaleDateString('fr-FR');
+          document.getElementById('lastClaimText').textContent = lastClaimText;
+          
+          // Démarrer le nouveau minuteur
+          startHourlyCountdown();
+          updateNextClaimTimeDisplay();
+          
+          // Animation de succès
+          const rewardElement = document.getElementById('currentHourlyReward');
+          rewardElement.classList.add('pulse');
+          setTimeout(() => rewardElement.classList.remove('pulse'), 2000);
         }
       } catch (error) {
-        console.error("Erreur lors de la réclamation de la récompense:", error);
+        console.error("Erreur lors de la réclamation:", error);
         showNotification("Erreur lors de la réclamation", "error");
       }
     }
@@ -1477,7 +1598,12 @@
                 gamblingLevel: currentLevel + 1
               });
               
-              showNotification(`Félicitations! Vous êtes maintenant niveau ${currentLevel + 1}`, "success");
+              // Mettre à jour la récompense horaire
+              const newHourlyReward = levels[currentLevel].hourlyReward;
+              document.getElementById('hourlyReward').textContent = newHourlyReward + ' Ar/h';
+              document.getElementById('currentHourlyReward').textContent = newHourlyReward + ' Ar';
+              
+              showNotification(`Félicitations! Vous êtes maintenant niveau ${currentLevel + 1}. Récompense horaire: ${newHourlyReward} Ar`, "success");
             }
           }
         }
@@ -1660,7 +1786,9 @@
       try {
         const historyQuery = query(
           collection(db, "gambling_history"),
-          where("userId", "==", userId)
+          where("userId", "==", userId),
+          orderBy("timestamp", "desc"),
+          limit(20)
         );
         
         const historySnap = await getDocs(historyQuery);
@@ -1671,33 +1799,19 @@
         }
         
         historyBody.innerHTML = '';
-        const historyData = [];
         
         historySnap.forEach(doc => {
           const data = doc.data();
-          data.id = doc.id;
-          historyData.push(data);
-        });
-        
-        // Trier par date (du plus récent au plus ancien)
-        historyData.sort((a, b) => {
-          const dateA = a.timestamp ? a.timestamp.toDate() : new Date(0);
-          const dateB = b.timestamp ? b.timestamp.toDate() : new Date(0);
-          return dateB - dateA;
-        });
-        
-        // Afficher les 20 derniers résultats
-        historyData.slice(0, 20).forEach(item => {
-          const date = item.timestamp ? item.timestamp.toDate().toLocaleDateString('fr-FR') + ' ' + item.timestamp.toDate().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'}) : 'Date inconnue';
-          const type = item.type;
-          const amount = item.amount;
-          const level = item.level || 1;
+          const date = data.timestamp ? data.timestamp.toDate().toLocaleDateString('fr-FR') + ' ' + data.timestamp.toDate().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'}) : 'Date inconnue';
+          const type = data.type;
+          const amount = data.amount;
+          const level = data.level || 1;
           
           let resultBadge = '';
           let resultAmount = '';
           
           if (type === 'game_round') {
-            if (item.result === 'win') {
+            if (data.result === 'win') {
               resultBadge = '<span class="badge-win">GAGNÉ</span>';
               resultAmount = `<span style="color: #4CAF50">+${amount} Ar</span>`;
             } else {
@@ -1721,7 +1835,7 @@
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${date}</td>
-            <td>${type === 'game_round' ? item.betAmount + ' Ar' : '-'}</td>
+            <td>${type === 'game_round' ? data.betAmount + ' Ar' : '-'}</td>
             <td>${resultBadge}</td>
             <td>${resultAmount}</td>
             <td>${level}</td>
