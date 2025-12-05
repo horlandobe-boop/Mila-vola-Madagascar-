@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vérification - Microtâche Mila Vola</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --success: #4cc9f0;
+      --danger: #e63946;
+      --warning: #f72585;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f8f9fc, #eef2f9);
+      color: #333;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .verification-container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+    
+    .verification-header {
+      background: linear-gradient(135deg, var(--primary), #3f37c9);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .verification-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    
+    .verification-header p {
+      opacity: 0.9;
+    }
+    
+    .verification-body {
+      padding: 2rem;
+    }
+    
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+    
+    .step-indicator::before {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #e9ecef;
+      z-index: 1;
+    }
+    
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e9ecef;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin-bottom: 8px;
+      transition: all 0.3s;
+    }
+    
+    .step.active .step-number {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .step.completed .step-number {
+      background: var(--success);
+      color: white;
+    }
+    
+    .step-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6c757d;
+    }
+    
+    .step.active .step-label {
+      color: var(--primary);
+    }
+    
+    .step-content {
+      display: none;
+    }
+    
+    .step-content.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .form-section {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-section h3 {
+      color: var(--primary);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--primary);
+      display: inline-block;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+      padding: 0.85rem 1.25rem;
+      border-radius: 10px;
+      border: 1px solid #dee2e6;
+      transition: all 0.3s;
+      font-size: 1rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.2);
+    }
+    
+    .required::after {
+      content: " *";
+      color: var(--danger);
+    }
+    
+    .account-number-hint {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.25rem;
+    }
+    
+    .account-number-hint .valid-prefix {
+      color: var(--success);
+      font-weight: 600;
+    }
+    
+    .verification-footer {
+      padding: 1.5rem 2rem;
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .btn {
+      padding: 0.85rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #3ab4d8;
+    }
+    
+    .alert {
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      border: 1px solid transparent;
+    }
+    
+    .alert-info {
+      background-color: #e3f2fd;
+      border-color: #bbdefb;
+      color: #1976d2;
+    }
+    
+    .alert-warning {
+      background-color: #fff8e1;
+      border-color: #ffecb3;
+      color: #ffa000;
+    }
+    
+    .alert-danger {
+      background-color: #fdecea;
+      border-color: #f9cfc9;
+      color: #d32f2f;
+    }
+    
+    .verification-status {
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+    
+    .verification-status i {
+      font-size: 5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .status-success {
+      color: var(--success);
+    }
+    
+    .status-error {
+      color: var(--danger);
+    }
+    
+    .status-blocked {
+      color: var(--warning);
+    }
+    
+    .data-summary {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .data-summary h4 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+    
+    .summary-label {
+      font-weight: 500;
+    }
+    
+    .summary-value {
+      color: #495057;
+      max-width: 60%;
+      text-align: right;
+      word-break: break-word;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .firebase-status {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    
+    .status-connected {
+      background-color: var(--success);
+      color: white;
+    }
+    
+    .status-disconnected {
+      background-color: var(--danger);
+      color: white;
+    }
+    
+    .duplicate-warning {
+      background-color: #fff3cd;
+      border-color: #ffeaa7;
+      color: #856404;
+      padding: 0.5rem;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    
+    .duplicate-warning.show {
+      display: block;
+    }
+    
+    .form-group {
+      position: relative;
+    }
+    
+    .is-invalid {
+      border-color: #e63946 !important;
+    }
+    
+    @media (max-width: 768px) {
+      .verification-container {
+        margin: 15px;
+      }
+      
+      .verification-body, .verification-header {
+        padding: 1.5rem;
+      }
+      
+      .step-indicator {
+        margin-bottom: 2rem;
+      }
+      
+      .step-label {
+        font-size: 0.75rem;
+        text-align: center;
+      }
+      
+      .verification-footer {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .verification-footer .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Firebase Status Indicator -->
+  <div id="firebaseStatus" class="firebase-status status-connected">
+    <i class="fas fa-circle-check"></i> Connecté à Firebase
+  </div>
+  
+  <div class="verification-container">
+    <div class="verification-header">
+      <h1><i class="fas fa-user-check me-2"></i>Vérification d'Identité</h1>
+      <p>Complétez cette vérification pour activer votre compte et effectuer des retraits</p>
+    </div>
+    
+    <div class="verification-body">
+      <!-- Indicateur d'étape (3 étapes seulement) -->
+      <div class="step-indicator">
+        <div class="step active" id="step1">
+          <div class="step-number">1</div>
+          <div class="step-label">Informations<br>Personnelles</div>
+        </div>
+        <div class="step" id="step2">
+          <div class="step-number">2</div>
+          <div class="step-label">Compte Bancaire</div>
+        </div>
+        <div class="step" id="step3">
+          <div class="step-number">3</div>
+          <div class="step-label">Confirmation</div>
+        </div>
+      </div>
+      
+      <!-- Étape 1: Informations personnelles -->
+      <div class="step-content active" id="stepContent1">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>Veuillez fournir vos informations personnelles.
+        </div>
+        
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <strong>Attention :</strong> Si vos informations (nom, CIN ou compte) sont déjà utilisées par un autre utilisateur, votre compte sera <strong>bloqué automatiquement</strong> et vous ne pourrez plus effectuer de retraits.
+        </div>
+        
+        <div class="form-section">
+          <h3>Informations Personnelles</h3>
+          
+          <div class="row mb-3">
+            <div class="col-md-6 form-group">
+              <label for="fullName" class="form-label required">Nom Complet</label>
+              <input type="text" class="form-control" id="fullName" placeholder="Votre nom complet" required>
+              <div class="duplicate-warning" id="nameDuplicateWarning">
+                <i class="fas fa-exclamation-triangle me-1"></i> Ce nom est déjà utilisé par un autre utilisateur
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="country" class="form-label required">Pays de Résidence</label>
+              <select class="form-select" id="country" required>
+                <option value="">Sélectionnez votre pays</option>
+                <option value="Madagascar">Madagascar</option>
+                <option value="France">France</option>
+                <option value="Canada">Canada</option>
+                <option value="Belgique">Belgique</option>
+                <option value="Suisse">Suisse</option>
+                <option value="États-Unis">États-Unis</option>
+                <option value="Sénégal">Sénégal</option>
+                <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+                <option value="Cameroun">Cameroun</option>
+                <option value="Gabon">Gabon</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-12 form-group">
+              <label for="cinNumber" class="form-label required">Numéro CIN</label>
+              <input type="text" class="form-control" id="cinNumber" placeholder="Ex: 123456789012" required>
+              <small class="text-muted">Numéro de votre carte d'identité nationale</small>
+              <div class="duplicate-warning" id="cinDuplicateWarning">
+                <i class="fas fa-exclamation-triangle me-1"></i> Ce numéro CIN est déjà utilisé par un autre utilisateur
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="verification-footer">
+          <div></div>
+          <button class="btn btn-primary" onclick="nextStep(2)">Suivant <i class="fas fa-arrow-right ms-2"></i></button>
+        </div>
+      </div>
+      
+      <!-- Étape 2: Compte bancaire -->
+      <div class="step-content" id="stepContent2">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>Fournissez les informations de votre compte bancaire pour les retraits.
+        </div>
+        
+        <div class="alert alert-danger">
+          <i class="fas fa-ban me-2"></i>
+          <strong>Bloquage automatique :</strong> Si ce compte est déjà utilisé par un autre utilisateur, votre compte sera immédiatement bloqué et tous les retraits seront suspendus.
+        </div>
+        
+        <div class="form-section">
+          <h3>Informations Bancaires</h3>
+          
+          <div class="row mb-3">
+            <div class="col-md-6 form-group">
+              <label for="accountNumber" class="form-label required">Numéro de Compte</label>
+              <input type="text" class="form-control" id="accountNumber" placeholder="Ex: 0341234567" required>
+              <div class="account-number-hint">
+                <i class="fas fa-info-circle me-1"></i> Seuls les numéros commençant par <span class="valid-prefix">034</span> ou <span class="valid-prefix">038</span> sont acceptés
+              </div>
+              <div class="duplicate-warning" id="accountDuplicateWarning">
+                <i class="fas fa-exclamation-triangle me-1"></i> Ce compte est déjà utilisé par un autre utilisateur
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="accountName" class="form-label required">Nom du Compte</label>
+              <input type="text" class="form-control" id="accountName" placeholder="Le nom associé au compte" required>
+              <small class="text-muted">Doit correspondre au nom sur votre compte bancaire</small>
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Important:</strong> Seul ce numéro de compte pourra être utilisé pour effectuer des retraits. Si vous saisissez un autre numéro, votre demande de retrait sera refusée.
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="verification-footer">
+          <button class="btn btn-secondary" onclick="prevStep(1)"><i class="fas fa-arrow-left me-2"></i>Précédent</button>
+          <button class="btn btn-primary" onclick="nextStep(3)">Suivant <i class="fas fa-arrow-right ms-2"></i></button>
+        </div>
+      </div>
+      
+      <!-- Étape 3: Confirmation -->
+      <div class="step-content" id="stepContent3">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>Vérifiez toutes vos informations avant de soumettre la vérification.
+        </div>
+        
+        <div class="alert alert-warning" id="duplicateAlert" style="display: none;">
+          <i class="fas fa-shield-alt me-2"></i>
+          <strong>Système de détection activé :</strong> Le système vérifiera si vos informations ne sont pas déjà utilisées par un autre compte.
+        </div>
+        
+        <div class="form-section">
+          <h3>Récapitulatif et Confirmation</h3>
+          
+          <div class="data-summary">
+            <h4><i class="fas fa-clipboard-check me-2"></i>Résumé de vos informations</h4>
+            
+            <div class="summary-item">
+              <div class="summary-label">Nom Complet:</div>
+              <div class="summary-value" id="summaryFullName">-</div>
+            </div>
+            
+            <div class="summary-item">
+              <div class="summary-label">Pays de Résidence:</div>
+              <div class="summary-value" id="summaryCountry">-</div>
+            </div>
+            
+            <div class="summary-item">
+              <div class="summary-label">Numéro CIN:</div>
+              <div class="summary-value" id="summaryCIN">-</div>
+            </div>
+            
+            <div class="summary-item">
+              <div class="summary-label">Numéro de Compte:</div>
+              <div class="summary-value" id="summaryAccountNumber">-</div>
+            </div>
+            
+            <div class="summary-item">
+              <div class="summary-label">Nom du Compte:</div>
+              <div class="summary-value" id="summaryAccountName">-</div>
+            </div>
+          </div>
+          
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" id="consentCheck" required>
+            <label class="form-check-label" for="consentCheck">
+              Je certifie que toutes les informations fournies sont exactes et à jour. J'accepte que ces informations soient vérifiées pour sécuriser mon compte.
+              <strong class="text-danger">Je comprends que si mes informations sont déjà utilisées par un autre compte, mon compte sera bloqué immédiatement.</strong>
+            </label>
+          </div>
+        </div>
+        
+        <div class="verification-footer">
+          <button class="btn btn-secondary" onclick="prevStep(2)"><i class="fas fa-arrow-left me-2"></i>Précédent</button>
+          <button class="btn btn-success" id="submitBtn" onclick="submitVerification()">
+            <i class="fas fa-check me-2"></i> Terminer la Vérification
+          </button>
+        </div>
+      </div>
+      
+      <!-- Étape 4: Résultat -->
+      <div class="step-content" id="stepContent4">
+        <div class="verification-status">
+          <div id="successStatus" style="display: none;">
+            <i class="fas fa-check-circle status-success"></i>
+            <h2>Vérification Complétée!</h2>
+            <p class="mb-4">Votre compte a été vérifié avec succès. Vous pouvez maintenant effectuer des retraits et utiliser toutes les fonctionnalités de l'application.</p>
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              Seul le numéro de compte que vous avez fourni (<strong id="verifiedAccountNumber"></strong>) pourra être utilisé pour effectuer des retraits.
+            </div>
+            <button class="btn btn-primary mt-3" onclick="returnToApp()">
+              <i class="fas fa-arrow-left me-2"></i> Retourner à l'application
+            </button>
+          </div>
+          
+          <div id="errorStatus" style="display: none;">
+            <i class="fas fa-times-circle status-error"></i>
+            <h2>Échec de la Vérification</h2>
+            <p class="mb-4" id="errorMessage">Une erreur s'est produite lors de la vérification.</p>
+            <button class="btn btn-primary mt-3" onclick="retryVerification()">
+              <i class="fas fa-redo me-2"></i> Réessayer
+            </button>
+          </div>
+          
+          <div id="blockedStatus" style="display: none;">
+            <i class="fas fa-ban status-blocked"></i>
+            <h2>Compte Bloqué</h2>
+            <p class="mb-4" id="blockedMessage"></p>
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Votre compte a été bloqué automatiquement par notre système de sécurité.</strong><br>
+              Vous ne pourrez plus effectuer de retraits.
+            </div>
+            <button class="btn btn-primary mt-3" onclick="returnToApp()">
+              <i class="fas fa-arrow-left me-2"></i> Retourner à l'application
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, getDoc, doc,
+      serverTimestamp, query, where, getDocs, setDoc,
+      updateDoc, onSnapshot, arrayUnion
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import { 
+      getAuth, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCKOfOqZLr7BGmZbs87Co3tjkSS11rj2M0",
+      authDomain: "mila-vola-55d6e.firebaseapp.com",
+      databaseURL: "https://mila-vola-55d6e-default-rtdb.firebaseio.com",
+      projectId: "mila-vola-55d6e",
+      storageBucket: "mila-vola-55d6e.firebasestorage.app",
+      messagingSenderId: "968310917440",
+      appId: "1:968310917440:web:6cec76c1c5a502f98912a5",
+      measurementId: "G-77V0HPGTV7"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Variables globales
+    let currentStep = 1;
+    let userId = "";
+    let userName = "";
+    let userEmail = "";
+    let verificationData = {
+      fullName: '',
+      country: '',
+      cinNumber: '',
+      accountNumber: '',
+      accountName: '',
+    };
+    
+    // Vérifier si l'utilisateur est déjà connecté
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // L'utilisateur est connecté avec Firebase Auth
+        userId = user.uid;
+        userEmail = user.email;
+        
+        try {
+          // Récupérer les informations utilisateur depuis Firestore
+          const userRef = doc(db, "users", userId);
+          const userSnap = await getDoc(userRef);
+          
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
+            userName = userData.firstName + ' ' + userData.lastName;
+            
+            // Vérifier si l'utilisateur est déjà bloqué
+            if (userData.blocked) {
+              showBlockedStatus("Votre compte a été bloqué par notre système de sécurité.");
+              return;
+            }
+            
+            // Pré-remplir le formulaire si des données existent
+            const verificationQuery = query(
+              collection(db, "verifications"), 
+              where("userId", "==", userId)
+            );
+            const verificationSnap = await getDocs(verificationQuery);
+            
+            if (!verificationSnap.empty) {
+              // L'utilisateur a déjà complété la vérification
+              verificationSnap.forEach(doc => {
+                const data = doc.data();
+                
+                // Pré-remplir les champs
+                document.getElementById('fullName').value = data.fullName || '';
+                document.getElementById('country').value = data.country || '';
+                document.getElementById('cinNumber').value = data.cinNumber || '';
+                document.getElementById('accountNumber').value = data.accountNumber || '';
+                document.getElementById('accountName').value = data.accountName || '';
+                
+                verificationData = {
+                  fullName: data.fullName || '',
+                  country: data.country || '',
+                  cinNumber: data.cinNumber || '',
+                  accountNumber: data.accountNumber || '',
+                  accountName: data.accountName || '',
+                };
+              });
+              
+              // Si la vérification est complète, afficher le statut
+              if (userData.verified) {
+                document.getElementById('successStatus').style.display = 'block';
+                document.getElementById('stepContent1').style.display = 'none';
+                document.getElementById('stepContent4').classList.add('active');
+                document.getElementById('verifiedAccountNumber').textContent = userData.verifiedAccountNumber || '';
+              }
+            }
+            
+            // Vérifier en temps réel si des doublons existent
+            setupRealTimeDuplicateCheck();
+          }
+        } catch (error) {
+          console.error("Erreur lors du chargement des données utilisateur:", error);
+        }
+        
+        // Mettre à jour le statut Firebase
+        document.getElementById('firebaseStatus').innerHTML = '<i class="fas fa-circle-check"></i> Connecté à Firebase';
+        document.getElementById('firebaseStatus').className = 'firebase-status status-connected';
+      } else {
+        // L'utilisateur n'est pas connecté
+        document.getElementById('firebaseStatus').innerHTML = '<i class="fas fa-circle-exclamation"></i> Non connecté';
+        document.getElementById('firebaseStatus').className = 'firebase-status status-disconnected';
+        
+        // Rediriger vers la page de connexion après 2 secondes
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 2000);
+      }
+    });
+    
+    // Configurer la vérification en temps réel des doublons
+    function setupRealTimeDuplicateCheck() {
+      // Écouter les changements sur les champs
+      document.getElementById('fullName').addEventListener('input', function() {
+        checkDuplicate('fullName', this.value, 'nameDuplicateWarning');
+      });
+      
+      document.getElementById('cinNumber').addEventListener('input', function() {
+        checkDuplicate('cinNumber', this.value, 'cinDuplicateWarning');
+      });
+      
+      document.getElementById('accountNumber').addEventListener('input', function() {
+        if (validateAccountNumber()) {
+          checkDuplicate('accountNumber', this.value, 'accountDuplicateWarning');
+        }
+      });
+    }
+    
+    // Vérifier si une valeur existe déjà pour un autre utilisateur
+    async function checkDuplicate(field, value, warningElementId) {
+      if (!value || !userId) return;
+      
+      try {
+        // Construire la requête pour vérifier si cette valeur existe pour un autre utilisateur
+        const q = query(
+          collection(db, "verifications"), 
+          where(field, "==", value.trim())
+        );
+        
+        const querySnapshot = await getDocs(q);
+        let isDuplicate = false;
+        let duplicateUserId = '';
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          // Ne pas compter l'utilisateur actuel s'il a déjà soumis une vérification
+          if (data.userId !== userId) {
+            isDuplicate = true;
+            duplicateUserId = data.userId;
+          }
+        });
+        
+        // Afficher ou cacher l'avertissement
+        const warningElement = document.getElementById(warningElementId);
+        if (isDuplicate) {
+          warningElement.classList.add('show');
+          
+          // Mettre à jour l'alerte dans l'étape 3
+          document.getElementById('duplicateAlert').style.display = 'block';
+          document.getElementById('duplicateAlert').innerHTML = `
+            <i class="fas fa-shield-alt me-2"></i>
+            <strong>Système de détection activé :</strong> Cette ${getFieldName(field)} est déjà utilisée par un autre compte. Si vous soumettez, votre compte sera bloqué.
+          `;
+        } else {
+          warningElement.classList.remove('show');
+          
+          // Cacher l'alerte si aucun doublon n'est détecté
+          const hasOtherDuplicates = document.querySelectorAll('.duplicate-warning.show').length === 0;
+          if (hasOtherDuplicates) {
+            document.getElementById('duplicateAlert').style.display = 'none';
+          }
+        }
+        
+        return { isDuplicate, duplicateUserId };
+      } catch (error) {
+        console.error(`Erreur lors de la vérification des doublons pour ${field}:`, error);
+        return { isDuplicate: false, duplicateUserId: '' };
+      }
+    }
+    
+    // Obtenir le nom du champ en français
+    function getFieldName(field) {
+      const fieldNames = {
+        'fullName': 'nom',
+        'cinNumber': 'numéro CIN',
+        'accountNumber': 'numéro de compte'
+      };
+      return fieldNames[field] || field;
+    }
+    
+    // Vérifier tous les doublons avant soumission
+    async function checkAllDuplicates() {
+      const nameCheck = await checkDuplicate('fullName', verificationData.fullName, 'nameDuplicateWarning');
+      const cinCheck = await checkDuplicate('cinNumber', verificationData.cinNumber, 'cinDuplicateWarning');
+      const accountCheck = await checkDuplicate('accountNumber', verificationData.accountNumber, 'accountDuplicateWarning');
+      
+      return {
+        nameDuplicate: nameCheck.isDuplicate,
+        cinDuplicate: cinCheck.isDuplicate,
+        accountDuplicate: accountCheck.isDuplicate,
+        duplicateUserId: nameCheck.duplicateUserId || cinCheck.duplicateUserId || accountCheck.duplicateUserId
+      };
+    }
+    
+    // Bloquer un utilisateur
+    async function blockUser(reason, duplicateUserId = '') {
+      try {
+        const userRef = doc(db, "users", userId);
+        
+        // Mettre à jour le statut de l'utilisateur
+        await updateDoc(userRef, {
+          blocked: true,
+          blockedAt: serverTimestamp(),
+          blockedReason: reason,
+          canWithdraw: false, // Désactiver les retraits
+          duplicateOf: duplicateUserId || null
+        });
+        
+        // Enregistrer l'événement de blocage
+        await addDoc(collection(db, "blockedAccounts"), {
+          userId: userId,
+          userEmail: userEmail,
+          blockedAt: serverTimestamp(),
+          blockedReason: reason,
+          duplicateUserId: duplicateUserId || null,
+          verificationData: verificationData
+        });
+        
+        // Si un utilisateur dupliqué est identifié, marquer également son compte
+        if (duplicateUserId) {
+          const duplicateUserRef = doc(db, "users", duplicateUserId);
+          await updateDoc(duplicateUserRef, {
+            hasDuplicate: true,
+            duplicateDetectedAt: serverTimestamp()
+          });
+        }
+        
+        return true;
+      } catch (error) {
+        console.error("Erreur lors du blocage de l'utilisateur:", error);
+        return false;
+      }
+    }
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      // Configurer la validation du numéro de compte
+      document.getElementById('accountNumber').addEventListener('input', validateAccountNumber);
+      
+      // Configurer la validation en temps réel pour les champs
+      setupFieldValidation();
+    });
+    
+    // Configurer la validation en temps réel des champs
+    function setupFieldValidation() {
+      document.getElementById('fullName').addEventListener('blur', function() {
+        validateField(this, 'Le nom complet est requis');
+      });
+      
+      document.getElementById('cinNumber').addEventListener('blur', function() {
+        validateField(this, 'Le numéro CIN est requis');
+      });
+      
+      document.getElementById('accountNumber').addEventListener('blur', function() {
+        if (!this.value.trim()) {
+          this.classList.add('is-invalid');
+          showNotification('Le numéro de compte est requis', 'warning');
+        } else if (!validateAccountNumber()) {
+          this.classList.add('is-invalid');
+          showNotification('Le numéro de compte doit commencer par 034 ou 038', 'warning');
+        } else {
+          this.classList.remove('is-invalid');
+        }
+      });
+      
+      document.getElementById('accountName').addEventListener('blur', function() {
+        validateField(this, 'Le nom du compte est requis');
+      });
+      
+      document.getElementById('country').addEventListener('change', function() {
+        if (!this.value) {
+          this.classList.add('is-invalid');
+        } else {
+          this.classList.remove('is-invalid');
+        }
+      });
+    }
+    
+    // Valider un champ simple
+    function validateField(field, errorMessage) {
+      if (!field.value.trim()) {
+        field.classList.add('is-invalid');
+        showNotification(errorMessage, 'warning');
+      } else {
+        field.classList.remove('is-invalid');
+      }
+    }
+    
+    // Valider le numéro de compte
+    function validateAccountNumber() {
+      const accountNumber = document.getElementById('accountNumber').value;
+      const isValid = /^(034|038)\d+$/.test(accountNumber);
+      
+      if (accountNumber && !isValid) {
+        document.getElementById('accountNumber').classList.add('is-invalid');
+        return false;
+      } else {
+        document.getElementById('accountNumber').classList.remove('is-invalid');
+        return true;
+      }
+    }
+    
+    // Passer à l'étape suivante
+    async function nextStep(step) {
+      // Valider l'étape actuelle
+      if (!validateStep(currentStep)) {
+        return;
+      }
+      
+      // Mettre à jour les données
+      updateVerificationData();
+      
+      // Vérifier les doublons avant de passer à l'étape suivante
+      if (currentStep === 1 && step === 2) {
+        try {
+          const duplicates = await checkAllDuplicates();
+          if (duplicates.nameDuplicate || duplicates.cinDuplicate) {
+            showNotification('Attention : des doublons ont été détectés. Si vous continuez, votre compte sera bloqué.', 'warning');
+          }
+        } catch (error) {
+          console.error("Erreur lors de la vérification des doublons:", error);
+        }
+      }
+      
+      // Cacher l'étape actuelle
+      document.getElementById(`stepContent${currentStep}`).classList.remove('active');
+      document.getElementById(`step${currentStep}`).classList.remove('active');
+      
+      // Afficher la nouvelle étape
+      currentStep = step;
+      document.getElementById(`stepContent${currentStep}`).classList.add('active');
+      document.getElementById(`step${currentStep}`).classList.add('active');
+      
+      // Marquer les étapes précédentes comme complétées
+      for (let i = 1; i < step; i++) {
+        document.getElementById(`step${i}`).classList.add('completed');
+      }
+      
+      // Mettre à jour le résumé si on est à l'étape 3
+      if (step === 3) {
+        updateSummary();
+        
+        // Vérifier à nouveau les doublons pour l'alerte
+        try {
+          const duplicates = await checkAllDuplicates();
+          if (duplicates.nameDuplicate || duplicates.cinDuplicate || duplicates.accountDuplicate) {
+            document.getElementById('duplicateAlert').style.display = 'block';
+          }
+        } catch (error) {
+          console.error("Erreur lors de la vérification des doublons:", error);
+        }
+      }
+    }
+    
+    // Revenir à l'étape précédente
+    function prevStep(step) {
+      // Cacher l'étape actuelle
+      document.getElementById(`stepContent${currentStep}`).classList.remove('active');
+      document.getElementById(`step${currentStep}`).classList.remove('active');
+      
+      // Afficher la nouvelle étape
+      currentStep = step;
+      document.getElementById(`stepContent${step}`).classList.add('active');
+      document.getElementById(`step${step}`).classList.add('active');
+      
+      // Marquer les étapes précédentes comme complétées
+      for (let i = 1; i < step; i++) {
+        document.getElementById(`step${i}`).classList.add('completed');
+      }
+    }
+    
+    // Valider l'étape actuelle
+    function validateStep(step) {
+      switch(step) {
+        case 1:
+          const fullName = document.getElementById('fullName').value.trim();
+          const country = document.getElementById('country').value;
+          const cinNumber = document.getElementById('cinNumber').value.trim();
+          
+          // Valider chaque champ
+          let isValid = true;
+          
+          if (!fullName) {
+            document.getElementById('fullName').classList.add('is-invalid');
+            showNotification('Veuillez entrer votre nom complet.', 'warning');
+            document.getElementById('fullName').focus();
+            isValid = false;
+          } else {
+            document.getElementById('fullName').classList.remove('is-invalid');
+          }
+          
+          if (!country) {
+            document.getElementById('country').classList.add('is-invalid');
+            showNotification('Veuillez sélectionner votre pays de résidence.', 'warning');
+            document.getElementById('country').focus();
+            isValid = false;
+          } else {
+            document.getElementById('country').classList.remove('is-invalid');
+          }
+          
+          if (!cinNumber) {
+            document.getElementById('cinNumber').classList.add('is-invalid');
+            showNotification('Veuillez entrer votre numéro CIN.', 'warning');
+            document.getElementById('cinNumber').focus();
+            isValid = false;
+          } else {
+            document.getElementById('cinNumber').classList.remove('is-invalid');
+          }
+          
+          return isValid;
+          
+        case 2:
+          const accountNumber = document.getElementById('accountNumber').value.trim();
+          const accountName = document.getElementById('accountName').value.trim();
+          
+          let isValidStep2 = true;
+          
+          if (!accountNumber) {
+            document.getElementById('accountNumber').classList.add('is-invalid');
+            showNotification('Veuillez entrer votre numéro de compte.', 'warning');
+            document.getElementById('accountNumber').focus();
+            isValidStep2 = false;
+          } else if (!validateAccountNumber()) {
+            document.getElementById('accountNumber').classList.add('is-invalid');
+            showNotification('Le numéro de compte doit commencer par 034 ou 038.', 'warning');
+            document.getElementById('accountNumber').focus();
+            isValidStep2 = false;
+          } else {
+            document.getElementById('accountNumber').classList.remove('is-invalid');
+          }
+          
+          if (!accountName) {
+            document.getElementById('accountName').classList.add('is-invalid');
+            showNotification('Veuillez entrer le nom associé au compte.', 'warning');
+            document.getElementById('accountName').focus();
+            isValidStep2 = false;
+          } else {
+            document.getElementById('accountName').classList.remove('is-invalid');
+          }
+          
+          return isValidStep2;
+          
+        case 3:
+          const consentCheck = document.getElementById('consentCheck').checked;
+          if (!consentCheck) {
+            showNotification('Veuillez accepter les conditions en cochant la case de consentement.', 'warning');
+            return false;
+          }
+          return true;
+          
+        default:
+          return true;
+      }
+    }
+    
+    // Mettre à jour les données de vérification
+    function updateVerificationData() {
+      verificationData.fullName = document.getElementById('fullName').value.trim();
+      verificationData.country = document.getElementById('country').value;
+      verificationData.cinNumber = document.getElementById('cinNumber').value.trim();
+      verificationData.accountNumber = document.getElementById('accountNumber').value.trim();
+      verificationData.accountName = document.getElementById('accountName').value.trim();
+    }
+    
+    // Mettre à jour le résumé
+    function updateSummary() {
+      document.getElementById('summaryFullName').textContent = verificationData.fullName || '-';
+      document.getElementById('summaryCountry').textContent = verificationData.country || '-';
+      document.getElementById('summaryCIN').textContent = verificationData.cinNumber || '-';
+      document.getElementById('summaryAccountNumber').textContent = verificationData.accountNumber || '-';
+      document.getElementById('summaryAccountName').textContent = verificationData.accountName || '-';
+    }
+    
+    // Afficher le statut de blocage
+    function showBlockedStatus(message) {
+      document.getElementById('stepContent1').style.display = 'none';
+      document.getElementById('stepContent4').classList.add('active');
+      document.getElementById('blockedStatus').style.display = 'block';
+      document.getElementById('blockedMessage').textContent = message;
+    }
+    
+    // Soumettre la vérification
+    async function submitVerification() {
+      // Valider l'étape
+      if (!validateStep(3)) {
+        return;
+      }
+      
+      // Mettre à jour les données
+      updateVerificationData();
+      
+      // Vérifier que l'utilisateur est connecté
+      if (!userId) {
+        showNotification('Vous devez être connecté pour soumettre la vérification.', 'danger');
+        return;
+      }
+      
+      // Vérifier si l'utilisateur est déjà bloqué
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists() && userSnap.data().blocked) {
+          showBlockedStatus("Votre compte a déjà été bloqué par notre système de sécurité.");
+          return;
+        }
+      } catch (error) {
+        console.error("Erreur lors de la vérification du statut bloqué:", error);
+      }
+      
+      // Afficher l'indicateur de chargement
+      const submitBtn = document.getElementById('submitBtn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="spinner"></span> Vérification des doublons...';
+      submitBtn.disabled = true;
+      
+      try {
+        // Étape 1: Vérifier les doublons
+        const duplicates = await checkAllDuplicates();
+        
+        // Si des doublons sont détectés, bloquer l'utilisateur
+        if (duplicates.nameDuplicate || duplicates.cinDuplicate || duplicates.accountDuplicate) {
+          let reason = "Doublon détecté: ";
+          const duplicateFields = [];
+          
+          if (duplicates.nameDuplicate) duplicateFields.push("nom");
+          if (duplicates.cinDuplicate) duplicateFields.push("CIN");
+          if (duplicates.accountDuplicate) duplicateFields.push("compte bancaire");
+          
+          reason += duplicateFields.join(", ");
+          
+          // Bloquer l'utilisateur
+          await blockUser(reason, duplicates.duplicateUserId);
+          
+          // Afficher le statut de blocage
+          document.getElementById('stepContent3').classList.remove('active');
+          document.getElementById('step3').classList.remove('active');
+          currentStep = 4;
+          document.getElementById('stepContent4').classList.add('active');
+          document.getElementById('step3').classList.add('completed');
+          
+          document.getElementById('blockedStatus').style.display = 'block';
+          document.getElementById('blockedMessage').textContent = 
+            `Votre compte a été bloqué car les informations suivantes sont déjà utilisées par un autre utilisateur : ${duplicateFields.join(', ')}.`;
+          
+          showNotification('Compte bloqué automatiquement pour doublon détecté.', 'danger');
+          return;
+        }
+        
+        // Étape 2: Continuer avec l'enregistrement normal si pas de doublon
+        submitBtn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+        
+        // Vérifier si une vérification existe déjà pour cet utilisateur
+        const verificationQuery = query(
+          collection(db, "verifications"), 
+          where("userId", "==", userId)
+        );
+        const verificationSnap = await getDocs(verificationQuery);
+        
+        let verificationId = '';
+        
+        if (!verificationSnap.empty) {
+          // Mettre à jour la vérification existante
+          verificationSnap.forEach(async (docSnap) => {
+            verificationId = docSnap.id;
+            await updateDoc(doc(db, "verifications", verificationId), {
+              fullName: verificationData.fullName,
+              country: verificationData.country,
+              cinNumber: verificationData.cinNumber,
+              accountNumber: verificationData.accountNumber,
+              accountName: verificationData.accountName,
+              updatedAt: serverTimestamp(),
+              status: 'completed'
+            });
+          });
+        } else {
+          // Créer une nouvelle vérification
+          const verificationRef = await addDoc(collection(db, "verifications"), {
+            userId: userId,
+            userEmail: userEmail,
+            userName: userName,
+            fullName: verificationData.fullName,
+            country: verificationData.country,
+            cinNumber: verificationData.cinNumber,
+            accountNumber: verificationData.accountNumber,
+            accountName: verificationData.accountName,
+            status: 'completed',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          
+          verificationId = verificationRef.id;
+        }
+        
+        // Mettre à jour le statut de vérification de l'utilisateur
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, {
+          verified: true,
+          verificationId: verificationId,
+          verifiedAccountNumber: verificationData.accountNumber,
+          verifiedAt: serverTimestamp(),
+          canWithdraw: true // Activer les retraits
+        });
+        
+        // Passer à l'étape de résultat
+        document.getElementById('stepContent3').classList.remove('active');
+        document.getElementById('step3').classList.remove('active');
+        
+        currentStep = 4;
+        document.getElementById('stepContent4').classList.add('active');
+        document.getElementById('step3').classList.add('completed');
+        
+        // Afficher le statut de réussite
+        document.getElementById('successStatus').style.display = 'block';
+        document.getElementById('verifiedAccountNumber').textContent = verificationData.accountNumber;
+        
+        showNotification('Vérification complétée avec succès!', 'success');
+        
+      } catch (error) {
+        console.error("Erreur lors de l'enregistrement:", error);
+        
+        // Afficher le statuit d'erreur
+        document.getElementById('stepContent3').classList.remove('active');
+        document.getElementById('step3').classList.remove('active');
+        
+        currentStep = 4;
+        document.getElementById('stepContent4').classList.add('active');
+        document.getElementById('step3').classList.add('completed');
+        
+        document.getElementById('errorStatus').style.display = 'block';
+        document.getElementById('errorMessage').textContent = 'Erreur: ' + error.message;
+        
+        showNotification('Erreur lors de la vérification: ' + error.message, 'danger');
+      } finally {
+        // Réactiver le bouton
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    }
+    
+    // Retourner à l'application
+    function returnToApp() {
+      // Rediriger vers l'application principale
+      window.location.href = 'index.html';
+    }
+    
+    // Réessayer la vérification
+    function retryVerification() {
+      document.getElementById('errorStatus').style.display = 'none';
+      document.getElementById('stepContent4').classList.remove('active');
+      
+      currentStep = 1;
+      document.getElementById('stepContent1').classList.add('active');
+      document.getElementById('step1').classList.add('active');
+      
+      // Réinitialiser les indicateurs d'étape
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById(`step${i}`).classList.remove('completed');
+      }
+    }
+    
+    // Fonction d'affichage de notification
+    function showNotification(message, type) {
+      // Créer l'élément de notification
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        max-width: 400px;
+        animation: slideIn 0.5s, fadeOut 0.5s 3s forwards;
+      `;
+      
+      notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'info' ? 'info-circle' : 'exclamation-circle'} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      
+      // Ajouter au corps du document
+      document.body.appendChild(notification);
+      
+      // Supprimer automatiquement après 3 secondes
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.remove();
+        }
+      }, 3000);
+    }
+    
+    // Exposer les fonctions au scope global pour les boutons
+    window.nextStep = nextStep;
+    window.prevStep = prevStep;
+    window.validateAccountNumber = validateAccountNumber;
+    window.submitVerification = submitVerification;
+    window.returnToApp = returnToApp;
+    window.retryVerification = retryVerification;
+  </script>
+</body>
+</html>
