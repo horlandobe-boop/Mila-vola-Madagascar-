@@ -633,6 +633,7 @@
       background: linear-gradient(135deg, #FF9800, #EF6C00);
     }
     
+    /* TIMER DISPLAY STYLES - AMÉLIORÉ */
     .timer-display {
       background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
@@ -642,24 +643,133 @@
       text-align: center;
     }
     
-    .countdown-animation {
-      animation: countdownPulse 1s infinite;
+    .countdown-container {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     }
     
-    @keyframes countdownPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+    .countdown-minutes {
+      color: #4ECDC4;
+      min-width: 50px;
+      text-align: right;
+    }
+    
+    .countdown-separator {
+      color: var(--gold);
+      animation: separatorPulse 1s infinite;
+    }
+    
+    .countdown-seconds {
+      color: #FF6B6B;
+      min-width: 50px;
+      text-align: left;
+      animation: secondsPulse 1s infinite;
+    }
+    
+    .time-remaining-text {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-top: 0.5rem;
     }
     
     .available-now {
       animation: availablePulse 2s infinite;
     }
     
+    @keyframes secondsPulse {
+      0% { 
+        transform: scale(1);
+        text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+      }
+      50% { 
+        transform: scale(1.05);
+        text-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+      }
+      100% { 
+        transform: scale(1);
+        text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+      }
+    }
+    
+    @keyframes separatorPulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    
     @keyframes availablePulse {
       0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
       70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
       100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    }
+    
+    .seconds-highlight {
+      background: rgba(255, 107, 107, 0.1);
+      padding: 2px 5px;
+      border-radius: 5px;
+      animation: highlightPulse 0.5s infinite alternate;
+    }
+    
+    @keyframes highlightPulse {
+      from { background: rgba(255, 107, 107, 0.1); }
+      to { background: rgba(255, 107, 107, 0.3); }
+    }
+    
+    .timer-section {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 1px solid var(--gambling-accent);
+    }
+    
+    .timer-label {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .timer-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      font-family: 'Courier New', monospace;
+    }
+    
+    .seconds-label {
+      color: #FF6B6B;
+      font-weight: 600;
+    }
+    
+    .minutes-label {
+      color: #4ECDC4;
+      font-weight: 600;
+    }
+    
+    .progress-time {
+      height: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    
+    .progress-time-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ECDC4, #FF6B6B);
+      border-radius: 5px;
+      transition: width 1s linear;
     }
   </style>
 </head>
@@ -668,6 +778,12 @@
     <div class="header">
       <h1><i class="fas fa-dice me-2"></i>Mila Vola Gambling</h1>
       <p>Système de jeu avec niveaux et gains horaires (60 minutes)</p>
+      <div style="margin-top: 1rem;">
+        <span style="color: #4ECDC4;">Connecté en tant que: <strong id="userNameDisplay"></strong></span>
+        <button class="btn-gambling btn-danger btn-sm" onclick="logout()" style="margin-left: 1rem; padding: 0.5rem 1rem;">
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+      </div>
     </div>
     
     <div class="stats-grid">
@@ -688,7 +804,12 @@
       <div class="stat-card">
         <div class="stat-label">Gain Horaire</div>
         <div class="stat-number" id="hourlyReward">5 Ar/h</div>
-        <div class="timer" id="hourlyTimer">Prochain gain: 60:00</div>
+        <div class="timer" id="hourlyTimer">
+          <div class="timer-label">
+            <i class="fas fa-clock"></i> Prochain gain:
+          </div>
+          <div class="timer-value" id="hourlyTimerValue">00:00</div>
+        </div>
       </div>
       
       <div class="stat-card">
@@ -707,25 +828,36 @@
       <div class="hourly-reward" id="currentHourlyReward">5 Ar</div>
       
       <div class="timer-display" id="timerDisplay">
-        <div style="font-size: 1.5rem; color: var(--gold); margin: 1rem 0;">
-          <i class="fas fa-stopwatch"></i>
-          <span id="countdownTimer">60:00</span>
+        <div class="countdown-container">
+          <span class="countdown-minutes" id="countdownMinutes">00</span>
+          <span class="countdown-separator">:</span>
+          <span class="countdown-seconds" id="countdownSeconds">00</span>
         </div>
-        <div style="font-size: 0.9rem; color: #aaa;">
+        <div class="time-remaining-text">
           <i class="fas fa-info-circle"></i>
-          Réclamez dans: <span id="timeRemaining">60 minutes</span>
+          <span id="timeRemaining">Prêt à réclamer!</span>
+        </div>
+        <div class="progress-time">
+          <div class="progress-time-fill" id="progressTimeFill" style="width: 0%"></div>
         </div>
       </div>
       
-      <button class="btn-gambling btn-warning" id="claimHourlyBtn" onclick="claimHourlyReward()" disabled>
-        <i class="fas fa-clock"></i> ATTENDRE 60:00
+      <button class="btn-gambling btn-warning pulse" id="claimHourlyBtn" onclick="claimHourlyReward()">
+        <i class="fas fa-gift"></i> RÉCLAMER LE BONUS
       </button>
       
-      <div class="timer" id="nextClaimTime" style="margin-top: 1rem; color: #FF9800;">
-        Prochaine réclamation: <span id="nextAvailableTime">--:--</span>
+      <div class="timer-section">
+        <div class="timer-label">
+          <i class="fas fa-calendar-alt"></i> Prochaine réclamation:
+        </div>
+        <div class="timer-value" id="nextAvailableTime">--:--</div>
       </div>
-      <div class="timer" id="lastClaimTime" style="font-size: 0.9rem; color: #aaa;">
-        Dernière réclamation: <span id="lastClaimText">Jamais</span>
+      
+      <div class="timer-section">
+        <div class="timer-label">
+          <i class="fas fa-history"></i> Dernière réclamation:
+        </div>
+        <div class="timer-value" id="lastClaimText">Jamais</div>
       </div>
     </div>
     
@@ -991,8 +1123,8 @@
     // Variables pour le système horaire
     let hourlyTimerInterval = null;
     let nextClaimTime = null;
-    let canClaimHourly = false;
-    let countdownSeconds = 3600; // 60 minutes en secondes
+    let canClaimHourly = true;
+    let countdownSeconds = 0;
     let lastClaimTimestamp = null;
     
     // Niveaux et récompenses horaires
@@ -1009,119 +1141,220 @@
       { level: 10, hourlyReward: 10000, requirement: 500000 }
     ];
 
+    // Tester la connexion Firebase
+    async function testFirebaseConnection() {
+      try {
+        console.log("🔍 Test de connexion Firebase...");
+        const testRef = collection(db, "test_connection");
+        const testQuery = query(testRef, limit(1));
+        await getDocs(testQuery);
+        console.log("✅ Connexion Firebase active");
+        return true;
+      } catch (error) {
+        console.error("❌ Erreur de connexion Firebase:", error);
+        showNotification("Erreur de connexion à la base de données", "error");
+        return false;
+      }
+    }
+
     // Initialiser l'application
     async function initApp() {
+      console.log("🚀 Initialisation de l'application...");
+      
+      // Tester la connexion Firebase d'abord
+      const isConnected = await testFirebaseConnection();
+      if (!isConnected) {
+        showNotification("Impossible de se connecter à la base de données. Vérifiez votre connexion Internet.", "error");
+        return;
+      }
+      
       // Vérifier si l'utilisateur est connecté
       const savedUser = localStorage.getItem('milaVolaUser');
       if (!savedUser) {
         showNotification("Veuillez vous connecter d'abord au compte principal.", "error");
         setTimeout(() => {
           window.location.href = "index.html";
-        }, 2000);
+        }, 3000);
         return;
       }
 
-      const userData = JSON.parse(savedUser);
-      userId = userData.id;
-      userName = userData.name;
-      userReferrer = userData.referrer || null;
+      try {
+        const userData = JSON.parse(savedUser);
+        userId = userData.id;
+        userName = userData.name;
+        userReferrer = userData.referrer || null;
 
-      // Charger les données de l'utilisateur
-      await loadUserData();
-      
-      // Configurer les écouteurs d'événements
-      setupEventListeners();
-      
-      // Initialiser le système horaire
-      await initHourlySystem();
-      
-      // Mettre à jour l'interface
-      updateUI();
-      
-      // Charger l'historique
-      loadHistory();
-      
-      // Configurer les écouteurs en temps réel
-      setupRealtimeListeners();
+        console.log("👤 Utilisateur connecté:", userId, userName);
+        
+        // Afficher le nom d'utilisateur
+        document.getElementById('userNameDisplay').textContent = userName;
+
+        // Créer ou charger l'utilisateur dans Firebase
+        await createOrLoadUserInFirebase();
+        
+        // Configurer les écouteurs d'événements
+        setupEventListeners();
+        
+        // Initialiser le système horaire
+        await initHourlySystem();
+        
+        // Charger l'historique
+        await loadHistory();
+        
+        // Configurer les écouteurs en temps réel
+        setupRealtimeListeners();
+
+        console.log("✅ Application initialisée avec succès");
+        showNotification("Connexion réussie à votre compte gambling!", "success");
+        
+      } catch (error) {
+        console.error("❌ Erreur lors de l'initialisation:", error);
+        showNotification("Erreur de connexion: " + error.message, "error");
+        
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 5000);
+      }
     }
 
-    // Charger les données de l'utilisateur
-    async function loadUserData() {
+    // Créer ou charger l'utilisateur dans Firebase
+    async function createOrLoadUserInFirebase() {
       try {
+        console.log("📊 Vérification de l'utilisateur dans Firebase...");
+        
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
         
-        if (userSnap.exists()) {
+        if (!userSnap.exists()) {
+          // CRÉER L'UTILISATEUR S'IL N'EXISTE PAS
+          console.log("👤 Création de l'utilisateur dans Firebase...");
+          
+          const userData = {
+            id: userId,
+            name: userName,
+            email: "", // Peut être ajouté plus tard
+            gain: 0,
+            gamblingBalance: 0,
+            gamblingLevel: 1,
+            totalGamblingWon: 0,
+            totalGamblingLost: 0,
+            referralCommission: 0,
+            referralEarnings: 0,
+            referrer: userReferrer || null,
+            referrals: [],
+            totalDeposited: 0,
+            totalWithdrawn: 0,
+            createdAt: serverTimestamp(),
+            lastHourlyClaim: null,
+            lastLogin: serverTimestamp()
+          };
+          
+          await setDoc(userRef, userData);
+          console.log("✅ Utilisateur créé avec succès dans Firebase");
+          showNotification("Compte gambling créé avec succès!", "success");
+        } else {
+          // Utilisateur existe déjà
+          console.log("✅ Utilisateur trouvé dans Firebase");
+          
           const userData = userSnap.data();
           
-          // Initialiser les données gambling si elles n'existent pas
-          if (!userData.gamblingBalance) {
-            await updateDoc(userRef, {
-              gamblingBalance: 0,
-              gamblingLevel: 1,
-              totalGamblingWon: 0,
-              totalGamblingLost: 0,
-              lastHourlyClaim: null,
-              referralCommission: 0,
-              referralEarnings: 0
-            });
-          }
+          // Mettre à jour le dernier login
+          await updateDoc(userRef, {
+            lastLogin: serverTimestamp()
+          });
           
-          // Charger le solde principal
-          const mainBalance = userData.gain || 0;
-          document.getElementById('mainBalance').textContent = mainBalance.toLocaleString();
+          // Vérifier et initialiser les champs gambling manquants
+          const updates = {};
+          const fieldsToCheck = [
+            'gamblingBalance',
+            'gamblingLevel',
+            'totalGamblingWon',
+            'totalGamblingLost',
+            'referralCommission',
+            'referralEarnings',
+            'totalDeposited',
+            'totalWithdrawn'
+          ];
+          
+          fieldsToCheck.forEach(field => {
+            if (userData[field] === undefined) {
+              if (field === 'gamblingLevel') {
+                updates[field] = 1;
+              } else {
+                updates[field] = 0;
+              }
+            }
+          });
+          
+          if (Object.keys(updates).length > 0) {
+            console.log("🔄 Mise à jour des champs manquants:", updates);
+            await updateDoc(userRef, updates);
+          }
         }
+        
+        console.log("✅ Données utilisateur prêtes");
       } catch (error) {
-        console.error("Erreur lors du chargement des données:", error);
-        showNotification("Erreur de chargement des données", "error");
+        console.error("❌ Erreur lors de la création/chargement de l'utilisateur:", error);
+        throw error;
       }
     }
 
     // Initialiser le système horaire
     async function initHourlySystem() {
+      console.log("⏰ Initialisation du système horaire...");
+      
       try {
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
         
         if (userSnap.exists()) {
           const userData = userSnap.data();
-          const lastHourlyClaim = userData.lastHourlyClaim ? userData.lastHourlyClaim.toDate() : null;
           
           // Mettre à jour la récompense horaire selon le niveau
           const currentLevel = userData.gamblingLevel || 1;
-          const hourlyReward = levels[currentLevel - 1].hourlyReward;
+          const hourlyReward = levels[currentLevel - 1]?.hourlyReward || 5;
           document.getElementById('hourlyReward').textContent = hourlyReward + ' Ar/h';
           document.getElementById('currentHourlyReward').textContent = hourlyReward + ' Ar';
           
-          // Calculer le temps écoulé depuis la dernière réclamation
           const now = new Date();
           
-          if (lastHourlyClaim) {
-            lastClaimTimestamp = lastHourlyClaim;
-            const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
-            
-            // Mettre à jour l'affichage de la dernière réclamation
-            const lastClaimText = lastHourlyClaim.toLocaleTimeString('fr-FR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-            }) + ' - ' + lastHourlyClaim.toLocaleDateString('fr-FR');
-            document.getElementById('lastClaimText').textContent = lastClaimText;
-            
-            if (timeSinceLastClaim >= 3600) {
-              // 60 minutes se sont écoulées, la réclamation est disponible
+          // Vérifier si l'utilisateur a déjà réclamé
+          if (userData.lastHourlyClaim && typeof userData.lastHourlyClaim.toDate === 'function') {
+            try {
+              const lastHourlyClaim = userData.lastHourlyClaim.toDate();
+              lastClaimTimestamp = lastHourlyClaim;
+              
+              const lastClaimText = lastHourlyClaim.toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+              }) + ' - ' + lastHourlyClaim.toLocaleDateString('fr-FR');
+              document.getElementById('lastClaimText').textContent = lastClaimText;
+              
+              // Calculer le temps écoulé depuis la dernière réclamation
+              const timeSinceLastClaim = Math.floor((now - lastHourlyClaim) / 1000);
+              
+              if (timeSinceLastClaim >= 3600) {
+                // 60 minutes se sont écoulées, la réclamation est disponible
+                console.log("✅ Réclamation disponible (60 minutes écoulées)");
+                enableHourlyClaim();
+              } else {
+                // Moins de 60 minutes, démarrer le compte à rebours avec le temps restant
+                countdownSeconds = 3600 - timeSinceLastClaim;
+                console.log("⏳ Démarrage du compte à rebours:", countdownSeconds, "secondes restantes");
+                startHourlyCountdown();
+              }
+              
+              // Calculer l'heure de prochaine réclamation
+              nextClaimTime = new Date(lastHourlyClaim.getTime() + 3600000);
+              updateNextClaimTimeDisplay();
+            } catch (dateError) {
+              console.error("❌ Erreur de date:", dateError);
               enableHourlyClaim();
-            } else {
-              // Moins de 60 minutes, démarrer le minuteur avec le temps restant
-              countdownSeconds = 3600 - timeSinceLastClaim;
-              startHourlyCountdown();
             }
-            
-            // Calculer l'heure de prochaine réclamation
-            nextClaimTime = new Date(lastHourlyClaim.getTime() + 3600000);
-            updateNextClaimTimeDisplay();
           } else {
-            // Première réclamation, disponible immédiatement
+            // Première fois: réclamation disponible immédiatement
+            console.log("✅ Première réclamation disponible");
             enableHourlyClaim();
             nextClaimTime = new Date(now.getTime() + 3600000);
             updateNextClaimTimeDisplay();
@@ -1129,13 +1362,19 @@
           }
         }
       } catch (error) {
-        console.error("Erreur initialisation système horaire:", error);
+        console.error("❌ Erreur initialisation système horaire:", error);
+        // En cas d'erreur, permettre la réclamation
+        enableHourlyClaim();
       }
     }
 
     // Démarrer le compte à rebours
     function startHourlyCountdown() {
-      if (hourlyTimerInterval) clearInterval(hourlyTimerInterval);
+      if (hourlyTimerInterval) {
+        clearInterval(hourlyTimerInterval);
+      }
+      
+      updateCountdownDisplay();
       
       hourlyTimerInterval = setInterval(() => {
         countdownSeconds--;
@@ -1147,8 +1386,6 @@
           updateCountdownDisplay();
         }
       }, 1000);
-      
-      updateCountdownDisplay();
     }
 
     // Mettre à jour l'affichage du compte à rebours
@@ -1157,20 +1394,46 @@
       const seconds = countdownSeconds % 60;
       const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       
-      document.getElementById('countdownTimer').textContent = timeStr;
-      document.getElementById('timeRemaining').textContent = `${minutes} minute${minutes > 1 ? 's' : ''}`;
+      document.getElementById('countdownMinutes').textContent = minutes.toString().padStart(2, '0');
+      document.getElementById('countdownSeconds').textContent = seconds.toString().padStart(2, '0');
       
-      // Mettre à jour également le timer dans la grille de stats
-      document.getElementById('hourlyTimer').textContent = `Prochain gain: ${timeStr}`;
+      const progressPercent = (countdownSeconds / 3600) * 100;
+      document.getElementById('progressTimeFill').style.width = progressPercent + '%';
+      
+      let timeRemainingText = '';
+      if (minutes > 0) {
+        timeRemainingText = `${minutes} minute${minutes > 1 ? 's' : ''} ${seconds} seconde${seconds !== 1 ? 's' : ''}`;
+      } else {
+        timeRemainingText = `${seconds} seconde${seconds !== 1 ? 's' : ''}`;
+      }
+      document.getElementById('timeRemaining').textContent = `Réclamez dans: ${timeRemainingText}`;
+      
+      document.getElementById('hourlyTimerValue').textContent = timeStr;
+      document.getElementById('hourlyTimer').querySelector('.timer-value').textContent = timeStr;
       
       const claimBtn = document.getElementById('claimHourlyBtn');
-      claimBtn.innerHTML = `<i class="fas fa-clock"></i> ATTENDRE ${timeStr}`;
+      claimBtn.innerHTML = `<i class="fas fa-clock"></i> ATTENDRE <span id="btnTimerText">${timeStr}</span>`;
       claimBtn.disabled = true;
       claimBtn.classList.remove('pulse');
+      
+      const secondsElement = document.getElementById('countdownSeconds');
+      if (countdownSeconds <= 10) {
+        secondsElement.classList.add('seconds-highlight');
+        secondsElement.style.animationDuration = '0.5s';
+      } else {
+        secondsElement.classList.remove('seconds-highlight');
+      }
+      
+      if (countdownSeconds <= 30) {
+        secondsElement.style.animationDuration = '0.3s';
+      }
     }
 
     // Activer la réclamation horaire
     function enableHourlyClaim() {
+      console.log("🎯 Activation de la réclamation horaire");
+      
+      canClaimHourly = true;
       const claimBtn = document.getElementById('claimHourlyBtn');
       const timerDisplay = document.getElementById('timerDisplay');
       
@@ -1179,20 +1442,22 @@
       claimBtn.classList.add('pulse');
       
       timerDisplay.innerHTML = `
-        <div style="font-size: 1.5rem; color: #4CAF50; margin: 1rem 0;">
-          <i class="fas fa-check-circle"></i>
-          <span>Disponible maintenant!</span>
+        <div style="font-size: 1.5rem; color: #4CAF50; margin: 1rem 0; text-align: center;">
+          <i class="fas fa-check-circle fa-2x"></i>
+          <div style="margin-top: 1rem; font-weight: 700;">Disponible maintenant!</div>
         </div>
-        <div style="font-size: 0.9rem; color: #4CAF50;">
+        <div style="font-size: 0.9rem; color: #4CAF50; text-align: center;">
           <i class="fas fa-info-circle"></i>
-          Réclamez votre bonus horaire
+          Réclamez votre bonus horaire de <span style="font-weight: 700;">${document.getElementById('currentHourlyReward').textContent}</span>
         </div>
       `;
       
-      // Mettre à jour le timer dans la grille de stats
-      document.getElementById('hourlyTimer').textContent = 'Disponible maintenant!';
+      document.getElementById('hourlyTimerValue').textContent = '00:00';
+      document.getElementById('hourlyTimer').querySelector('.timer-value').textContent = 'Disponible!';
       
-      canClaimHourly = true;
+      document.getElementById('timeRemaining').textContent = 'Prêt à réclamer!';
+      document.getElementById('progressTimeFill').style.width = '0%';
+      
       showNotification("Bonus horaire disponible! Réclamez maintenant.", "success");
     }
 
@@ -1208,9 +1473,92 @@
       }
     }
 
+    // Réclamer la récompense horaire
+    async function claimHourlyReward() {
+      console.log("🎁 Tentative de réclamation horaire...");
+      
+      if (!canClaimHourly) {
+        showNotification("Le bonus n'est pas encore disponible", "warning");
+        return;
+      }
+      
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        if (!userSnap.exists()) {
+          showNotification("Utilisateur non trouvé", "error");
+          return;
+        }
+        
+        const userData = userSnap.data();
+        const currentLevel = userData.gamblingLevel || 1;
+        const hourlyReward = levels[currentLevel - 1]?.hourlyReward || 5;
+        
+        const currentGamblingBalance = Number(userData.gamblingBalance) || 0;
+        const currentTotalWon = Number(userData.totalGamblingWon) || 0;
+        
+        const newGamblingBalance = currentGamblingBalance + hourlyReward;
+        const newTotalWon = currentTotalWon + hourlyReward;
+        
+        const updateData = {
+          gamblingBalance: newGamblingBalance,
+          totalGamblingWon: newTotalWon,
+          lastHourlyClaim: serverTimestamp()
+        };
+        
+        await updateDoc(userRef, updateData);
+        
+        // Enregistrer dans l'historique
+        try {
+          await addDoc(collection(db, "gambling_history"), {
+            userId: userId,
+            userName: userName,
+            type: "hourly_reward",
+            amount: hourlyReward,
+            level: currentLevel,
+            timestamp: serverTimestamp(),
+            description: `Bonus horaire niveau ${currentLevel}`
+          });
+        } catch (historyError) {
+          console.warn("⚠️ Erreur lors de l'enregistrement de l'historique:", historyError);
+        }
+        
+        showNotification(`🎉 Récompense horaire de ${hourlyReward} Ar réclamée! Prochaine réclamation dans 60 minutes.`, "success");
+        
+        // Réinitialiser le système pour 60 minutes
+        canClaimHourly = false;
+        countdownSeconds = 3600;
+        const now = new Date();
+        nextClaimTime = new Date(now.getTime() + 3600000);
+        lastClaimTimestamp = now;
+        
+        const lastClaimText = now.toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        }) + ' - ' + now.toLocaleDateString('fr-FR');
+        document.getElementById('lastClaimText').textContent = lastClaimText;
+        
+        startHourlyCountdown();
+        updateNextClaimTimeDisplay();
+        
+        const rewardElement = document.getElementById('currentHourlyReward');
+        rewardElement.classList.add('pulse');
+        setTimeout(() => rewardElement.classList.remove('pulse'), 2000);
+        
+        console.log("✅ Réclamation terminée avec succès");
+        
+      } catch (error) {
+        console.error("❌ ERREUR lors de la réclamation:", error);
+        showNotification(`❌ Erreur lors de la réclamation: ${error.message}`, "error");
+      }
+    }
+
     // Configurer les écouteurs d'événements
     function setupEventListeners() {
-      // Mise à jour des valeurs des sliders
+      console.log("🎮 Configuration des écouteurs d'événements...");
+      
       document.getElementById('betAmount').addEventListener('input', function() {
         document.getElementById('betAmountValue').textContent = this.value;
       });
@@ -1239,381 +1587,39 @@
       
       document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawFees);
       
-      // Nettoyer l'intervalle lorsque la page se ferme
       window.addEventListener('beforeunload', () => {
         if (hourlyTimerInterval) {
           clearInterval(hourlyTimerInterval);
         }
       });
-    }
-
-    // Mettre à jour l'interface
-    function updateUI() {
-      // Cette fonction sera appelée par les écouteurs en temps réel
-    }
-
-    // Réclamer la récompense horaire
-    async function claimHourlyReward() {
-      if (!canClaimHourly) {
-        showNotification("Le bonus n'est pas encore disponible", "warning");
-        return;
-      }
       
-      try {
-        const userRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userRef);
-        
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          const currentLevel = userData.gamblingLevel || 1;
-          const hourlyReward = levels[currentLevel - 1].hourlyReward;
-          
-          // Ajouter la récompense au solde gambling
-          await updateDoc(userRef, {
-            gamblingBalance: increment(hourlyReward),
-            lastHourlyClaim: serverTimestamp(),
-            totalGamblingWon: increment(hourlyReward)
-          });
-          
-          // Enregistrer dans l'historique
-          await addDoc(collection(db, "gambling_history"), {
-            userId: userId,
-            userName: userName,
-            type: "hourly_reward",
-            amount: hourlyReward,
-            level: currentLevel,
-            timestamp: serverTimestamp(),
-            description: `Bonus horaire niveau ${currentLevel}`
-          });
-          
-          showNotification(`Récompense horaire de ${hourlyReward} Ar réclamée! Prochaine réclamation dans 60 minutes.`, "success");
-          
-          // Réinitialiser le système pour 60 minutes
-          canClaimHourly = false;
-          countdownSeconds = 3600;
-          nextClaimTime = new Date(new Date().getTime() + 3600000);
-          lastClaimTimestamp = new Date();
-          
-          // Mettre à jour l'affichage de la dernière réclamation
-          const now = new Date();
-          const lastClaimText = now.toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }) + ' - ' + now.toLocaleDateString('fr-FR');
-          document.getElementById('lastClaimText').textContent = lastClaimText;
-          
-          // Démarrer le nouveau minuteur
-          startHourlyCountdown();
-          updateNextClaimTimeDisplay();
-          
-          // Animation de succès
-          const rewardElement = document.getElementById('currentHourlyReward');
-          rewardElement.classList.add('pulse');
-          setTimeout(() => rewardElement.classList.remove('pulse'), 2000);
-        }
-      } catch (error) {
-        console.error("Erreur lors de la réclamation:", error);
-        showNotification("Erreur lors de la réclamation", "error");
+      console.log("✅ Écouteurs d'événements configurés");
+    }
+
+    // Fonction de déconnexion
+    function logout() {
+      if (confirm("Voulez-vous vraiment vous déconnecter ?")) {
+        localStorage.removeItem('milaVolaUser');
+        showNotification("Déconnexion réussie", "success");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
       }
     }
 
-    // Démarrer le jeu
+    // Fonctions de jeu (à implémenter)
     async function startGame() {
-      if (isGameRunning) {
-        showNotification("Une partie est déjà en cours", "warning");
-        return;
-      }
-      
-      const betAmount = parseInt(document.getElementById('betAmount').value);
-      const takeProfit = parseInt(document.getElementById('takeProfit').value);
-      const multiple = parseFloat(document.getElementById('multiple').value);
-      const takeLoss = parseInt(document.getElementById('takeLoss').value);
-      const percentage = parseFloat(document.getElementById('percentage').value);
-      
-      // Vérifier la mise minimum
-      if (betAmount < 5) {
-        showNotification("La mise minimum est de 5 Ar", "warning");
-        return;
-      }
-      
-      // Vérifier le solde
-      const userRef = doc(db, "users", userId);
-      const userSnap = await getDoc(userRef);
-      
-      if (!userSnap.exists()) {
-        showNotification("Utilisateur non trouvé", "error");
-        return;
-      }
-      
-      const userData = userSnap.data();
-      const gamblingBalance = userData.gamblingBalance || 0;
-      
-      if (gamblingBalance < betAmount) {
-        showNotification("Solde gambling insuffisant", "error");
-        return;
-      }
-      
-      // Débiter la mise
-      await updateDoc(userRef, {
-        gamblingBalance: increment(-betAmount)
-      });
-      
-      // Initialiser les variables de jeu
-      isGameRunning = true;
-      currentProfit = 0;
-      currentLoss = 0;
-      gamesPlayed = 0;
-      
-      // Mettre à jour l'interface
-      document.getElementById('startGameBtn').disabled = true;
-      document.getElementById('stopGameBtn').disabled = false;
-      document.getElementById('resultText').textContent = "Jeu en cours...";
-      
-      // Démarrer le jeu
-      playGameRound(betAmount, takeProfit, multiple, takeLoss, percentage);
-      
-      showNotification("Jeu démarré!", "success");
+      console.log("🎮 Démarrage du jeu...");
+      showNotification("Fonctionnalité de jeu à implémenter", "warning");
     }
 
-    // Jouer un tour de jeu
-    async function playGameRound(betAmount, takeProfit, multiple, takeLoss, percentage) {
-      if (!isGameRunning) return;
-      
-      // Vérifier les conditions d'arrêt
-      if (currentProfit >= takeProfit) {
-        stopGame();
-        showNotification(`Take Profit atteint! Profit total: ${currentProfit} Ar`, "success");
-        return;
-      }
-      
-      if (currentLoss >= takeLoss) {
-        stopGame();
-        showNotification(`Take Loss atteint! Perte totale: ${currentLoss} Ar`, "error");
-        return;
-      }
-      
-      // Jouer le tour
-      gamesPlayed++;
-      
-      // Calculer la probabilité de gain (moins de 1% = chance de gain)
-      const winProbability = percentage < 1 ? 0.5 : 0.1; // 50% de chance si <1%, sinon 10%
-      const isWin = Math.random() < winProbability;
-      
-      // Calculer le gain/perte
-      let roundResult;
-      if (isWin) {
-        roundResult = betAmount * multiple;
-        currentProfit += roundResult;
-      } else {
-        roundResult = -betAmount * multiple;
-        currentLoss += Math.abs(roundResult);
-      }
-      
-      // Mettre à jour l'affichage
-      updateGameDisplay(isWin, roundResult);
-      
-      // Mettre à jour la base de données
-      await processGameResult(betAmount, isWin, roundResult);
-      
-      // Continuer le jeu si autoRoll est activé
-      if (autoRollEnabled && isGameRunning) {
-        setTimeout(() => {
-          playGameRound(betAmount, takeProfit, multiple, takeLoss, percentage);
-        }, 1000);
-      }
-    }
-
-    // Mettre à jour l'affichage du jeu
-    function updateGameDisplay(isWin, amount) {
-      const domino = document.getElementById('domino');
-      const resultText = document.getElementById('resultText');
-      const resultAmount = document.getElementById('resultAmount');
-      const resultDetail = document.getElementById('resultDetail');
-      
-      // Animation du domino
-      domino.classList.remove('red', 'blue');
-      domino.classList.add(isWin ? 'blue' : 'red');
-      domino.style.transform = 'rotate(360deg)';
-      
-      setTimeout(() => {
-        domino.style.transform = 'rotate(0deg)';
-      }, 500);
-      
-      // Mettre à jour les résultats
-      if (isWin) {
-        resultText.textContent = "GAGNÉ!";
-        resultText.style.color = "#4CAF50";
-        resultAmount.textContent = `+${amount} Ar`;
-        resultAmount.style.color = "#4CAF50";
-        resultDetail.textContent = `Multiplicateur: ${document.getElementById('multiple').value}x`;
-        
-        // Animation de victoire
-        document.getElementById('dominoWheel').classList.add('win-flash');
-        setTimeout(() => {
-          document.getElementById('dominoWheel').classList.remove('win-flash');
-        }, 1000);
-      } else {
-        resultText.textContent = "PERDU";
-        resultText.style.color = "#F44336";
-        resultAmount.textContent = `-${Math.abs(amount)} Ar`;
-        resultAmount.style.color = "#F44336";
-        resultDetail.textContent = `Pourcentage: ${document.getElementById('percentage').value}%`;
-        
-        // Animation de défaite
-        document.getElementById('dominoWheel').classList.add('lose-flash');
-        setTimeout(() => {
-          document.getElementById('dominoWheel').classList.remove('lose-flash');
-        }, 1000);
-      }
-      
-      // Mettre à jour les statistiques
-      document.getElementById('currentProfit').textContent = `Profit actuel: ${currentProfit} Ar`;
-      document.getElementById('currentLoss').textContent = `Perte actuelle: ${currentLoss} Ar`;
-      document.getElementById('gamesPlayed').textContent = `Parties jouées: ${gamesPlayed}`;
-      
-      // Ajouter au historique récent
-      addRecentResult(isWin, amount);
-    }
-
-    // Ajouter un résultat récent
-    function addRecentResult(isWin, amount) {
-      const recentResults = document.getElementById('recentResults');
-      const resultDiv = document.createElement('div');
-      
-      resultDiv.style.cssText = `
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 0.8rem;
-        background: ${isWin ? '#4CAF50' : '#F44336'};
-      `;
-      
-      resultDiv.textContent = isWin ? '+' : '-';
-      recentResults.insertBefore(resultDiv, recentResults.firstChild);
-      
-      // Limiter à 10 résultats
-      if (recentResults.children.length > 10) {
-        recentResults.removeChild(recentResults.lastChild);
-      }
-    }
-
-    // Traiter le résultat du jeu dans la base de données
-    async function processGameResult(betAmount, isWin, amount) {
-      try {
-        const userRef = doc(db, "users", userId);
-        const batch = writeBatch(db);
-        
-        if (isWin) {
-          // Ajouter le gain au solde
-          batch.update(userRef, {
-            gamblingBalance: increment(amount),
-            totalGamblingWon: increment(amount)
-          });
-          
-          // Payer la commission au parrain (50% du gain net)
-          if (userReferrer) {
-            const referrerRef = doc(db, "users", userReferrer);
-            const commission = amount * 0.5;
-            
-            batch.update(referrerRef, {
-              referralCommission: increment(commission),
-              referralEarnings: increment(amount)
-            });
-          }
-        } else {
-          // Enregistrer la perte
-          batch.update(userRef, {
-            totalGamblingLost: increment(Math.abs(amount))
-          });
-        }
-        
-        // Enregistrer dans l'historique
-        const historyRef = doc(collection(db, "gambling_history"));
-        batch.set(historyRef, {
-          userId: userId,
-          userName: userName,
-          type: "game_round",
-          betAmount: betAmount,
-          result: isWin ? "win" : "loss",
-          amount: amount,
-          level: levels[(await getDoc(userRef)).data().gamblingLevel - 1].level,
-          timestamp: serverTimestamp(),
-          multiple: parseFloat(document.getElementById('multiple').value),
-          percentage: parseFloat(document.getElementById('percentage').value)
-        });
-        
-        await batch.commit();
-        
-        // Vérifier la progression de niveau
-        await checkLevelUp();
-        
-      } catch (error) {
-        console.error("Erreur lors du traitement du résultat:", error);
-      }
-    }
-
-    // Arrêter le jeu
     function stopGame() {
-      isGameRunning = false;
-      autoRollEnabled = false;
-      document.getElementById('autoRoll').checked = false;
-      document.getElementById('autoRollStatus').textContent = 'OFF';
-      document.getElementById('autoRollStatus').style.color = '#aaa';
-      
-      document.getElementById('startGameBtn').disabled = false;
-      document.getElementById('stopGameBtn').disabled = true;
-      
-      document.getElementById('resultText').textContent = "Jeu arrêté";
-      document.getElementById('resultAmount').textContent = `Profit: ${currentProfit} Ar`;
-      document.getElementById('resultDetail').textContent = `Parties: ${gamesPlayed}`;
-      
+      console.log("🛑 Arrêt du jeu...");
       showNotification("Jeu arrêté", "warning");
     }
 
-    // Vérifier la progression de niveau
-    async function checkLevelUp() {
-      try {
-        const userRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userRef);
-        
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          const currentLevel = userData.gamblingLevel || 1;
-          const totalWon = userData.totalGamblingWon || 0;
-          const totalLost = userData.totalGamblingLost || 0;
-          const totalGambling = totalWon + totalLost;
-          
-          // Vérifier si l'utilisateur peut monter de niveau
-          if (currentLevel < levels.length) {
-            const nextLevelRequirement = levels[currentLevel].requirement;
-            
-            if (totalGambling >= nextLevelRequirement) {
-              // Monter de niveau
-              await updateDoc(userRef, {
-                gamblingLevel: currentLevel + 1
-              });
-              
-              // Mettre à jour la récompense horaire
-              const newHourlyReward = levels[currentLevel].hourlyReward;
-              document.getElementById('hourlyReward').textContent = newHourlyReward + ' Ar/h';
-              document.getElementById('currentHourlyReward').textContent = newHourlyReward + ' Ar';
-              
-              showNotification(`Félicitations! Vous êtes maintenant niveau ${currentLevel + 1}. Récompense horaire: ${newHourlyReward} Ar`, "success");
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Erreur lors de la vérification du niveau:", error);
-      }
-    }
-
-    // Ouvrir le modal de dépôt
     function openDepositModal() {
+      console.log("💰 Ouverture du modal de dépôt");
       if (isGameRunning) {
         showNotification("Vous ne pouvez pas déposer pendant une partie", "warning");
         return;
@@ -1622,8 +1628,8 @@
       document.getElementById('depositModal').classList.add('show');
     }
 
-    // Ouvrir le modal de retrait
     function openWithdrawModal() {
+      console.log("💸 Ouverture du modal de retrait");
       if (isGameRunning) {
         showNotification("Vous ne pouvez pas retirer pendant une partie", "warning");
         return;
@@ -1633,156 +1639,185 @@
       document.getElementById('withdrawModal').classList.add('show');
     }
 
-    // Fermer un modal
     function closeModal(modalId) {
+      console.log("❌ Fermeture du modal:", modalId);
       document.getElementById(modalId).classList.remove('show');
     }
 
-    // Mettre à jour les frais de retrait
     function updateWithdrawFees() {
       const amount = parseInt(document.getElementById('withdrawAmount').value) || 0;
       const afterFees = amount * 0.9;
       document.getElementById('withdrawAfterFees').textContent = afterFees.toLocaleString();
     }
 
-    // Traiter le dépôt
     async function processDeposit() {
+      console.log("💰 Traitement du dépôt...");
+      const amount = parseInt(document.getElementById('depositAmount').value) || 0;
+      
+      if (amount < 5) {
+        showNotification("Le montant minimum de dépôt est de 5 Ar", "error");
+        return;
+      }
+      
       try {
-        const amount = parseInt(document.getElementById('depositAmount').value);
-        
-        if (amount < 5) {
-          showNotification("Le dépôt minimum est de 5 Ar", "warning");
-          return;
-        }
-        
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
         
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          const mainBalance = userData.gain || 0;
-          
-          if (mainBalance < amount) {
-            showNotification("Solde principal insuffisant", "error");
-            return;
-          }
-          
-          // Transférer du compte principal vers le compte gambling
-          await updateDoc(userRef, {
-            gain: increment(-amount),
-            gamblingBalance: increment(amount)
-          });
-          
-          // Enregistrer dans l'historique
-          await addDoc(collection(db, "gambling_history"), {
-            userId: userId,
-            userName: userName,
-            type: "deposit",
-            amount: amount,
-            timestamp: serverTimestamp()
-          });
-          
-          showNotification(`Dépôt de ${amount} Ar effectué!`, "success");
-          closeModal('depositModal');
+        if (!userSnap.exists()) {
+          showNotification("Utilisateur non trouvé", "error");
+          return;
         }
+        
+        const userData = userSnap.data();
+        const mainBalance = Number(userData.gain) || 0;
+        const currentGamblingBalance = Number(userData.gamblingBalance) || 0;
+        const currentTotalDeposited = Number(userData.totalDeposited) || 0;
+        
+        if (amount > mainBalance) {
+          showNotification("Solde principal insuffisant", "error");
+          return;
+        }
+        
+        const newMainBalance = mainBalance - amount;
+        const newGamblingBalance = currentGamblingBalance + amount;
+        const newTotalDeposited = currentTotalDeposited + amount;
+        
+        await updateDoc(userRef, {
+          gain: newMainBalance,
+          gamblingBalance: newGamblingBalance,
+          totalDeposited: newTotalDeposited
+        });
+        
+        // Enregistrer dans l'historique
+        await addDoc(collection(db, "gambling_history"), {
+          userId: userId,
+          userName: userName,
+          type: "deposit",
+          amount: amount,
+          timestamp: serverTimestamp(),
+          description: `Dépôt vers compte gambling`
+        });
+        
+        closeModal('depositModal');
+        showNotification(`Dépôt de ${amount} Ar effectué avec succès!`, "success");
+        
       } catch (error) {
-        console.error("Erreur lors du dépôt:", error);
-        showNotification("Erreur lors du dépôt", "error");
+        console.error("❌ Erreur lors du dépôt:", error);
+        showNotification("Erreur lors du dépôt: " + error.message, "error");
       }
     }
 
-    // Traiter le retrait
     async function processWithdraw() {
+      console.log("💸 Traitement du retrait...");
+      const amount = parseInt(document.getElementById('withdrawAmount').value) || 0;
+      
+      if (amount < 5) {
+        showNotification("Le montant minimum de retrait est de 5 Ar", "error");
+        return;
+      }
+      
       try {
-        const amount = parseInt(document.getElementById('withdrawAmount').value);
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
         
-        if (amount < 5) {
-          showNotification("Le retrait minimum est de 5 Ar", "warning");
+        if (!userSnap.exists()) {
+          showNotification("Utilisateur non trouvé", "error");
           return;
         }
         
-        const userRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        const gamblingBalance = Number(userData.gamblingBalance) || 0;
+        const mainBalance = Number(userData.gain) || 0;
+        const currentTotalWithdrawn = Number(userData.totalWithdrawn) || 0;
         
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          const gamblingBalance = userData.gamblingBalance || 0;
-          
-          if (gamblingBalance < amount) {
-            showNotification("Solde gambling insuffisant", "error");
-            return;
-          }
-          
-          // Calculer les frais (10%)
-          const fees = amount * 0.1;
-          const netAmount = amount - fees;
-          
-          // Transférer du compte gambling vers le compte principal (après frais)
-          await updateDoc(userRef, {
-            gamblingBalance: increment(-amount),
-            gain: increment(netAmount)
-          });
-          
-          // Enregistrer dans l'historique
-          await addDoc(collection(db, "gambling_history"), {
-            userId: userId,
-            userName: userName,
-            type: "withdraw",
-            amount: amount,
-            fees: fees,
-            netAmount: netAmount,
-            timestamp: serverTimestamp()
-          });
-          
-          showNotification(`Retrait de ${amount} Ar effectué! (Frais: ${fees} Ar, Net: ${netAmount} Ar)`, "success");
-          closeModal('withdrawModal');
+        if (amount > gamblingBalance) {
+          showNotification("Solde gambling insuffisant", "error");
+          return;
         }
+        
+        const fee = amount * 0.1;
+        const amountAfterFees = amount - fee;
+        
+        const newGamblingBalance = gamblingBalance - amount;
+        const newMainBalance = mainBalance + amountAfterFees;
+        const newTotalWithdrawn = currentTotalWithdrawn + amount;
+        
+        await updateDoc(userRef, {
+          gain: newMainBalance,
+          gamblingBalance: newGamblingBalance,
+          totalWithdrawn: newTotalWithdrawn
+        });
+        
+        // Enregistrer dans l'historique
+        await addDoc(collection(db, "gambling_history"), {
+          userId: userId,
+          userName: userName,
+          type: "withdraw",
+          amount: amount,
+          fee: fee,
+          amountReceived: amountAfterFees,
+          timestamp: serverTimestamp(),
+          description: `Retrait vers compte principal (frais: 10%)`
+        });
+        
+        closeModal('withdrawModal');
+        showNotification(`Retrait de ${amount} Ar effectué! Vous avez reçu ${amountAfterFees} Ar (frais: ${fee} Ar)`, "success");
+        
       } catch (error) {
-        console.error("Erreur lors du retrait:", error);
-        showNotification("Erreur lors du retrait", "error");
+        console.error("❌ Erreur lors du retrait:", error);
+        showNotification("Erreur lors du retrait: " + error.message, "error");
       }
     }
 
-    // Réclamer la commission de parrainage
     async function claimCommission() {
+      console.log("👥 Réclamation de commission...");
+      
       try {
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
         
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          const commission = userData.referralCommission || 0;
-          
-          if (commission <= 0) {
-            showNotification("Aucune commission disponible", "warning");
-            return;
-          }
-          
-          // Ajouter la commission au solde gambling
-          await updateDoc(userRef, {
-            gamblingBalance: increment(commission),
-            referralCommission: 0
-          });
-          
-          // Enregistrer dans l'historique
-          await addDoc(collection(db, "gambling_history"), {
-            userId: userId,
-            userName: userName,
-            type: "commission_claim",
-            amount: commission,
-            timestamp: serverTimestamp()
-          });
-          
-          showNotification(`Commission de ${commission} Ar réclamée!`, "success");
+        if (!userSnap.exists()) {
+          showNotification("Utilisateur non trouvé", "error");
+          return;
         }
+        
+        const userData = userSnap.data();
+        const commission = Number(userData.referralCommission) || 0;
+        const gamblingBalance = Number(userData.gamblingBalance) || 0;
+        
+        if (commission <= 0) {
+          showNotification("Aucune commission disponible à réclamer", "warning");
+          return;
+        }
+        
+        const newGamblingBalance = gamblingBalance + commission;
+        
+        await updateDoc(userRef, {
+          gamblingBalance: newGamblingBalance,
+          referralCommission: 0
+        });
+        
+        // Enregistrer dans l'historique
+        await addDoc(collection(db, "gambling_history"), {
+          userId: userId,
+          userName: userName,
+          type: "commission_claim",
+          amount: commission,
+          timestamp: serverTimestamp(),
+          description: `Réclamation de commission de parrainage`
+        });
+        
+        showNotification(`Commission de ${commission} Ar réclamée avec succès!`, "success");
+        
       } catch (error) {
-        console.error("Erreur lors de la réclamation de la commission:", error);
-        showNotification("Erreur lors de la réclamation", "error");
+        console.error("❌ Erreur lors de la réclamation de commission:", error);
+        showNotification("Erreur lors de la réclamation: " + error.message, "error");
       }
     }
 
     // Charger l'historique
     async function loadHistory() {
+      console.log("📜 Chargement de l'historique...");
       try {
         const historyQuery = query(
           collection(db, "gambling_history"),
@@ -1795,9 +1830,11 @@
         const historyBody = document.getElementById('historyBody');
         
         if (historySnap.empty) {
+          console.log("ℹ️ Aucun historique trouvé");
           return;
         }
         
+        console.log(`📊 ${historySnap.size} entrées d'historique trouvées`);
         historyBody.innerHTML = '';
         
         historySnap.forEach(doc => {
@@ -1835,7 +1872,7 @@
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${date}</td>
-            <td>${type === 'game_round' ? data.betAmount + ' Ar' : '-'}</td>
+            <td>${type === 'game_round' ? (data.betAmount || 0) + ' Ar' : '-'}</td>
             <td>${resultBadge}</td>
             <td>${resultAmount}</td>
             <td>${level}</td>
@@ -1844,20 +1881,22 @@
           historyBody.appendChild(row);
         });
         
+        console.log("✅ Historique chargé avec succès");
       } catch (error) {
-        console.error("Erreur lors du chargement de l'historique:", error);
+        console.error("❌ Erreur lors du chargement de l'historique:", error);
       }
     }
 
     // Configurer les écouteurs en temps réel
     function setupRealtimeListeners() {
+      console.log("📡 Configuration des écouteurs en temps réel...");
+      
       const userRef = doc(db, "users", userId);
       
       onSnapshot(userRef, (doc) => {
         if (doc.exists()) {
           const userData = doc.data();
           
-          // Mettre à jour les soldes
           const gamblingBalance = userData.gamblingBalance || 0;
           const mainBalance = userData.gain || 0;
           const currentLevel = userData.gamblingLevel || 1;
@@ -1866,8 +1905,6 @@
           const totalGambling = totalWon + totalLost;
           const referralCommission = userData.referralCommission || 0;
           const referralEarnings = userData.referralEarnings || 0;
-          
-          // Compter les filleuls actifs
           const activeReferrals = userData.referrals ? userData.referrals.length : 0;
           
           // Mettre à jour l'interface
@@ -1888,8 +1925,14 @@
           
           // Mettre à jour les informations de niveau
           updateLevelInfo(currentLevel);
+          
+          console.log("🔄 Données mises à jour en temps réel");
         }
+      }, (error) => {
+        console.error("❌ Erreur d'écoute en temps réel:", error);
       });
+      
+      console.log("✅ Écouteurs en temps réel configurés");
     }
 
     // Mettre à jour la progression de niveau
@@ -1929,6 +1972,8 @@
 
     // Afficher une notification
     function showNotification(message, type = "info") {
+      console.log(`📢 Notification [${type}]: ${message}`);
+      
       const notification = document.getElementById('notification');
       const notificationMessage = document.getElementById('notificationMessage');
       
@@ -1943,6 +1988,7 @@
 
     // Initialiser l'application au chargement
     window.addEventListener('DOMContentLoaded', async () => {
+      console.log("🚀 DOM chargé, initialisation de l'application...");
       await initApp();
     });
 
@@ -1957,6 +2003,7 @@
     window.processDeposit = processDeposit;
     window.processWithdraw = processWithdraw;
     window.updateWithdrawFees = updateWithdrawFees;
+    window.logout = logout;
   </script>
 </body>
 </html>
