@@ -1641,6 +1641,50 @@
       color: var(--danger);
       margin-top: 0.25rem;
     }
+    
+    /* Nouveaux styles pour l'upload d'image */
+    .image-upload-container {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 2px dashed var(--primary);
+      border-radius: 10px;
+      text-align: center;
+      background: var(--primary-light);
+    }
+    
+    .image-preview {
+      max-width: 100%;
+      max-height: 200px;
+      margin-top: 1rem;
+      display: none;
+    }
+    
+    .file-info {
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      margin-top: 0.5rem;
+    }
+    
+    .proof-image {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      border: 1px solid var(--gray-300);
+    }
+    
+    .proof-image-modal {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      margin: 0.5rem 0;
+    }
+    
+    .image-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 <body>
@@ -2324,7 +2368,7 @@
         </div>
       </div>
 
-      <!-- Proof Modal -->
+      <!-- Proof Modal avec upload d'image -->
       <div class="modal fade" id="proofModal" tabindex="-1">
         <div class="modal-dialog">
           <form id="submitProofForm" class="modal-content">
@@ -2338,25 +2382,62 @@
                 <label class="form-label">Votre Identifiant</label>
                 <input id="userName" type="text" class="form-control" placeholder="Nom/Email/Instagram" required>
               </div>
+              
+              <!-- Section upload d'image -->
               <div class="mb-3">
-                <label class="form-label">Preuve de Réalisation</label>
-                <textarea id="userProof" class="form-control" placeholder="Texte ou URL d'image" rows="3" required></textarea>
-                <div class="form-text">Fournissez un lien ou décrivez votre preuve</div>
+                <label class="form-label">Preuve de Réalisation (Image)</label>
+                <div class="image-upload-container">
+                  <input type="file" id="userProofImage" accept="image/*" class="form-control" onchange="handleImageUpload()">
+                  <div class="file-info" id="fileInfo"></div>
+                  <img id="imagePreview" class="image-preview" alt="Aperçu de l'image">
+                  <div class="image-actions mt-2">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="clearImage()" style="display:none;" id="clearImageBtn">
+                      <i class="fas fa-trash me-1"></i> Supprimer
+                    </button>
+                  </div>
+                </div>
+                <small class="text-muted">Téléchargez une capture d'écran de la preuve (max 10Mo). L'image sera automatiquement réduite si nécessaire.</small>
+              </div>
+              
+              <!-- Champ pour lien ou description (alternative) -->
+              <div class="mb-3">
+                <label class="form-label">Ou lien/description texte</label>
+                <textarea id="userProof" class="form-control" placeholder="Lien ou description texte (si pas d'image)" rows="2"></textarea>
               </div>
               
               <div class="proof-container">
                 <p class="proof-title"><i class="fas fa-info-circle"></i> Envoyer une capture d'écran par WhatsApp</p>
                 <a href="#" id="whatsappProofBtn" target="_blank" class="btn whatsapp-btn">
-                  <i class="fab fa-whatsapp"></i> Envoyer par WhatsApp
+                  <i class="fab fa-whatsapp"></i> Envoyer par WhatsApp (Service Client)
                 </a>
                 <p class="mt-2 small">Après avoir envoyé votre capture d'écran sur WhatsApp, soumettez votre nom ci-dessus pour que nous puissions vous créditer.</p>
               </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button type="submit" class="btn btn-primary">Envoyer</button>
+              <button type="submit" class="btn btn-primary">Envoyer Preuve</button>
             </div>
           </form>
+        </div>
+      </div>
+      
+      <!-- Modal pour visualiser l'image de preuve -->
+      <div class="modal fade" id="proofImageModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="fas fa-image me-2"></i>Preuve d'Exécution</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+              <img id="proofImageDisplay" class="proof-image-modal" alt="Image de preuve">
+              <div class="mt-3">
+                <button class="btn btn-primary" onclick="downloadProofImage()">
+                  <i class="fas fa-download me-1"></i> Télécharger
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -2421,6 +2502,10 @@
               <div class="mb-3">
                 <label class="form-label">Lien de Preuve</label>
                 <input type="text" class="form-control" id="confirmationProof" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Image de Preuve</label>
+                <div id="confirmationImageContainer"></div>
               </div>
               <div class="text-center mt-4">
                 <button class="btn btn-success me-2" id="confirmSubmissionBtn">
@@ -2547,6 +2632,7 @@
     let userWhatsApp = "";
     let userReferrer = null;
     let isBlocked = false;
+    let currentProofImage = null;
 
     // Page elements
     const authPage = document.getElementById('authPage');
@@ -2921,15 +3007,20 @@
         }
       });
       
-      // Formulaire de preuve
+      // Formulaire de preuve modifié pour gérer l'image
       document.getElementById("submitProofForm").addEventListener("submit", async e => {
         e.preventDefault();
         const taskId = document.getElementById("taskIdHidden").value;
         const name = document.getElementById("userName").value;
-        const proof = document.getElementById("userProof").value;
+        const proofText = document.getElementById("userProof").value;
         
-        if (!taskId || !name || !proof) {
-          showNotification("Veuillez remplir tous les champs", "warning");
+        if (!taskId || !name) {
+          showNotification("Veuillez remplir votre identifiant", "warning");
+          return;
+        }
+        
+        if (!currentProofImage && !proofText) {
+          showNotification("Veuillez fournir une preuve (image ou texte)", "warning");
           return;
         }
         
@@ -2944,10 +3035,26 @@
             return;
           }
           
-          await setDoc(submissionRef, {
-            userId, userName, taskId, name, proof,
-            status: "en attente", createdAt: serverTimestamp()
-          });
+          // Préparer les données de la soumission
+          const submissionData = {
+            userId, 
+            userName, 
+            taskId, 
+            name, 
+            status: "en attente", 
+            createdAt: serverTimestamp()
+          };
+          
+          // Ajouter la preuve (image en base64 ou texte)
+          if (currentProofImage) {
+            submissionData.proof = currentProofImage;
+            submissionData.proofType = "image";
+          } else {
+            submissionData.proof = proofText;
+            submissionData.proofType = "text";
+          }
+          
+          await setDoc(submissionRef, submissionData);
           
           showNotification("Preuve envoyée! L'administrateur va l'examiner.", "success");
           
@@ -2956,6 +3063,7 @@
           
           // Reset form and close modal
           e.target.reset();
+          clearImage();
           bootstrap.Modal.getInstance(document.getElementById('proofModal')).hide();
         } catch (error) {
           showNotification("Erreur lors de l'envoi de la preuve: " + error.message, "danger");
@@ -3061,6 +3169,118 @@
         }
       });
     }
+
+    // Fonction pour gérer l'upload d'image
+    window.handleImageUpload = function() {
+      const fileInput = document.getElementById('userProofImage');
+      const fileInfo = document.getElementById('fileInfo');
+      const imagePreview = document.getElementById('imagePreview');
+      const clearImageBtn = document.getElementById('clearImageBtn');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        return;
+      }
+      
+      // Vérifier la taille du fichier (10Mo max)
+      const maxSize = 10 * 1024 * 1024; // 10MB en bytes
+      if (file.size > maxSize) {
+        showNotification("L'image est trop grande (max 10Mo). Réduction automatique en cours...", "warning");
+        // On va réduire l'image automatiquement
+      }
+      
+      fileInfo.textContent = `Fichier: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} Mo)`;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          // Créer un canvas pour redimensionner l'image si nécessaire
+          let canvas = document.createElement('canvas');
+          let ctx = canvas.getContext('2d');
+          
+          // Dimensions initiales
+          let width = img.width;
+          let height = img.height;
+          
+          // Réduire la taille si l'image est trop grande
+          const MAX_WIDTH = 1024;
+          const MAX_HEIGHT = 1024;
+          
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          // Ajuster la qualité si le fichier est toujours trop grand
+          let quality = 0.8;
+          let base64Image;
+          
+          do {
+            canvas.width = width;
+            canvas.height = height;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Convertir en base64 avec qualité réduite
+            base64Image = canvas.toDataURL('image/jpeg', quality);
+            
+            // Réduire la qualité si l'image est toujours trop grande
+            quality -= 0.1;
+          } while (base64Image.length > 7000000 && quality > 0.3); // ~7MB max pour base64
+          
+          // Afficher l'aperçu
+          imagePreview.src = base64Image;
+          imagePreview.style.display = 'block';
+          clearImageBtn.style.display = 'block';
+          
+          // Stocker l'image compressée en base64
+          currentProofImage = base64Image;
+          
+          fileInfo.textContent += ` - Réduit à ${(base64Image.length / 1024 / 1024).toFixed(2)} Mo`;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // Fonction pour effacer l'image
+    window.clearImage = function() {
+      const fileInput = document.getElementById('userProofImage');
+      const fileInfo = document.getElementById('fileInfo');
+      const imagePreview = document.getElementById('imagePreview');
+      const clearImageBtn = document.getElementById('clearImageBtn');
+      
+      fileInput.value = '';
+      fileInfo.textContent = '';
+      imagePreview.style.display = 'none';
+      clearImageBtn.style.display = 'none';
+      currentProofImage = null;
+    };
+
+    // Fonction pour visualiser l'image de preuve
+    window.viewProofImage = function(imageSrc) {
+      document.getElementById('proofImageDisplay').src = imageSrc;
+      new bootstrap.Modal(document.getElementById('proofImageModal')).show();
+    };
+
+    // Fonction pour télécharger l'image de preuve
+    window.downloadProofImage = function() {
+      const imageSrc = document.getElementById('proofImageDisplay').src;
+      const link = document.createElement('a');
+      link.href = imageSrc;
+      link.download = 'preuve_tache_' + Date.now() + '.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
 
     // Vérifier si l'utilisateur est déjà connecté
     function checkLoginStatus() {
@@ -3741,16 +3961,42 @@
           return;
         }
         
+        // Filtrer les tâches déjà complétées
+        const activeTasks = [];
         snap.forEach(docSnap => {
           const d = docSnap.data();
           const taskId = docSnap.id;
           
           // Vérifier si la tâche est déjà complétée
-          const isCompleted = completedTasks.includes(taskId);
+          if (!completedTasks.includes(taskId)) {
+            activeTasks.push({ id: taskId, data: d });
+          }
+        });
+        
+        // Afficher uniquement les tâches non complétées
+        if (activeTasks.length === 0) {
+          list.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center py-4">
+                <div class="empty-state py-0">
+                  <i class="fas fa-check-circle"></i>
+                  <p>Toutes les tâches disponibles ont été complétées</p>
+                  <p class="small">Revenez plus tard pour de nouvelles tâches</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        activeTasks.forEach(task => {
+          const taskId = task.id;
+          const d = task.data;
+          
           // Vérifier si l'utilisateur a une soumission en attente pour cette tâche
           const isPending = pendingSubmissions.has(taskId);
           
-          // Récupérer le budget (compatibilité avec ancienne version)
+          // Récupérer le budget
           const budget = d.budgetPerParticipant || d.budget || 0;
           
           let socialText = '';
@@ -3784,7 +4030,6 @@
           }
           
           const el = document.createElement('tr');
-          el.className = isCompleted ? 'completed-task' : '';
           
           el.innerHTML = `
             <td>${d.description}</td>
@@ -3794,8 +4039,7 @@
               <button class="btn btn-sm btn-primary" onclick="showTaskDetails('${taskId}', '${d.whatsapp || ''}')">
                 <i class="fas fa-eye me-1"></i> Ouvrir
               </button>
-              ${isCompleted ? '<span class="badge bg-success ms-2">Complétée</span>' : 
-                (isPending ? '<span class="badge bg-warning ms-2">En attente</span>' : '')}
+              ${isPending ? '<span class="badge bg-warning ms-2">En attente</span>' : ''}
             </td>
           `;
           list.appendChild(el);
@@ -3909,8 +4153,13 @@
       if (whatsapp) {
         whatsappBtn.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(defaultMessage)}`;
       } else {
-        whatsappBtn.href = "https://wa.me/261384557584";
+        whatsappBtn.href = "https://wa.me/261384557584?text=" + encodeURIComponent(defaultMessage);
       }
+      
+      // Réinitialiser le formulaire
+      document.getElementById('userName').value = userName;
+      document.getElementById('userProof').value = '';
+      clearImage();
       
       // Ouvrir la modal
       new bootstrap.Modal(document.getElementById('proofModal')).show();
@@ -3949,7 +4198,7 @@
           let statusBadge = '';
           
           if (d.status === 'active') {
-            statusBadge = '<span n bg-success">Active</span>';
+            statusBadge = '<span class="badge bg-success">Active</span>';
           } else {
             statusBadge = '<span class="badge bg-secondary">Inactive</span>';
           }
@@ -4006,7 +4255,10 @@
             submissions.push({
               id: subDoc.id,
               name: subData.name,
-              proof: subData.proof
+              proof: subData.proof,
+              proofType: subData.proofType || 'text',
+              userName: subData.userName,
+              userId: subData.userId
             });
           });
           
@@ -4061,7 +4313,7 @@
                       <thead>
                         <tr>
                           <th>Nom</th>
-                          <th>ID</th>
+                          <th>Preuve</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -4075,9 +4327,16 @@
                           : submissions.map(sub => `
                             <tr>
                               <td>${sub.name}</td>
-                              <td>${sub.id.substring(0, 8)}...</td>
                               <td>
-                                <button class="btn btn-success btn-sm me-1" onclick="confirmSubmission('${sub.id}')">
+                                ${sub.proofType === 'image' ? 
+                                  `<button class="btn btn-sm btn-info" onclick="viewProofImage('${sub.proof}')">
+                                    <i class="fas fa-image me-1"></i> Voir image
+                                  </button>` 
+                                  : `<span class="small">${sub.proof.length > 50 ? sub.proof.substring(0, 50) + '...' : sub.proof}</span>`
+                                }
+                              </td>
+                              <td>
+                                <button class="btn btn-success btn-sm me-1" onclick="confirmSubmission('${sub.id}', '${sub.proofType}', '${sub.proof ? sub.proof.replace(/'/g, "\\'") : ''}')">
                                   <i class="fas fa-check"></i>
                                 </button>
                                 <button class="btn btn-danger btn-sm" onclick="cancelSubmission('${sub.id}')">
@@ -4317,8 +4576,58 @@
     // Ajout de la fonction à l'objet window pour la rendre accessible globalement
     window.loadHistory = loadHistory;
 
-    // Fonction pour confirmer une soumission
-    window.confirmSubmission = async (submissionId) => {
+    // Fonction pour confirmer une soumission (avec gestion d'image)
+    window.confirmSubmission = async (submissionId, proofType, proofData) => {
+      try {
+        // Afficher la modal de confirmation avec les détails
+        const submissionRef = doc(db, "submissions", submissionId);
+        const submissionSnap = await getDoc(submissionRef);
+        
+        if (!submissionSnap.exists()) {
+          showNotification("Soumission introuvable", "danger");
+          return;
+        }
+        
+        const submissionData = submissionSnap.data();
+        
+        // Remplir la modal de confirmation
+        document.getElementById('confirmationTaskId').textContent = submissionData.taskId;
+        document.getElementById('confirmationName').value = submissionData.name;
+        
+        if (proofType === 'image') {
+          document.getElementById('confirmationProof').value = "Image jointe (voir ci-dessous)";
+          const imageContainer = document.getElementById('confirmationImageContainer');
+          imageContainer.innerHTML = `
+            <img src="${proofData}" class="proof-image" alt="Image de preuve">
+            <button class="btn btn-sm btn-info mt-2" onclick="viewProofImage('${proofData}')">
+              <i class="fas fa-expand me-1"></i> Agrandir
+            </button>
+          `;
+        } else {
+          document.getElementById('confirmationProof').value = proofData || submissionData.proof;
+          document.getElementById('confirmationImageContainer').innerHTML = '';
+        }
+        
+        // Configurer les boutons
+        document.getElementById('confirmSubmissionBtn').onclick = async () => {
+          await processSubmissionConfirmation(submissionId);
+        };
+        
+        document.getElementById('cancelSubmissionBtn').onclick = async () => {
+          await cancelSubmission(submissionId);
+          bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+        };
+        
+        // Ouvrir la modal
+        new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+        
+      } catch (error) {
+        showNotification("Erreur lors de la confirmation: " + error.message, "danger");
+      }
+    };
+
+    // Fonction pour traiter la confirmation de soumission
+    async function processSubmissionConfirmation(submissionId) {
       try {
         const submissionRef = doc(db, "submissions", submissionId);
         const submissionSnap = await getDoc(submissionRef);
@@ -4404,11 +4713,16 @@
         }
         
         showNotification(`Soumission confirmée! ${taskBudget} Ar crédités.`, 'success');
+        
+        // Fermer la modal
+        bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+        
+        // Recharger les publications
         loadPublications();
       } catch (error) {
         showNotification("Erreur lors de la confirmation: " + error.message, "danger");
       }
-    };
+    }
 
     // Fonction pour annuler une soumission
     window.cancelSubmission = async (submissionId) => {
